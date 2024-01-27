@@ -1,0 +1,10 @@
+<h1 matDialogTitle>Eliminar Autor</h1>
+<div mat-dialog-content>
+    ¿Desea Eliminar el Autor "{{dataAutor.descripcion}}"?
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close color="warn"> No, Volver</button>
+  <button mat-raised-button color="primary" (click)="confirmarEliminar()" 
+  cdkFocusInitial>
+  Si, Eliminar</button>
+</div>
