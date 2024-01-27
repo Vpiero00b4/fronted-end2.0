@@ -8,10 +8,10 @@ import { AutorService } from '../../../Services/autor.service';
 
 @Component({
   selector: 'app-dialog-new',
-  templateUrl: './dialog-new.component.html',
-  styleUrl: './dialog-new.component.css'
+  templateUrl: './autor-new.component.html',
+  styleUrl: './autor-new.component.css'
 })
-export class DialogNewComponent implements OnInit {
+export class AutorNewComponent implements OnInit {
   formAutor: FormGroup = this.fb.group({
     idAutor:['',[]],
     descripcion: [this.dataAutor?.descripcion || '', [Validators.required]]
@@ -22,7 +22,7 @@ export class DialogNewComponent implements OnInit {
   listaAutor: Autor[] = [];
 
   constructor(
-    private dialogoReferencia: MatDialogRef<DialogNewComponent>,
+    private dialogoReferencia: MatDialogRef<AutorNewComponent>,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
     private _autorServicio: AutorService,

@@ -3,8 +3,8 @@ import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import {MatPaginator, MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 
-import { Autor } from '../Interface/autor'; 
-import { AutorService } from '../Services/autor.service';
+import { Categorium } from '../Interface/categorium';
+import { CategoriaService } from '../Services/categoria.service';
 import { HttpHeaders } from '@angular/common/http';
 
 import {
@@ -17,22 +17,22 @@ import {
 
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { AutorAddEditComponent } from './ADialogo/autor-dialog-add-edit/autor-add-edit.component';
+import { CategoriaAddEditComponent } from './CDialogo/categoria-add-edit/categoria-add-edit.component';
 
-import { AutorDeleteComponent } from './ADialogo/autor-delete/autor-delete.component';
-import { AutorNewComponent } from './ADialogo/autor-dialog-new/autor-new.component';
+import { CategoriaDeleteComponent } from './CDialogo/categoria-delete/categoria-delete.component';
+import { CategoriaNewComponent } from './CDialogo/categoria-new/categoria-new.component';
 
 
 @Component({
-  selector: 'app-autor',
-  templateUrl: './autor.component.html',
-  styleUrl: './autor.component.css'
+  selector: 'app-categoria',
+  templateUrl: './categoria.component.html',
+  styleUrl: './categoria.component.css'
 })
-export class AutorComponent  implements AfterViewInit,OnInit{
-  displayedColumns: string[] = ['descripcion','Acciones'];
-  dataSource = new MatTableDataSource<Autor>();
+export class CategoriaComponent  implements AfterViewInit,OnInit{
+  displayedColumns: string[] = ['nombreCategoria','Acciones'];
+  dataSource = new MatTableDataSource<Categorium>();
   constructor(
-    private _autorServicio:AutorService,
+    private _categoriaServicio:CategoriaService,
     public dialog: MatDialog,
     private _snackBar:MatSnackBar
 
@@ -40,7 +40,7 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     
   }
   ngOnInit(): void {
-    this.mostrarAutor()
+    this.mostrarcategoria()
   }
 
 
@@ -55,9 +55,9 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  mostrarAutor() {
+  mostrarcategoria() {
     
-    this._autorServicio.getList().subscribe({
+    this._categoriaServicio.getList().subscribe({
       next: (dataResponse) => {
         this.dataSource.data = dataResponse;
       },
@@ -73,28 +73,28 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     };    
   }
 
-  NuevoAutor() {
-    const dialogRef = this.dialog.open(AutorNewComponent, {
+  Nuevocategoria() {
+    const dialogRef = this.dialog.open(CategoriaNewComponent, {
       disableClose: true,
       width: "350px",
     });
   
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado === "creado") {
-        this.mostrarAutor();
+        this.mostrarcategoria();
       }
     });
   }
   
 
-  editarAutor(dataAutor:Autor){
-    this.dialog.open(AutorAddEditComponent,{
+  editarcategoria(datacategoria:Categorium){
+    this.dialog.open(CategoriaAddEditComponent,{
       disableClose:true,
       width:"350px",
-      data:dataAutor
+      data:datacategoria
     }).afterClosed().subscribe(resultado => {
       if(resultado === "Editado"){
-        this.mostrarAutor();
+        this.mostrarcategoria();
       }
     })
 }
@@ -106,17 +106,17 @@ mostrarAlerta(msg: string, accion: string) {
   })
 }
 
-DialogoEliminarComponent(dataAutor:Autor){
-  this.dialog.open(AutorDeleteComponent,{
+DialogoEliminarComponent(datacategoria:Categorium){
+  this.dialog.open(CategoriaDeleteComponent,{
     disableClose:true,
-    data:dataAutor
+    data:datacategoria
   }).afterClosed().subscribe(resultado => {
     ;
     if( resultado === "Eliminar"){
-      this._autorServicio.delete(dataAutor.idAutor).subscribe({
+      this._categoriaServicio.delete(datacategoria.idCategoria).subscribe({
         next:(data)=>{ 
-          this.mostrarAlerta("Autor fue Eliminado","Listo");
-          this.mostrarAutor();
+          this.mostrarAlerta("Categoria Eliminada","Listo");
+          this.mostrarcategoria();
         },error:(e)=>{ ; console.log(e)}
       })
     }

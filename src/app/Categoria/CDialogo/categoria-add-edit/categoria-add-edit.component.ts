@@ -5,34 +5,35 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import*as moment from 'moment';
 
-import { Autor } from '../../../Interface/autor';
-import { AutorService } from '../../../Services/autor.service';
+import { CategoriaService } from '../../../Services/categoria.service';
+
+import { Categorium } from '../../../Interface/categorium';
 
 
 
 @Component({
   selector: 'app-dialog-add-edit',
-  templateUrl: './dialog-add-edit.component.html',
-  styleUrl: './dialog-add-edit.component.css'
+  templateUrl: './categoria-add-edit.component.html',
+  styleUrl: './categoria-add-edit.component.css'
 })
-export class DialogAddEditComponent implements OnInit{
+export class CategoriaAddEditComponent implements OnInit{
   
-  formAutor: FormGroup;
+  formCategoria: FormGroup;
   tituloAccion : string="Nuevo";
   botonAccion : string="guardar";
-  listaAutor:Autor[]=[];
+  listaCategoria:Categorium[]=[];
   constructor(
 
-    private dialogoReferencia:MatDialogRef<DialogAddEditComponent>,
+    private dialogoReferencia:MatDialogRef<CategoriaAddEditComponent>,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
-    private _autorServicio:AutorService,
-    @Inject(MAT_DIALOG_DATA) public dataAutor:Autor
+    private _categoriaServicio:CategoriaService,
+    @Inject(MAT_DIALOG_DATA) public dataCategoria:Categorium
 
   ){
-    this.formAutor=this.fb.group({
-      idAutor:['',[]],
-      descripcion:[this.dataAutor.descripcion,[Validators.required]]
+    this.formCategoria=this.fb.group({
+      idCategoria:['',[]],
+      nombreCategoria:[this.dataCategoria.nombreCategoria,[Validators.required]]
     })
 
     // this._autorServicio.getList().subscribe({
@@ -51,14 +52,14 @@ export class DialogAddEditComponent implements OnInit{
     })
   }
 
-  addEditAutor(){
-    debugger
-    console.log(this.formAutor.value)
-    const modelo : Autor={
-      idAutor:this.formAutor.value.idAutor,
-      descripcion:this.formAutor.value.descripcion
+  addEditCategoria(){
+    
+    console.log(this.formCategoria.value)
+    const modelo : Categorium={
+      idCategoria:this.formCategoria.value.idCategoria,
+      nombreCategoria:this.formCategoria.value.nombreCategoria
     }
-    this._autorServicio.update(modelo.descripcion,modelo).subscribe({
+    this._categoriaServicio.update(modelo.nombreCategoria,modelo).subscribe({
       next:(data)=>{
         this.mostrarAlerta("Autor actualizado","listo");
         this.dialogoReferencia.close("creado");
@@ -70,7 +71,7 @@ export class DialogAddEditComponent implements OnInit{
 
   
   ngOnInit(): void {
-    this.formAutor.patchValue(this.dataAutor);
+    this.formCategoria.patchValue(this.dataCategoria);
     //   this.formAutor.patchValue({
     // if (this.dataAutor) {
     //     ID_Autor: this.dataAutor.idAutor,
