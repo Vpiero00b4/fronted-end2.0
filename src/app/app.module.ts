@@ -44,7 +44,15 @@ import { CategoriaAddEditComponent } from './Categoria/CDialogo/categoria-add-ed
 import { CategoriaDeleteComponent } from './Categoria/CDialogo/categoria-delete/categoria-delete.component';
 import { CategoriaNewComponent } from './Categoria/CDialogo/categoria-new/categoria-new.component';
 import { CategoriaComponent } from './Categoria/categoria.component';
-
+import { AlmacenComponent } from './Almacen/almacen.component';
+import { AlmacenDeleteComponent } from './Almacen/AlDialogo/almacen-delete/almacen-delete.component';
+import { AlmacenAddEditComponent } from './Almacen/AlDialogo/almacen-add-edit/almacen-add-edit.component';
+import { TiendaComponent } from './Tienda/tienda.component';
+import { TiendaAddEditComponent } from './Tienda/TDialogo/tienda-add-edit/tienda-add-edit.component';
+import { TiendaDeleteComponent } from './Tienda/TDialogo/tienda-delete/tienda-delete.component';
+import { TiendaNewComponent } from './Tienda/TDialogo/tienda-new/tienda-new.component';
+import { AlmacenNewComponent } from './Almacen/AlDialogo/almacen-new/almacen-new.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @NgModule({
@@ -58,7 +66,15 @@ import { CategoriaComponent } from './Categoria/categoria.component';
     CategoriaAddEditComponent,
     CategoriaDeleteComponent,
     CategoriaNewComponent,
-    CategoriaComponent
+    CategoriaComponent,
+    AlmacenComponent,
+    AlmacenDeleteComponent,
+    AlmacenAddEditComponent,
+    TiendaComponent,
+    TiendaAddEditComponent,
+    TiendaDeleteComponent,
+    TiendaNewComponent,
+    AlmacenNewComponent
   ],
   imports: [
     BrowserModule,
@@ -80,7 +96,8 @@ import { CategoriaComponent } from './Categoria/categoria.component';
     MatGridListModule,
     BrowserAnimationsModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSidenavModule
     
   ],
   providers: [],

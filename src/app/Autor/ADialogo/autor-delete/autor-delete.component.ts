@@ -6,7 +6,7 @@ import { Autor } from '../../../Interface/autor';
 @Component({
   selector: 'app-dialogo-delete',
   templateUrl: './autor-delete.component.html',
-  styleUrl: './autor-delete.component.css'
+  styleUrl: './autor-delete.component.scss'
 })
 export class AutorDeleteComponent  implements OnInit{
 

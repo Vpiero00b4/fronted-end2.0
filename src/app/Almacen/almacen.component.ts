@@ -6,6 +6,9 @@ import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { Autor } from '../Interface/autor'; 
 import { AutorService } from '../Services/autor.service';
 import { HttpHeaders } from '@angular/common/http';
+import { AlmacenAddEditComponent } from './AlDialogo/almacen-add-edit/almacen-add-edit.component';
+import { AlmacenNewComponent } from './AlDialogo/almacen-new/almacen-new.component';
+import { AlmacenDeleteComponent } from './AlDialogo/almacen-delete/almacen-delete.component';
 
 import {
   MatDialog,
@@ -16,23 +19,21 @@ import {
 } from '@angular/material/dialog';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Almacen } from '../Interface/almacen';
+import { almacenService } from '../Services/almacen.service';
 
-import { AutorAddEditComponent } from './ADialogo/autor-dialog-add-edit/autor-add-edit.component';
-
-import { AutorDeleteComponent } from './ADialogo/autor-delete/autor-delete.component';
-import { AutorNewComponent } from './ADialogo/autor-dialog-new/autor-new.component';
 
 
 @Component({
-  selector: 'app-autor',
-  templateUrl: './autor.component.html',
-  styleUrl: './autor.component.scss'
+  selector: 'app-almacen',
+  templateUrl: './almacen.component.html',
+  styleUrl: './almacen.component.scss'
 })
-export class AutorComponent  implements AfterViewInit,OnInit{
-  displayedColumns: string[] = ['descripcion','Acciones'];
-  dataSource = new MatTableDataSource<Autor>();
+export class AlmacenComponent {
+  displayedColumns: string[] = ['nroEstante','librosEstante','ubicacion','Acciones'];
+  dataSource = new MatTableDataSource<Almacen>();
   constructor(
-    private _autorServicio:AutorService,
+    private _almacenServicio:almacenService,
     public dialog: MatDialog,
     private _snackBar:MatSnackBar
 
@@ -40,7 +41,7 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     
   }
   ngOnInit(): void {
-    this.mostrarAutor()
+    this.mostrarAlmacen()
   }
 
 
@@ -55,9 +56,9 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  mostrarAutor() {
+  mostrarAlmacen() {
     
-    this._autorServicio.getList().subscribe({
+    this._almacenServicio.getList().subscribe({
       next: (dataResponse) => {
         this.dataSource.data = dataResponse;
       },
@@ -73,28 +74,28 @@ export class AutorComponent  implements AfterViewInit,OnInit{
     };    
   }
 
-  NuevoAutor() {
-    const dialogRef = this.dialog.open(AutorNewComponent, {
+  NuevoAlmacen() {
+    const dialogRef = this.dialog.open(AlmacenNewComponent, {
       disableClose: true,
       width: "350px",
     });
   
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado === "creado") {
-        this.mostrarAutor();
+        this.mostrarAlmacen();
       }
     });
   }
   
 
-  editarAutor(dataAutor:Autor){
-    this.dialog.open(AutorAddEditComponent,{
+  editarAlmacen(dataAlmacen:Almacen){
+    this.dialog.open(AlmacenAddEditComponent,{
       disableClose:true,
       width:"350px",
-      data:dataAutor
+      data:dataAlmacen
     }).afterClosed().subscribe(resultado => {
       if(resultado === "Editado"){
-        this.mostrarAutor();
+        this.mostrarAlmacen();
       }
     })
 }
@@ -106,17 +107,17 @@ mostrarAlerta(msg: string, accion: string) {
   })
 }
 
-DialogoEliminarComponent(dataAutor:Autor){
-  this.dialog.open(AutorDeleteComponent,{
+DialogoEliminarComponent(dataAlmacen:Almacen){
+  this.dialog.open(AlmacenDeleteComponent,{
     disableClose:true,
-    data:dataAutor
+    data:dataAlmacen
   }).afterClosed().subscribe(resultado => {
     ;
     if( resultado === "Eliminar"){
-      this._autorServicio.delete(dataAutor.idAutor).subscribe({
+      this._almacenServicio.delete(dataAlmacen.idAlmacen).subscribe({
         next:(data)=>{ 
           this.mostrarAlerta("Autor fue Eliminado","Listo");
-          this.mostrarAutor();
+          this.mostrarAlmacen();
         },error:(e)=>{ ; console.log(e)}
       })
     }

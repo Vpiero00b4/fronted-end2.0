@@ -4,35 +4,34 @@ import { MatDialog, MatDialogRef , MAT_DIALOG_DATA} from '@angular/material/dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MAT_DATE_FORMATS } from '@angular/material/core';
 import*as moment from 'moment';
-
-import { Autor } from '../../../Interface/autor';
-import { AutorService } from '../../../Services/autor.service';
-
+import { Almacen } from '../../../Interface/almacen';
+import { almacenService } from '../../../Services/almacen.service';
 
 
 @Component({
-  selector: 'app-dialog-add-edit',
-  templateUrl: './autor-add-edit.component.html',
-  styleUrl: './autor-add-edit.component.scss'
+  selector: 'app-almacen-add-edit',
+  templateUrl: './almacen-add-edit.component.html',
+  styleUrl: './almacen-add-edit.component.scss'
 })
-export class AutorAddEditComponent implements OnInit{
-  
-  formAutor: FormGroup;
+export class AlmacenAddEditComponent {
+  formAlmacen: FormGroup;
   tituloAccion : string="Nuevo";
   botonAccion : string="guardar";
-  listaAutor:Autor[]=[];
+  listaAutor:Almacen[]=[];
   constructor(
 
-    private dialogoReferencia:MatDialogRef<AutorAddEditComponent>,
+    private dialogoReferencia:MatDialogRef<AlmacenAddEditComponent>,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
-    private _autorServicio:AutorService,
-    @Inject(MAT_DIALOG_DATA) public dataAutor:Autor
+    private _almacenServicio:almacenService,
+    @Inject(MAT_DIALOG_DATA) public dataAlmacen:Almacen
 
   ){
-    this.formAutor=this.fb.group({
-      idAutor:['',[]],
-      descripcion:[this.dataAutor.descripcion,[Validators.required]]
+    this.formAlmacen=this.fb.group({
+      idAlmacen:['',[]],
+      nroEstante:[this.dataAlmacen.nroEstante,[Validators.required]],
+      librosEstante:[this.dataAlmacen.librosEstante,[Validators.required]],
+      ubicacion:[this.dataAlmacen.ubicacion,[Validators.required]]
     })
 
     // this._autorServicio.getList().subscribe({
@@ -51,14 +50,16 @@ export class AutorAddEditComponent implements OnInit{
     })
   }
 
-  addEditAutor(){
+  addEditAlmacen(){
     debugger
-    console.log(this.formAutor.value)
-    const modelo : Autor={
-      idAutor:this.formAutor.value.idAutor,
-      descripcion:this.formAutor.value.descripcion
+    console.log(this.formAlmacen.value)
+    const modelo : Almacen={
+      idAlmacen:this.formAlmacen.value.idAlmacen,
+      nroEstante:this.formAlmacen.value.nroEstante,
+      librosEstante:this.formAlmacen.value.librosEstante,
+      ubicacion:this.formAlmacen.value.ubicacion
     }
-    this._autorServicio.update(modelo.descripcion,modelo).subscribe({
+    this._almacenServicio.update(modelo.nroEstante,modelo.librosEstante,modelo.ubicacion,modelo).subscribe({
       next:(data)=>{
         this.mostrarAlerta("Autor actualizado","listo");
         this.dialogoReferencia.close("creado");
@@ -70,7 +71,7 @@ export class AutorAddEditComponent implements OnInit{
 
   
   ngOnInit(): void {
-    this.formAutor.patchValue(this.dataAutor);
+    this.formAlmacen.patchValue(this.dataAlmacen);
     //   this.formAutor.patchValue({
     // if (this.dataAutor) {
     //     ID_Autor: this.dataAutor.idAutor,
@@ -81,5 +82,4 @@ export class AutorAddEditComponent implements OnInit{
     //   this.botonAccion = "Actualizar";
     // }
   }
-  
 }

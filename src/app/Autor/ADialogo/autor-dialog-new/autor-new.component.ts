@@ -9,7 +9,7 @@ import { AutorService } from '../../../Services/autor.service';
 @Component({
   selector: 'app-dialog-new',
   templateUrl: './autor-new.component.html',
-  styleUrl: './autor-new.component.css'
+  styleUrl: './autor-new.component.scss'
 })
 export class AutorNewComponent implements OnInit {
   formAutor: FormGroup = this.fb.group({

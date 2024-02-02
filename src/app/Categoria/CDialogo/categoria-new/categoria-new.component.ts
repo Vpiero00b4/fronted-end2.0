@@ -10,7 +10,7 @@ import { Categorium } from '../../../Interface/categorium';
 @Component({
   selector: 'app-dialog-new',
   templateUrl: './categoria-new.component.html',
-  styleUrl: './categoria-new.component.css'
+  styleUrl: './categoria-new.component.scss'
 })
 export class CategoriaNewComponent implements OnInit {
     formCategoria: FormGroup = this.fb.group({

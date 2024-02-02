@@ -14,7 +14,7 @@ import { Categorium } from '../../../Interface/categorium';
 @Component({
   selector: 'app-dialog-add-edit',
   templateUrl: './categoria-add-edit.component.html',
-  styleUrl: './categoria-add-edit.component.css'
+  styleUrl: './categoria-add-edit.component.scss'
 })
 export class CategoriaAddEditComponent implements OnInit{
   

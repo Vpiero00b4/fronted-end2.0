@@ -8,17 +8,42 @@
     </button>
 
     
-
-    <span>LIBRERIA SABER</span>
+    <a routerLink="/home">LIBRERIA SABER</a>
+    
     <span class="example-spacer"></span>
-    <a routerLink="/home">Inicio</a>
+    
     <span class="example-spacer"></span>
     <a routerLink="/autor">Autor</a>
     <span class="example-spacer"></span>
     <a routerLink="/categoria">Categoria</a>
+    <span class="example-spacer"></span>
+    <a routerLink="/almacen">Almacen</a>
   </mat-toolbar>
 
 </p>
+
+<!-- <mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #sidenav class="sidenav" mode="side" opened>
+    <mat-nav-list>
+      <a mat-list-item routerLink="/autor" routerLinkActive="active">autor</a>
+      <a mat-list-item routerLink="/categoria" routerLinkActive="active">Categoria</a>
+      <a mat-list-item routerLink="/almacen" routerLinkActive="active">Almacen</a>
+      <!-- Agrega más enlaces según sea necesario -->
+    <!-- </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar class="toolbar">
+      <button mat-icon-button (click)="sidenav.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <span>LIBRERIA SABER</span>
+    </mat-toolbar>
+
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container> --> 
+
 <img src="assets/imagenes/libSaber.png" alt="Imagen Librería Saber" style="width: 100%; height: auto;">
 
 

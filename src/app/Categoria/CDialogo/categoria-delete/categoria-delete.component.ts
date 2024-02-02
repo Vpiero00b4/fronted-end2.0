@@ -7,7 +7,7 @@ import { Categorium } from '../../../Interface/categorium';
 @Component({
   selector: 'app-categoria-dialogo-delete',
   templateUrl: './categoria-delete.component.html',
-  styleUrl: './categoria-delete.component.css'
+  styleUrl: './categoria-delete.component.scss'
 })
 export class CategoriaDeleteComponent  implements OnInit{
 

@@ -26,7 +26,7 @@ import { CategoriaNewComponent } from './CDialogo/categoria-new/categoria-new.co
 @Component({
   selector: 'app-categoria',
   templateUrl: './categoria.component.html',
-  styleUrl: './categoria.component.css'
+  styleUrl: './categoria.component.scss'
 })
 export class CategoriaComponent  implements AfterViewInit,OnInit{
   displayedColumns: string[] = ['nombreCategoria','Acciones'];
