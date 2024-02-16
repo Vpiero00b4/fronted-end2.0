@@ -21,8 +21,12 @@
     "@angular/platform-browser": "^17.0.0",
     "@angular/platform-browser-dynamic": "^17.0.0",
     "@angular/router": "^17.0.0",
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "bootstrap": "^5.3.2",
+    "jquery": "^3.7.1",
     "moment": "^2.29.4",
     "rxjs": "~7.8.0",
+    "startbootstrap-sb-admin": "^7.0.7",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },

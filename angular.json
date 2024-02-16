@@ -35,11 +35,16 @@
               "src/assets"
             ],
             "styles": [
+              
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/startbootstrap-sb-admin/dist/css/styles.css",
+              "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
             "scripts": [
-             
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"             
             ]
           },
           "configurations": {
@@ -97,13 +102,22 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "./node_modules/startbootstrap-sb-admin/dist/css/styles.css",
+              "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+            ]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "99c0565d-18b9-4189-8d34-0c15e63c7905"
   }
 }
