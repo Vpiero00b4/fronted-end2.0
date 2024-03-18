@@ -11,8 +11,8 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent  {
-  
+export class LoginComponent {
+
   token: string = "";
   usuarios: LoginRequest[] = [];
   loginForm: FormGroup;
@@ -43,9 +43,9 @@ export class LoginComponent  {
         // Nosotros almacenamos el valor del token y algunos valores de nuestro
         if (data.success) {
           sessionStorage.setItem("token", data.token);
-          sessionStorage.setItem("idUsuario", data.usuario.id.toString());
           sessionStorage.setItem("username", data.usuario.username);
           sessionStorage.setItem("fullName", data.usuario.password);
+          sessionStorage.setItem("cargoId", data.usuario.cargo);
 
           alert("LOGIN CORRECTO");
 
@@ -64,5 +64,5 @@ export class LoginComponent  {
     });
   }
 
- 
+
 }

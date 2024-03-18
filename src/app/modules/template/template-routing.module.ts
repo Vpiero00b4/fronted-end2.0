@@ -14,6 +14,10 @@ const routes: Routes = [
           path: 'reportes',
           loadChildren: () => import("./../mantenimiento/mantenimiento.module").then(x => x.MantenimientoModule)  // Supuse que existe un módulo de reportes
         },  
+        {
+          path: 'configuracion',
+          loadChildren: () => import("./../mantenimiento/mantenimiento.module").then(x => x.MantenimientoModule)  // Supuse que existe un módulo de reportes
+        },  
       ]
   },
 ];

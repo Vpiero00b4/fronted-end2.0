@@ -1,7 +1,8 @@
-export class UsuarioResponse {
-    id: number=0;
-    username: string="0";
-    password: string ="0";
-    idPersona: number =0;
-    estado: boolean =false;
+export class UsuarioRequest {
+    idUsuario: number=0;
+    username:  string="";
+    password:  string="";
+    cargo:  string="";
+    estado: boolean=true;
+    idPersona: number=0;
 }

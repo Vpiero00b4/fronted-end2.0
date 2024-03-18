@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 
 
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatTableModule} from '@angular/material/table';
@@ -53,6 +53,7 @@ import { TiendaDeleteComponent } from './Tienda/TDialogo/tienda-delete/tienda-de
 import { TiendaNewComponent } from './Tienda/TDialogo/tienda-new/tienda-new.component';
 import { AlmacenNewComponent } from './Almacen/AlDialogo/almacen-new/almacen-new.component';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { AuthInterceptor } from './Services/auth.interceptor';
 
 
 @NgModule({
@@ -74,7 +75,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     TiendaAddEditComponent,
     TiendaDeleteComponent,
     TiendaNewComponent,
-    AlmacenNewComponent
+    AlmacenNewComponent,
+   
   ],
   imports: [
     BrowserModule,
@@ -97,10 +99,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     BrowserAnimationsModule,
     MatIconModule,
     MatToolbarModule,
-    MatSidenavModule
+    MatSidenavModule,
+    ReactiveFormsModule,
+    
     
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS,useClass:AuthInterceptor,multi:true,}],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

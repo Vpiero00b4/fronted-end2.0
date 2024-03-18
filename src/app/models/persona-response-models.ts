@@ -1,9 +1,10 @@
 export class PersonaResponse {
     idPersona: number=0;
-    cargo:  string="0";
-    nombres:  string="0";
-    correo:  string="0";
-    tipoDocumento:  string="0";
-    numDocumento: number=0;
-    razonSocial:  string="0";
+    nombre: string = "";
+    apellidoPaterno: string = "";
+    apellidoMaterno: string = "";
+    correo: string = "";
+    tipoDocumento: string = "";
+    numeroDocumento: string = "";
+    telefono: string = "";
 }

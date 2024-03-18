@@ -1,0 +1,91 @@
+
+<div class="container-fluid px-4 mt-5">
+  <!-- Formulario para filtrar libros por categoría y buscar productos -->
+  <form class="form-inline mb-3">
+    <!-- Contenedor flexible para alinear los campos en una fila -->
+    <div class="d-flex flex-row">
+      <!-- Desplegable para seleccionar la opción de filtrado -->
+      <div class="form-group mr-3">
+        <label for="filtroSelect">Filtrar por:</label>
+        <select class="form-control" id="filtroSelect">
+          <option value="categoria">Categoría</option>
+          <option value="marca">Marca</option>
+        </select>
+      </div>
+      <!-- Campo de entrada para buscar productos -->
+      <div class="form-group mr-3">
+        <label for="buscarInput">Buscar Producto:</label>
+        <input type="text" class="form-control" id="buscarInput" placeholder="Buscar Producto">
+      </div>
+    </div>
+    <!-- Botón de enviar para realizar la búsqueda -->
+    <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Buscar</button>
+  </form>
+
+  <!-- Lista de libros -->
+  <div class="card bg-light mb-3">
+    <div class="card-header text-center">
+      <h1 class="mt-4">LISTADO DE PRODUCTOS :</h1>
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered table-striped">
+        <!-- Cabecera de la tabla -->
+        <thead>
+          <tr>
+            <!-- Definir las columnas de la tabla -->
+            <th>IdLibro</th>
+            <th>Titulo</th>
+            <th>Isbn P</th>
+            <th>Tamano M</th>
+            <th>Descripcion M</th>
+            <th>Condicion</th>
+            <th>Impresion</th>
+            <th>TipoTapa</th>
+            <th>Estado</th>
+            <th>IdCategoria</th>
+            <th>IdTipoPapel</th>
+            <th>IdProveedor</th> 
+            <th>
+              <button (click)="crearLibro(modalEdit)" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i>
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <!-- Cuerpo de la tabla -->
+        <tbody>
+          <!-- Utilizar ngFor para iterar sobre la lista de libros -->
+          <tr *ngFor="let libro of libros">
+            <!-- Mostrar los detalles del libro en cada columna -->
+            <td>{{ libro.idLibro}}</td>
+            <td>{{ libro.titulo}}</td>
+            <td>{{ libro.isbn }}</td>
+            <td>{{ libro.tamanno}}</td>
+            <td>{{ libro.descripcion }}</td>
+            <td>{{ libro.condicion }}</td>
+            <td>{{ libro.impresion }}</td>
+            <td>{{ libro.tipoTapa}}</td>
+            <td>{{ libro.estadoDescripcion}}</td>
+            <td>{{ libro.idCategoria}}</td>
+            <td>{{ libro.idTipoPapel}}</td>
+            <td>{{ libro.idProveedor}}</td> 
+            <!-- Agregar botones para editar y eliminar cada libro -->
+            <td>
+              <button (click)="editarLibro(modalEdit,libro)" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button (click)="eliminarRegistro(libro.idLibro)" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalEdit>
+  <app-mant-libro-register [title]="titleModal" [libro]="libroSelected" [accion]="accionModal"
+    (closeModalEmmit)="getCloseModalEmmit($event)"></app-mant-libro-register>
+</ng-template>

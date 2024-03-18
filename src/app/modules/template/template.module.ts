@@ -6,6 +6,7 @@ import { TemplateHeaderComponent } from './component/template-header/template-he
 import { TemplateFooterComponent } from './component/template-footer/template-footer.component';
 import { TemplateSidebarComponent } from './component/template-sidebar/template-sidebar.component';
 import { TemplateComponent } from './component/template/template.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { TemplateComponent } from './component/template/template.component';
   ],
   imports: [
     CommonModule,
-    TemplateRoutingModule
+    TemplateRoutingModule,
+    SharedModule
     
   ]
 })

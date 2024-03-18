@@ -1,7 +1,8 @@
 export class UsuarioResponse {
-    id: number=0;
-    username: string ="";
-    password: string ="";
-    idPersona: number =0;
-    estado: boolean =false;
+    idUsuario: number=0;
+    username:  string="";
+    password:  string="";
+    cargo:  string="";
+    estado: boolean=false;
+    idPersona: number=0;
 }

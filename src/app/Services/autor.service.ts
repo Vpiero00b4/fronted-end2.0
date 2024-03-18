@@ -27,4 +27,4 @@ export class AutorService {
   delete(idAutor:number):Observable<void>{
     return this.http.delete<void>(`${this.apiUrl}/Eliminar/${idAutor}`);
   }
-}
+} 
