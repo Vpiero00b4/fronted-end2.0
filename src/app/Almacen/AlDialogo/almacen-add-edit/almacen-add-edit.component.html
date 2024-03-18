@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>{{ tituloAccion }} Autor</h1>
+<div mat-dialog-content>
+  <form [formGroup]="formAlmacen">
+    <mat-grid-list cols="1" rowHeight="100px">
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Numero de estante</mat-label>
+          <input matInput formControlName="nroEstante" autocomplete="off" />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Libro Estante</mat-label>
+            <input matInput formControlName="librosEstante" autocomplete="off" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Ubicacion</mat-label>
+            <input matInput formControlName="ubicacion" autocomplete="off" />
+          </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close color="warn">Volver</button>
+  <button mat-raised-button color="primary" (click)="addEditAlmacen()" [disabled]="formAlmacen.invalid">
+  {{botonAccion}}</button>
+</div>

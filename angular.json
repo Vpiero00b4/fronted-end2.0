@@ -26,41 +26,42 @@
             "outputPath": "dist/frontend-crud",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/startbootstrap-sb-admin/dist/css/styles.css",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
+              "src/styles.scss",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
+
             ],
             "scripts": [
+              
               "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/@popperjs/core/dist/umd/popper.min.js",      
               "node_modules/bootstrap/dist/js/bootstrap.min.js"             
-            ]
+            ],
+
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "1mb",
+                "maximumError": "2mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "2kb",
+                "maximumError": "4kb"
+              }
+            ],
+            "outputHashing": "all"
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
               "outputHashing": "all"
             },
             "development": {
@@ -92,21 +93,16 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/startbootstrap-sb-admin/dist/css/styles.css",
               "./node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",

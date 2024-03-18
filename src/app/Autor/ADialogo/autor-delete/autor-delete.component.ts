@@ -5,13 +5,13 @@ import { Autor } from '../../../Interface/autor';
 
 @Component({
   selector: 'app-dialogo-delete',
-  templateUrl: './dialogo-delete.component.html',
-  styleUrl: './dialogo-delete.component.css'
+  templateUrl: './autor-delete.component.html',
+  styleUrl: './autor-delete.component.scss'
 })
-export class DialogoDeleteComponent  implements OnInit{
+export class AutorDeleteComponent  implements OnInit{
 
   constructor(
-    private dialogoReferencia:MatDialogRef<DialogoDeleteComponent>,
+    private dialogoReferencia:MatDialogRef<AutorDeleteComponent>,
     @Inject(MAT_DIALOG_DATA) public dataAutor:Autor
   ){
 

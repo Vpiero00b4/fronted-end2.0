@@ -1,9 +1,11 @@
-import { NgModule } from '@angular/core';
+import { NgModule,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ReactiveFormsModule } from '@angular/forms';
+
+
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -32,25 +34,47 @@ import {MatDialogModule} from '@angular/material/dialog'
 import {MatGridListModule} from '@angular/material/grid-list'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconModule } from '@angular/material/icon';
-import { DialogAddEditComponent } from './Autor/Dialogo/dialog-add-edit/dialog-add-edit.component';
-import { DialogoDeleteComponent } from './Autor/Dialogo/dialogo-delete/dialogo-delete.component';
+import { AutorAddEditComponent } from './Autor/ADialogo/autor-dialog-add-edit/autor-add-edit.component';
+import { AutorDeleteComponent } from './Autor/ADialogo/autor-delete/autor-delete.component';
 import { AutorComponent } from './Autor/autor.component';
 import { InicioComponent } from './Inicio/inicio.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { DialogNewComponent } from './Autor/Dialogo/dialog-new/dialog-new.component';
-
-
-
+import { AutorNewComponent } from './Autor/ADialogo/autor-dialog-new/autor-new.component';
+import { CategoriaAddEditComponent } from './Categoria/CDialogo/categoria-add-edit/categoria-add-edit.component';
+import { CategoriaDeleteComponent } from './Categoria/CDialogo/categoria-delete/categoria-delete.component';
+import { CategoriaNewComponent } from './Categoria/CDialogo/categoria-new/categoria-new.component';
+import { CategoriaComponent } from './Categoria/categoria.component';
+import { AlmacenComponent } from './Almacen/almacen.component';
+import { AlmacenDeleteComponent } from './Almacen/AlDialogo/almacen-delete/almacen-delete.component';
+import { AlmacenAddEditComponent } from './Almacen/AlDialogo/almacen-add-edit/almacen-add-edit.component';
+import { TiendaComponent } from './Tienda/tienda.component';
+import { TiendaAddEditComponent } from './Tienda/TDialogo/tienda-add-edit/tienda-add-edit.component';
+import { TiendaDeleteComponent } from './Tienda/TDialogo/tienda-delete/tienda-delete.component';
+import { TiendaNewComponent } from './Tienda/TDialogo/tienda-new/tienda-new.component';
+import { AlmacenNewComponent } from './Almacen/AlDialogo/almacen-new/almacen-new.component';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DialogAddEditComponent,
-    DialogoDeleteComponent,
+    AutorAddEditComponent,
+    AutorDeleteComponent,
     AutorComponent,
     InicioComponent,
-    DialogNewComponent
+    AutorNewComponent,
+    CategoriaAddEditComponent,
+    CategoriaDeleteComponent,
+    CategoriaNewComponent,
+    CategoriaComponent,
+    AlmacenComponent,
+    AlmacenDeleteComponent,
+    AlmacenAddEditComponent,
+    TiendaComponent,
+    TiendaAddEditComponent,
+    TiendaDeleteComponent,
+    TiendaNewComponent,
+    AlmacenNewComponent
   ],
   imports: [
     BrowserModule,
@@ -72,10 +96,12 @@ import { DialogNewComponent } from './Autor/Dialogo/dialog-new/dialog-new.compon
     MatGridListModule,
     BrowserAnimationsModule,
     MatIconModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSidenavModule
     
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{ tituloAccion }} Autor</h1>
+<div mat-dialog-content>
+  <form [formGroup]="formCategoria">
+    <mat-grid-list cols="1" rowHeight="100px">
+      <mat-grid-tile>
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <input matInput formControlName="nombreCategoria" autocomplete="off" />
+        </mat-form-field>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button mat-dialog-close color="warn">Volver</button>
+  <button mat-raised-button color="primary" (click)="addEditCategoria()" [disabled]="formCategoria.invalid">
+  {{botonAccion}}</button>
+</div>

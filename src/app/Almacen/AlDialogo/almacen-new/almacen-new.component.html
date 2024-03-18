@@ -1,0 +1,25 @@
+<h2 mat-dialog-title> Almacen</h2>
+<form [formGroup]="formAlmacen" class="example-form" >
+    <mat-grid-list cols="1" rowHeight="100px">
+        <mat-grid-tile>
+            <mat-form-field appearance="outline">
+                <mat-label>Numero de Estante</mat-label>
+                <input matInput formControlName="nroEstante" autocomplete="off">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Libro estante</mat-label>
+                <input matInput formControlName="libroEstante" autocomplete="off">
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Ubicacion</mat-label>
+                <input matInput formControlName="ubicacion" autocomplete="off">
+              </mat-form-field>
+        </mat-grid-tile>
+    </mat-grid-list>
+</form>
+<mat-dialog-actions align="end">
+    <button mat-raised-button mat-dialog-close color="warn" >Cancelar</button>
+    <button mat-raised-button color="primary" (click)="newAlmacen()"
+    [disabled]="formAlmacen.invalid"
+    >Guardar</button>
+  </mat-dialog-actions>

@@ -12,10 +12,10 @@ import { AutorService } from '../../../Services/autor.service';
 
 @Component({
   selector: 'app-dialog-add-edit',
-  templateUrl: './dialog-add-edit.component.html',
-  styleUrl: './dialog-add-edit.component.css'
+  templateUrl: './autor-add-edit.component.html',
+  styleUrl: './autor-add-edit.component.scss'
 })
-export class DialogAddEditComponent implements OnInit{
+export class AutorAddEditComponent implements OnInit{
   
   formAutor: FormGroup;
   tituloAccion : string="Nuevo";
@@ -23,7 +23,7 @@ export class DialogAddEditComponent implements OnInit{
   listaAutor:Autor[]=[];
   constructor(
 
-    private dialogoReferencia:MatDialogRef<DialogAddEditComponent>,
+    private dialogoReferencia:MatDialogRef<AutorAddEditComponent>,
     private fb: FormBuilder,
     private _snackBar: MatSnackBar,
     private _autorServicio:AutorService,
