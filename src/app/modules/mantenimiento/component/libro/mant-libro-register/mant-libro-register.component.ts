@@ -41,7 +41,7 @@ export class MantLibroRegisterComponent implements OnInit{
       impresion: [null, [Validators.required]],
       tipoTapa: [null, [Validators.required]],
       estado: [null, [Validators.required]],
-      idCategoria: [null, [Validators.required]],
+      idSubcategoria: [null, [Validators.required]],
       idTipoPapel: [null, [Validators.required]],
       idProveedor: [null, [Validators.required]],
     });
@@ -70,14 +70,15 @@ export class MantLibroRegisterComponent implements OnInit{
   }
   
   crearRegistro(){
+    debugger;
     this._libroService.create(this.libroEnvio).subscribe({
       next: (data: LibroResponse) => {
-        alert("creado de forma  coorerctae");
+        alert("creado de forma  correcta");
       },
 
       error: () => {
         
-        alert("Ocurrio un error en crear");
+        alert("Ocurrio un error en crear libro");
       },
       complete: () => {
         this.cerrarModal(true);

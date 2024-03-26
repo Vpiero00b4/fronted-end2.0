@@ -12,7 +12,7 @@ import { PersonaResponse } from '../../../../../models/persona-response-models';
 })
 export class MantPersonaListComponent implements OnInit {
   personas: PersonaResponse[] = [];
-  modalRef?: BsModalRef;  //!
+  modalRef?: BsModalRef;  
   personaSelected: PersonaResponse = new PersonaResponse();
   titleModal: string = "";
   accionModal: number = 0;

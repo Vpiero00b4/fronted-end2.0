@@ -8,8 +8,16 @@ export class LibroResponse {
     impresion: string = "";
     tipoTapa: string = "";
     estado: boolean=false ;
-    idCategoria: number = 0;
+    idSubcategoria: number = 0;
     idTipoPapel: number = 0;
     idProveedor: number = 0;
     estadoDescripcion:string="";
+    precioVenta: number = 0; 
+    idPrecios: number=0;
+    porcUtilidad: number=0;
+    // idSucursal: number=0;
+    // stock: number=0;
+    // ultPrecioCosto: number=0;
+    //agregar los campos que faltan
 }
+

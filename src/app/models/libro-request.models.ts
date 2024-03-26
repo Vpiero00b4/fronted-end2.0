@@ -8,7 +8,7 @@ export class LibroRequest {
     impresion: string = "";
     tipoTapa: string = "";
     estado: boolean=false ;
-    idCategoria: number = 0;
+    idSubcategoria: number = 0;
     idTipoPapel: number = 0;
     idProveedor: number = 0;
 }

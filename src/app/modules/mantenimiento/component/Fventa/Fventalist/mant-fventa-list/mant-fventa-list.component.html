@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="row">
+    <!-- Lado izquierdo: Datos Generales -->
+    <div class="col-md-6">
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Datos Generales</h5>
+          <form>
+            <!-- Campos para los datos generales -->
+            <div class="form-group">
+              <label for="tipoComprobante">Tipo de Comprobante:</label>
+              <select class="form-control" id="tipoComprobante" name="tipoComprobante">
+                <option value="Boleta">Boleta</option>
+                <option value="Factura">Factura</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="telefono">Teléfono de Contacto:</label>
+              <input type="text" class="form-control" id="telefono" name="telefono">
+            </div>
+            <div class="form-group">
+              <label for="razonSocial">Razón Social:</label>
+              <input type="text" class="form-control" id="razonSocial" name="razonSocial">
+            </div>
+            <div class="form-group">
+              <label for="vendedor">Vendedor:</label>
+              <input type="text" class="form-control" id="vendedor" name="vendedor">
+            </div>
+            <div class="form-group">
+              <label for="fechaEmision">Fecha de Emisión:</label>
+              <input type="text" class="form-control" id="fechaEmision" name="fechaEmision">
+            </div>
+            <div class="form-group">
+              <label for="cliente">Cliente:</label>
+              <input type="text" class="form-control" id="cliente" name="cliente">
+            </div>
+                     
+           </form>
+        </div>
+      </div>
+    </div>
+    <!-- Lado derecho: Lista de Productos -->
+    <div class="col-md-6">
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Lista de Productos</h5>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Id Libro</th>
+                <th>Id_Ventas</th>
+                <th>Nombre Producto</th>
+                <th>Unidad de Medida</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Id_Precios</th>
+                <th>Subtotal</th>
+                <th>Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Aquí se listarán dinámicamente los productos agregados -->
+            </tbody>
+          </table>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

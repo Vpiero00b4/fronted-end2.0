@@ -4,6 +4,8 @@ import { MantPersonaListComponent } from './component/persona/mant-persona-list/
 import { MantGeneroListComponent } from './component/genero/mant-genero-list/mant-genero-list.component';
 import { MantLibroListComponent } from './component/libro/mant-libro-list/mant-libro-list.component';
 import { MantUsuarioListComponent } from './component/usuario/mant-usuario-list/mant-usuario-list.component';
+import { MantReporteInventarioComponent } from './component/inventarioc/mant-inventa-list/mant-reporte-inventario.component';
+import { MantClienteListComponent } from './component/cliente/cliente/mant-cliente-list/mant-cliente-list.component';
 
 const routes: Routes = [
   {
@@ -19,6 +21,14 @@ const routes: Routes = [
   { 
     path:'usuario',component:MantUsuarioListComponent
   },
+  { 
+    path:'cliente',component:MantClienteListComponent
+  },
+  
+  
+  { 
+    path:'reporte-inventario',component:MantReporteInventarioComponent
+  }
 ];
 
 @NgModule({

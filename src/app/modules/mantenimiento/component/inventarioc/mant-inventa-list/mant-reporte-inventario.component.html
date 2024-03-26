@@ -1,0 +1,31 @@
+<div class="card">
+  <div class="card-body">
+    <div *ngIf="libros.length > 0" class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID Libro</th>
+            <th>Nombre del libro</th>
+            <th>Precio de venta</th>
+            <th>ID Subcategoría</th>
+            <th>ID Precios</th>
+            <th>Porcentaje de utilidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let libro of libros">
+            <td>{{ libro.idLibro }}</td>
+            <td>{{ libro.titulo }}</td>
+            <td>{{ libro.precioVenta }}</td>
+            <td>{{ libro.idSubcategoria }}</td>
+            <td>{{ libro.idPrecios }}</td>
+            <td>{{ libro.porcUtilidad }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="libros.length === 0">
+      <p>No se encontraron libros.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<div class="modal-header">
+  <h4 class="modal-title pull-left">{{ title }}</h4>
+  <!-- Agrega el atributo (click) para cerrar el modal -->
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="myForm">
+    <div class="row">
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="idVentas">idVentas</label>
+          <input formControlName="idVentas" type="text" class="form-control" id="idVentas" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="totalPrecio">totalPrecio</label>
+          <input formControlName="totalPrecio" type="text" class="form-control" id="totalPrecio" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="tipoComprobante">tipoComprobante</label>
+          <input formControlName="tipoComprobante" type="text" class="form-control" id="tipoComprobante" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="fechaVenta">fechaVenta</label>
+          <input formControlName="fechaVenta" type="text" class="form-control" id="fechaVenta" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="nroComprobante">nroComprobante</label>
+          <input formControlName="nroComprobante" type="text" class="form-control" id="nroComprobante" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="idCliente">idCliente</label>
+          <input formControlName="idCliente" type="text" class="form-control" id="idCliente" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="idUsuario">idUsuario</label>
+          <input formControlName="idUsuario" type="text" class="form-control" id="idUsuario" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+      <div class="col-12 mt-3">
+        <div class="form-group">
+          <label for="idLibro">idLibro</label>
+          <input formControlName="idLibro" type="text" class="form-control" id="idLibro" placeholder="Ingrese el Identificador">
+        </div>
+      </div>
+
+      <!-- Botones para GUARDAR y CANCELAR -->
+      <div class="col-6 mt-3">
+        <!-- Asegúrate de que la función se llame correctamente en el evento (click) -->
+        <button [disabled]="!myForm.valid" (click)="guardar()" class="btn-block btn btn-primary btn-sm">GUARDAR</button>
+      </div>
+
+      <div class="col-6 mt-3">
+        <button class="btn-block btn btn-danger btn-sm">CANCELAR</button>
+      </div>
+    </div>
+  </form>
+</div>

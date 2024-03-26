@@ -32,5 +32,4 @@ export class CrudService<T, Y> implements CrudInterface<T, Y> {
   delete(id: number): Observable<number> {
     return this._http.delete<number>(`${this.url_service}/${id}`);
 }
-
 }

@@ -4,33 +4,63 @@ import { Router } from '@angular/router';
 import { AccionMantConst } from '../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
 import { LibroResponse } from '../../../../../models/libro-response.models';
 import { LibroService } from '../../../service/libro.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-mant-libro-list',
   templateUrl: './mant-libro-list.component.html',
-  styleUrl: './mant-libro-list.component.css'
+  styleUrls: ['./mant-libro-list.component.css']
 })
-
 export class MantLibroListComponent implements OnInit {
+  filtroForm: FormGroup;
+  filtroFormCategorias: FormGroup;
+  librosFiltrados!: LibroResponse[];
   libros: LibroResponse[] = [];
-  modalRef?: BsModalRef;  //!
+  modalRef?: BsModalRef;
   libroSelected: LibroResponse = new LibroResponse();
   titleModal: string = "";
   accionModal: number = 0;
+  // myFormFilter: FormGroup;
 
   constructor(
     private _route: Router,
     private _libroService: LibroService,
-    private modalService: BsModalService
-  ) { }
+    private modalService: BsModalService,
+    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
+  ) {
+    // Inicializa el formulario de filtro dentro del constructor
+    this.filtroForm = this.formBuilder.group({
+      estadoDescripcion: [false], // Campo para filtrar por estado
+      idSubcategoria: [''] // Campo para filtrar por categoría
+    },
+    this.filtroFormCategorias = this.formBuilder.group({
+      idSubcategoria: [6] // Campo para filtrar por categoría
+    }));
+
+    // Inicializa el formulario de filtro dentro del constructor
+    this.filtroFormCategorias = this.fb.group({
+      idLibro: [{ value: 0, disabled: true }, [Validators.required]],
+      titulo: [null, []],
+      isbn: [null, []],
+      tamanno: [null, []],
+      descripcion: [null, []],
+      condicion: [null, []],
+      impresion: [null, []],
+      tipoTapa: [null, []],
+      estado: [null, []],
+      idSubcategoria: [null, []],
+      idTipoPapel: [null, []],
+      idProveedor: [null, []],
+      estadoDescripcion: [null, []],
+    });
+  }
 
   ngOnInit(): void {
     this.listarLibros();
-
   }
-  
+
   listarLibros() {
-   
     this._libroService.getAll().subscribe({
       next: (data: LibroResponse[]) => {
         this.libros = data;
@@ -44,21 +74,19 @@ export class MantLibroListComponent implements OnInit {
     });
   }
 
-
   crearLibro(template: TemplateRef<any>) {
     this.libroSelected = new LibroResponse();
     this.titleModal = "NUEVO LIBRO"
     this.accionModal = AccionMantConst.crear;
     this.openModal(template);
   }
+
   editarLibro(template: TemplateRef<any>, libro: LibroResponse) {
     this.libroSelected = libro;
     this.titleModal = "EDIT LIBRO"
     this.accionModal = AccionMantConst.editar;
-
     this.openModal(template);
   }
-
 
   openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);
@@ -72,12 +100,11 @@ export class MantLibroListComponent implements OnInit {
   }
 
   eliminarRegistro(id: number) {
-    
-    let result = confirm("¿Está seguro de eliminar el registroL?");
+    let result = confirm("¿Está seguro de eliminar el registro?");
     if (result) {
       this._libroService.delete(id).subscribe({
         next: (data: number) => {
-          alert("Registro eliminado de forma correctaL");
+          alert("Registro eliminado de forma correcta");
         },
         error: () => { },
         complete: () => {
@@ -86,24 +113,52 @@ export class MantLibroListComponent implements OnInit {
       });
     }
   }
-  buscarProductos(): void {
-    // Lógica para buscar productos
-    // Aquí puedes usar this.filtroSeleccionado y this.textoBusqueda para realizar la búsqueda
-    // Por ejemplo, puedes llamar a un servicio que se encargue de realizar la búsqueda
-  }
 
-  filtroSeleccionado(event: any): void {
-    // Lógica para manejar la selección del filtro
-    // Aquí puedes obtener el valor seleccionado del desplegable
-    // y almacenarlo en una variable para su posterior uso en la búsqueda
+  filtrar() {
+    const estadoDescripcion = this.filtroForm.value.estadoDescripcion;
+  
+    // Filtrar los libros según el estado seleccionado
+    this.librosFiltrados = this.libros.filter(libro =>
+      (!estadoDescripcion || libro.estadoDescripcion === estadoDescripcion)
+    );
   }
-
-  textoBusqueda(event: any): void {
-    // Lógica para manejar el texto de búsqueda
-    // Aquí puedes obtener el valor del campo de búsqueda
-    // y almacenarlo en una variable para su posterior uso en la búsqueda
+  filtrarPorCategoria() {
+    const idSubcategoriaSeleccionada = this.filtroFormCategorias.value.idSubcategoria;
+  
+    if (idSubcategoriaSeleccionada !== '') {
+      // Llama a la función para listar los libros por categoría
+      this.listarLibrosPorCategoria(idSubcategoriaSeleccionada);
+    } else {
+      // Si no se selecciona ninguna categoría, muestra todos los libros
+      this.listarLibros();
+    }
   }
-
-    // Lógica para editar un libro
-    // Por ejemplo, abrir un modal con los detalles del libro seleccionado
+  listarLibrosPorCategoria(idSubcategoria: string) {
+    this._libroService.getAll().subscribe({
+      next: (data: LibroResponse[]) => {
+        // Filtrar los libros según la categoría especificada
+        this.libros = data.filter(libro => libro.idSubcategoria.toString() === idSubcategoria);
+      },
+      error: (err) => {
+        console.log("error", err);
+      }
+    });
+  }
+  buscarLibro(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const consulta = inputElement.value.trim();
+  
+    if (!consulta) {
+      // Si la consulta está vacía, mostrar todos los libros
+      this.listarLibros();
+      return;
+    }
+    
+    // Filtrar los libros según la consulta
+    this.librosFiltrados = this.libros.filter(libro =>
+      libro.titulo.toLowerCase().includes(consulta.toLowerCase())
+    );
+  }
+  
+  
 }

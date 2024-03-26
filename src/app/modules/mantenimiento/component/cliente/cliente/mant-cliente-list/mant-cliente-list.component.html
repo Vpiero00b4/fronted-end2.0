@@ -1,0 +1,31 @@
+<div *ngIf="clientesConPersona.length > 0">
+  <table>
+    <thead>
+      <tr>
+        <th>ID Cliente</th>
+        <th>Código Cliente</th>
+        <th>ID Persona</th>
+        <th>Nombre</th>
+        <th>Apellido Paterno</th>
+        <th>Apellido Materno</th>
+        <th>tipoDocumento</th>
+        <th>numeroDocumento</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cliente of clientesConPersona">
+        <td>{{ cliente.idCliente }}</td>
+        <td>{{ cliente.codigoCliente }}</td>
+        <td>{{ cliente.idPersona }}</td>
+        <td>{{ cliente.nombre }}</td>
+        <td>{{ cliente.apellidoPaterno }}</td>
+        <td>{{ cliente.apellidoMaterno }}</td>
+        <td>{{ cliente.tipoDocumento }}</td>
+        <td>{{ cliente.numeroDocumento }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div *ngIf="clientesConPersona.length === 0">
+  <p>No se encontraron clientes.</p>
+</div>

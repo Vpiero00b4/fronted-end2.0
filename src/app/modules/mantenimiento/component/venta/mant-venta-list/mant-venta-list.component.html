@@ -1,0 +1,57 @@
+<div class="container-fluid px-4 mt-5">
+  <div class="card bg-light mb-3">
+    <div class="card-header text-center">
+      <h1 class="mt-4">MANTENIMIENTO DE PERSONAS</h1>
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>idVentas</th>
+            <th>totalPrecio</th>
+            <th>tipoComprobante P</th>
+            <th>fechaVenta M</th>
+            <th>nroComprobante M</th>
+            <th>idCliente</th>
+            <th>idUsuario</th>
+            <th>idLibro</th>
+            <th>
+              
+              <a class="nav-link" [routerLink]="['/dashboard/ventas/mant-venta-registerr']"><i class="fas fa-plus"></i> Agregar Nueva venta</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let venta of ventas">
+            <td>{{ venta.idVentas }}</td>
+          <td>{{ venta.totalPrecio }}</td>
+          <td>{{ venta.tipoComprobante }}</td>
+          <td>{{ venta.fechaVenta }}</td>
+          <td>{{ venta.nroComprobante }}</td>
+          <td>{{ venta.idCliente }}</td>
+          <td>{{ venta.idUsuario }}</td>
+          <td>{{ venta.idLibro }}</td>
+
+            <td>
+              <button (click)="editarVenta(modalEdit,venta)" class="btn btn-primary btn-sm">
+                <i class="fas fa-edit"></i>
+              </button>
+                
+              <button (click)="eliminarRegistro(venta.idVentas)" class="btn btn-danger btn-sm">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<ng-template #modalEdit>
+<app-mant-venta-register
+  [title]="titleModal"  
+  [venta]="ventaSelected"
+  [accion]="accionModal"
+  (closeModalEmmit)="getCloseModalEmmit($event)"
+></app-mant-venta-register>
+</ng-template>

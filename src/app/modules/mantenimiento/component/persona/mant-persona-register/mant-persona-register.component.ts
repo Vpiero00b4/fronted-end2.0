@@ -31,6 +31,7 @@ export class MantPersonaRegisterComponent implements OnInit{
       private _personaService:PersonaService
     )
       {
+        //dasboard/mantenimiento/clientes
         //nuestro formulario persona request
         this.myForm=this.fb.group({
           idPersona:[{value:0, disabled:true},[Validators.required]],

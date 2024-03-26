@@ -11,13 +11,11 @@ const routes: Routes = [
           loadChildren: () => import("./../mantenimiento/mantenimiento.module").then(x => x.MantenimientoModule),
         },
         {
-          path: 'reportes',
-          loadChildren: () => import("./../mantenimiento/mantenimiento.module").then(x => x.MantenimientoModule)  // Supuse que existe un módulo de reportes
-        },  
-        {
-          path: 'configuracion',
-          loadChildren: () => import("./../mantenimiento/mantenimiento.module").then(x => x.MantenimientoModule)  // Supuse que existe un módulo de reportes
-        },  
+          path: 'ventas',
+          loadChildren: () => import("./../mantenimiento/venta.module").then(x => x.VentaModule),
+        },
+        
+
       ]
   },
 ];

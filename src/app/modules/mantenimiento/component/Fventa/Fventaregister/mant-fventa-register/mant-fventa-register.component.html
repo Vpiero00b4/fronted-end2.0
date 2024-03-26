@@ -1,0 +1,40 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Agregar Producto</h5>
+          <form>
+            <div class="form-group">
+              <label for="buscarProducto">Buscar Libro:</label>
+              <input type="text" class="form-control" id="buscarProducto" name="buscarProducto" placeholder="Ingrese el título del libro">
+            </div>
+            <div class="form-group">
+              <label for="marca">Marca:</label>
+              <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingrese la marca">
+            </div>
+            <div class="form-group">
+              <label for="cantidad">Cantidad:</label>
+              <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ingrese la cantidad">
+            </div>
+            <div class="form-group">
+              <label for="precioUnitario">Precio Unitario:</label>
+              <input type="number" class="form-control" id="precioUnitario" name="precioUnitario" placeholder="Ingrese el precio unitario">
+            </div>
+            <div class="form-group">
+              <label for="totalImporte">Total Importe:</label>
+              <input type="number" class="form-control" id="totalImporte" name="totalImporte" placeholder="Ingrese el total importe">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Producto</button>
+            <nav class="sb-sidenav-menu-nested nav">
+              <a class="nav-link" [routerLink]="['ventas/mant-venta-registerr']"> <i class="bi bi-basket2-fill"></i>Listado de para hacer ventas</a>
+          </nav>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <!-- Aquí irá la lista de productos -->
+    </div>
+  </div>
+</div>

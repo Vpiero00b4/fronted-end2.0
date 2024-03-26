@@ -8,3 +8,4 @@ export class LoginResponse {
     refreshToken:  string="";
     message:  string="";
 }
+

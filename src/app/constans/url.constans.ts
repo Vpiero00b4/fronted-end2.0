@@ -5,8 +5,13 @@ export const dominio = "https://localhost:7143/";
         persona: dominio+"Persona",
         libro: dominio+"Libro",
         auth: dominio+"api/Auth/",
-        //   guardarPersona: dominio + "Persona/guardar",
-        //   actualizarPersona: dominio + "Persona/Actualizar",
-        // eliminarPersona:dominio + "Persona/Eliminar/",
+        genero:dominio+"Genero",
+        sucursal:dominio+"Sucursal",
+        kardex:dominio+"Kardex",
+        precio:dominio+"Precio",
+        proveedor:dominio+"Proveedor",
+        venta:dominio+"Venta",
+        categoria:dominio+"Categoria",
+        cliente:dominio+"Cliente"
     };
     

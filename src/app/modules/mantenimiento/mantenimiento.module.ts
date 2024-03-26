@@ -6,11 +6,14 @@ import { MantPersonaRegisterComponent } from './component/persona/mant-persona-r
 import { SharedModule } from '../shared/shared.module';
 import { MantGeneroListComponent } from './component/genero/mant-genero-list/mant-genero-list.component';
 import { MantGeneroRegisterComponent } from './component/genero/mant-genero-register/mant-genero-register.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MantLibroListComponent } from './component/libro/mant-libro-list/mant-libro-list.component';
 import { MantLibroRegisterComponent } from './component/libro/mant-libro-register/mant-libro-register.component';
 import { MantUsuarioListComponent } from './component/usuario/mant-usuario-list/mant-usuario-list.component';
 import { MantUsuarioRegisterComponent } from './component/usuario/mant-usuario-register/mant-usuario-register.component';
+import { MantReporteInventarioComponent } from './component/inventarioc/mant-inventa-list/mant-reporte-inventario.component';
+import { MantClienteListComponent } from './component/cliente/cliente/mant-cliente-list/mant-cliente-list.component';
+import { MantClienteRegisterComponent } from './component/cliente/cliente/mant-cliente-register/mant-cliente-register.component';
 
 @NgModule({
   declarations: [
@@ -21,16 +24,19 @@ import { MantUsuarioRegisterComponent } from './component/usuario/mant-usuario-r
     MantLibroListComponent,
     MantLibroRegisterComponent,
     MantUsuarioListComponent,
-    MantUsuarioRegisterComponent
-  
+    MantUsuarioRegisterComponent,
+    MantReporteInventarioComponent,
+    MantClienteListComponent,
+    MantClienteRegisterComponent
     
   ],
   imports: [
     CommonModule,
     MantenimientoRoutingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
+   
   ]
 })
 export class MantenimientoModule { }
-  

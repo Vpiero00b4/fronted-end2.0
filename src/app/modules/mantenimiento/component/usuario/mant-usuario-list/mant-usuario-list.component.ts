@@ -12,7 +12,7 @@ import { UsuarioService } from '../../../service/usuario.service';
 })
 export class MantUsuarioListComponent implements OnInit {
   usuarios: UsuarioResponse[] = [];
-  modalRef?: BsModalRef;  //!
+  modalRef?: BsModalRef;  
   usuarioSelected: UsuarioResponse = new UsuarioResponse();
   titleModal: string = "";
   accionModal: number = 0;
@@ -45,13 +45,13 @@ export class MantUsuarioListComponent implements OnInit {
   crearUsuario(template: TemplateRef<any>) {
     this.usuarioSelected = new UsuarioResponse();
 
-    this.titleModal = "NUEVO PERSO"
+    this.titleModal = "Nuevo Usuario"
     this.accionModal = AccionMantConst.crear;
     this.openModal(template);
   }
   editarUsuario(template: TemplateRef<any>, usuario: UsuarioResponse) {
     this.usuarioSelected = usuario;
-    this.titleModal = "EDIT PERSO"
+    this.titleModal = "Editar Usuario"
     this.accionModal = AccionMantConst.editar;
 
     this.openModal(template);
