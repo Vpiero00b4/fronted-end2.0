@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../servicef/auth.service';
-import { LoginRequest } from '../../models/login-request.models';
-import { LoginResponse } from '../../../../models/login-response.models';
 import { Router } from '@angular/router';
-import { alert_successlogin } from '../../../../../functions/general.functions';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LoginRequest } from '../models/login-request.models';
+import { AuthService } from '../servicef/auth.service';
+import { LoginResponse } from '../../../models/login-response.models';
+import { alert_successlogin } from '../../../../functions/general.functions';
 
 
 @Component({
@@ -32,6 +32,7 @@ export class LoginComponent {
 
 
   login() {
+    debugger;
     console.log(this.loginForm.getRawValue());
     // Este login request lo tengo que enviar hacia el servicio web
     this.loginRequest = this.loginForm.getRawValue();

@@ -1,5 +1,31 @@
-<div *ngIf="clientesConPersona.length > 0">
-  <table>
+<!-- Campo de clientes -->
+<div class="container">
+  <!-- Formulario para seleccionar el tipo de filtrado y el campo de búsqueda -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <br>
+      <label for="filtro" class="form-label" style="font-family: Arial, sans-serif;">Filtrar por:</label>
+      <select class="form-select">
+        <option selected>Escoge el tipo de Filtrado</option>
+        <option>Nombre</option>
+        <option>Código Cliente</option>
+        <option>Código Persona</option>
+        <option>Número de documento</option>
+        <!-- Agrega más opciones de filtrado según sea necesario -->
+      </select>
+    </div>
+    <div class="col-md-6">
+      <br>
+      <label for="buscar" class="form-label" style="font-family: Arial, sans-serif;">Ingrese los datos:</label>
+      <div class="input-group">
+        <input type="text" class="form-control" id="buscar">
+        <button class="btn btn-primary" type="button">Buscar</button>
+      </div>
+    
+  </div>
+</div>
+<div *ngIf="clientesConPersona.length > 0" class="table-responsive">
+  <table class="table table-striped">
     <thead>
       <tr>
         <th>ID Cliente</th>
@@ -8,8 +34,8 @@
         <th>Nombre</th>
         <th>Apellido Paterno</th>
         <th>Apellido Materno</th>
-        <th>tipoDocumento</th>
-        <th>numeroDocumento</th>
+        <th>Tipo Documento</th>
+        <th>Número Documento</th>
       </tr>
     </thead>
     <tbody>

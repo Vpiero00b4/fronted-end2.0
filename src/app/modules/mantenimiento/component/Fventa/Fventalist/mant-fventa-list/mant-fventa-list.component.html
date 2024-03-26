@@ -35,8 +35,9 @@
               <label for="cliente">Cliente:</label>
               <input type="text" class="form-control" id="cliente" name="cliente">
             </div>
-                     
-           </form>
+            <!-- Botón para agregar producto -->
+            <button type="button" class="btn btn-primary">Agregar Producto</button>
+          </form>
         </div>
       </div>
     </div>
@@ -49,7 +50,7 @@
             <thead>
               <tr>
                 <th>Id Libro</th>
-                <th>Id_Ventas</th>
+                <!-- <th>Id_Ventas</th> -->
                 <th>Nombre Producto</th>
                 <th>Unidad de Medida</th>
                 <th>Cantidad</th>
@@ -63,7 +64,38 @@
               <!-- Aquí se listarán dinámicamente los productos agregados -->
             </tbody>
           </table>
-          
+        </div>
+      </div>
+      <!-- Formulario con atributos adicionales -->
+      <div class="card mt-4">
+        <div class="card-body">
+          <h5 class="card-title">Atributos Adicionales</h5>
+          <form>
+            <div class="form-group">
+              <label for="descuentoMonto">Descuento Monto:</label>
+              <input type="text" class="form-control" id="descuentoMonto" name="descuentoMonto">
+            </div>
+            <div class="form-group">
+              <label for="opExoneradas">Op. Exoneradas:</label>
+              <input type="text" class="form-control" id="opExoneradas" name="opExoneradas">
+            </div>
+            <div class="form-group">
+              <label for="otrosCargos">Otros Cargos:</label>
+              <input type="text" class="form-control" id="otrosCargos" name="otrosCargos">
+            </div>
+            <div class="form-group">
+              <label for="totalPagar">Total a Pagar:</label>
+              <input type="text" class="form-control" id="totalPagar" name="totalPagar">
+            </div>
+            <div class="form-group">
+              <label for="condicionPago">Condición de Pago:</label>
+              <input type="text" class="form-control" id="condicionPago" name="condicionPago">
+            </div>
+            <div class="form-group">
+              <label for="contado">Contado:</label>
+              <input type="text" class="form-control" id="contado" name="contado">
+            </div>
+          </form>
         </div>
       </div>
     </div>

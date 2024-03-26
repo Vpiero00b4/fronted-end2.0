@@ -1,3 +1,22 @@
+<div class="container">
+  <!-- Formulario para seleccionar la sucursal y el stock -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <p></p>
+      <label for="sucursal" class="form-label" style="font-family: Arial, sans-serif;">Seleccione la sucursal:</label>
+      <select class="form-select">
+        <option selected>Seleccione una sucursal</option>
+        <option>Tienda Oficial</option>
+        <option>Almacen Principal</option>
+        <option>Galeria</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <p></p>
+      <label for="stock" class="form-label" style="font-family: Arial, sans-serif;">Stock de libros:</label>
+      <input type="number" class="form-control" id="stock">
+    </div>
+  </div>
 <div class="card">
   <div class="card-body">
     <div *ngIf="libros.length > 0" class="table-responsive">
@@ -10,6 +29,7 @@
             <th>ID Subcategoría</th>
             <th>ID Precios</th>
             <th>Porcentaje de utilidad</th>
+            <th>Editorial</th>
           </tr>
         </thead>
         <tbody>
