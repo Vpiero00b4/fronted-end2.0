@@ -1,0 +1,55 @@
+.modal {
+  display: block; 
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,.4);
+}
+
+.modal-dialog {
+  max-width: 80%;
+  margin: 4% auto;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 5px; /* Añadido para suavizar bordes */
+}
+
+.close {
+  color: #aaa;
+  font-size: 24px; /* Reducido para ahorrar espacio */
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Simplifica los estilos de los controles de formulario */
+.form-group {
+  margin-bottom: 10px; /* Reducción del margen */
+}
+
+.form-control {
+  width: 100%;
+}
+
+/* Simplificación de los botones */
+.btn {
+  margin-top: 10px; /* Espaciado sobre botones para claridad */
+}
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}

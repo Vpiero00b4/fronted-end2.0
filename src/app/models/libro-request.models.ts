@@ -1,7 +1,7 @@
 export class LibroRequest {
     idLibro: number = 0;
     titulo: string = "";
-    isbn: number = 0;
+    isbn: string = "";
     tamanno: string = "";
     descripcion: string = "";
     condicion: string = "";

@@ -25,7 +25,7 @@ export class LoginComponent {
     private _router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: [null, [Validators.required]],
+      email: [null, [Validators.required]],
       password: [null, [Validators.required]]
     });
   }
@@ -45,7 +45,7 @@ export class LoginComponent {
         // Nosotros almacenamos el valor del token y algunos valores de nuestro
         if (data.success) {
           sessionStorage.setItem("token", data.token);
-          sessionStorage.setItem("username", data.usuario.username);
+          sessionStorage.setItem("email", data.usuario.email);
           sessionStorage.setItem("fullName", data.usuario.password);
           sessionStorage.setItem("cargoId", data.usuario.cargo);
           alert_successlogin("LOGIN CORRECTO");

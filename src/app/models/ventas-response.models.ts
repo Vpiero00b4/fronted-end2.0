@@ -7,4 +7,5 @@ export class VentaResponse {
     idCliente: number =0;
     idUsuario: number =0;
     idLibro: number =0;
+    
 }

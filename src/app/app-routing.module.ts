@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { WelcomeComponent } from './pages/welcome/welcome.component';
 import { PruebaComponent } from './pages/prueba/prueba.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { AuthGuard } from './guard/auth.guard';
+// import { AuthGuard } from './guard/auth.guard';
 
 const routes: Routes = [
   { path: 'welcome', component: WelcomeComponent },
@@ -18,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     
     loadChildren: () => import('./modules/template/template.module').then(x => x.TemplateModule)
   },

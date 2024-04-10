@@ -1,38 +1,48 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, mergeMap } from 'rxjs/operators';
 import { CrudService } from '../../shared/services/crud.service';
 import { UrlConstants } from '../../../constans/url.constans';
 import { PersonaRequest } from '../../../models/persona-request-models';
 import { PersonaResponse } from '../../../models/persona-response-models';
-  
+
 @Injectable({
   providedIn: 'root'
 })
-export class PersonaService extends CrudService<PersonaRequest,PersonaResponse> {
+export class PersonaService extends CrudService<PersonaRequest, PersonaResponse> {
+  constructor(protected http: HttpClient) {
+    super(http, UrlConstants.persona);
+  }
 
-  constructor(
-    protected http: HttpClient,
-    ) { 
-      super(http,UrlConstants.persona);
-      
+  obtenerPersonaPorDocumento(tipoDocumento: string, numeroDocumento: string): Observable<PersonaResponse> {
+    // Validación de los parámetros de entrada podría ser más compleja dependiendo de los requerimientos de negocio
+    if (!tipoDocumento || !numeroDocumento) {
+      return throwError(new Error('Tipo de documento o número de documento inválido.'));
     }
-
-  //  getAll():Observable<PersonaResponse[]>{
     
+    const url = `${UrlConstants.persona}/dni/${tipoDocumento}/${numeroDocumento}`;
+    return this.http.get<PersonaResponse>(url).pipe(
+      catchError((error) => {
+        console.error('Error al obtener la persona:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  obtenerPersonaPorId(idPersona: number): Observable<PersonaResponse> {
+    if (!idPersona) {
+      return throwError(new Error('ID de persona inválido.'));
+    }
     
-  //    return this._http.get<PersonaResponse[]>(UrlConstants.traerPersona,);
-  //  }
-  //  create(request:PersonaRequest):Observable<PersonaResponse>{
-  //    return this._http.post<PersonaResponse>(UrlConstants.guardarPersona,request);
-  //  }
-  //  update(request:PersonaRequest):Observable<PersonaResponse>{
-  //    return this._http.put<PersonaResponse>(UrlConstants.actualizarPersona,request);
+    const url = `${UrlConstants.persona}/${idPersona}`;
+    return this.http.get<PersonaResponse>(url).pipe(
+      catchError((error) => {
+        console.error('Error al obtener la persona por ID:', error);
+        return throwError(error);
+      })
+    );
+  }
 
-  //  }
-
-  //  delete(id:number):Observable<number>{
-  //    return this._http.delete<number>(`${UrlConstants.eliminarPersona}${id}`);
-
-  //  }
+  // ...otros métodos y validaciones...
 }

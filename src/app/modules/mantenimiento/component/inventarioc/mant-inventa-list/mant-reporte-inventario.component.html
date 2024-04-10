@@ -1,51 +1,60 @@
-<div class="container">
-  <!-- Formulario para seleccionar la sucursal y el stock -->
-  <div class="row mb-3">
-    <div class="col-md-6">
-      <p></p>
-      <label for="sucursal" class="form-label" style="font-family: Arial, sans-serif;">Seleccione la sucursal:</label>
-      <select class="form-select">
-        <option selected>Seleccione una sucursal</option>
-        <option>Tienda Oficial</option>
-        <option>Almacen Principal</option>
-        <option>Galeria</option>
-      </select>
+  <div class="container">
+    <!-- Formulario para seleccionar la sucursal y el stock -->
+    <div class="row mb-3">
+      <!-- Add your selection form here if needed -->
     </div>
-    <div class="col-md-6">
-      <p></p>
-      <label for="stock" class="form-label" style="font-family: Arial, sans-serif;">Stock de libros:</label>
-      <input type="number" class="form-control" id="stock">
+    <div class="card">
+      <div class="card-body">
+        <div *ngIf="libros && libros.length > 0" class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID Libro</th>
+                <th>Nombre del libro</th>
+                <th>Precio de venta</th>
+                <th>Porcentaje de utilidad</th>
+                <th>ID Precios</th>
+                <th>ISBN</th>
+                <th>Tamaño</th>
+                <th>Descripción</th>
+                <th>Condición</th>
+                <th>Impresión</th>
+                <th>Estado</th>
+                <th>ID Tipo de Papel</th>
+                <th>ID Proveedor</th>
+                <th>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let libro of libros">
+                <td>{{ libro.idLibro }}</td>
+                <td>{{ libro.titulo }}</td>
+                <td>{{ libro.precioVenta }}</td>
+                <td>{{ libro.porcUtilidad }}</td>
+                <td>{{ libro.idPrecios }}</td>
+                <td>{{ libro.isbn }}</td>
+                <td>{{ libro.tamanno }}</td>
+                <td>{{ libro.descripcion }}</td>
+                <td>{{ libro.condicion }}</td>
+                <td>{{ libro.impresion }}</td>
+                <td>{{ libro.estado ? 'Disponible' : 'No disponible' }}</td>
+                <td>{{ libro.idTipoPapel }}</td>
+                <td>{{ libro.idProveedor }}</td>
+                <td>{{ libro.stock }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="!libros || libros.length === 0">
+          <p>No se encontraron libros.</p>
+        </div>
+      </div>
     </div>
+
+    <div *ngIf="totalPages > 0">
+      <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
+    </div>
+    
   </div>
-<div class="card">
-  <div class="card-body">
-    <div *ngIf="libros.length > 0" class="table-responsive">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>ID Libro</th>
-            <th>Nombre del libro</th>
-            <th>Precio de venta</th>
-            <th>ID Subcategoría</th>
-            <th>ID Precios</th>
-            <th>Porcentaje de utilidad</th>
-            <th>Editorial</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let libro of libros">
-            <td>{{ libro.idLibro }}</td>
-            <td>{{ libro.titulo }}</td>
-            <td>{{ libro.precioVenta }}</td>
-            <td>{{ libro.idSubcategoria }}</td>
-            <td>{{ libro.idPrecios }}</td>
-            <td>{{ libro.porcUtilidad }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div *ngIf="libros.length === 0">
-      <p>No se encontraron libros.</p>
-    </div>
-  </div>
-</div>

@@ -1,10 +1,12 @@
 
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccionMantConst } from './../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
 import { VentaResponse } from '../../../../../models/ventas-response.models';
 import { VentasService } from '../../../service/venta.service';
+import { Subscription } from 'rxjs';
+import { SharedService } from '../../../service/sharedservice';
 
 @Component({
   selector: 'app-mant-venta-list',
@@ -12,6 +14,8 @@ import { VentasService } from '../../../service/venta.service';
   styleUrls: ['./mant-venta-list.component.css']
 })
 export class MantVentaListComponent implements OnInit {
+  //PARA EL LISTADO DE COMPROBANTES(LISTA DE VENTAS REALIZADAS)
+  private subscription: Subscription = new Subscription(); 
   ventas: VentaResponse[] = [];
   modalRef?: BsModalRef;  
   ventaSelected: VentaResponse = new VentaResponse();
@@ -19,13 +23,16 @@ export class MantVentaListComponent implements OnInit {
   accionModal: number = 0;
 
   constructor(
+    private sharedService: SharedService,
     private _route: Router,
     private _ventaService: VentasService,
     private modalService: BsModalService
   ) { }
 
+
   ngOnInit(): void {
     this.listarVentas();
+    this.escucharRegistroDeVentas();
 
   }
   listarVentas() {
@@ -42,13 +49,15 @@ export class MantVentaListComponent implements OnInit {
     });
   }
 
+  escucharRegistroDeVentas() {
+    this.subscription.add(this.sharedService.ventaRegistrada$.subscribe((registrada) => {
+      if (registrada) {
+        this.listarVentas();
+      }
+    }));
+  }
 
-  // crearVenta(template: TemplateRef<any>) {
-  //   this.ventaSelected = new VentaResponse();
-  //   this.titleModal = "Nueva venta"
-  //   this.accionModal = AccionMantConst.crear;
-  //   this.openModal(template);
-  // }
+
   editarVenta(template: TemplateRef<any>, venta: VentaResponse) {
     this.ventaSelected = venta;
     this.titleModal = "Editar Venta"
@@ -56,9 +65,6 @@ export class MantVentaListComponent implements OnInit {
 
     this.openModal(template);
   }
-
-
-
 
   openModal(template: TemplateRef<any>) {
     this.modalRef = this.modalService.show(template);

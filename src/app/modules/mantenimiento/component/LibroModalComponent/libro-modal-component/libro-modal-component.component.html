@@ -1,0 +1,57 @@
+<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Agregar Libro</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cerrar()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Asegúrate de que solo haya un atributo formGroup para el formulario -->
+        <form [formGroup]="libroForm" (ngSubmit)="agregarLibro()">
+          <div class="form-group">
+            <label for="busquedaLibro">Buscar Libro por ISBN o Título:</label>
+            <input type="text" class="form-control" formControlName="busqueda" id="busquedaLibro"
+            placeholder="Ingrese el título"
+            (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" [attr.autocomplete]="'off'">
+     
+          </div>
+          
+          <!-- Sección de opciones de autocompletado -->
+          <div class="autocomplete-options" *ngIf="mostrarOpciones && librosFiltrados.length > 0">
+            <div class="list-group" style="max-height: 200px; overflow-y: auto;">
+              <a *ngFor="let libro of librosFiltrados" 
+                 (click)="seleccionarLibro(libro.idLibro); mostrarOpciones=false" 
+                 class="list-group-item list-group-item-action">
+                {{ libro.displayText }}
+              </a>
+            </div>
+          </div>
+          
+          <!-- Resto de campos del formulario -->
+          <div class="form-group">
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" class="form-control" formControlName="cantidad" id="cantidad" min="1">
+          </div>
+
+          <div class="form-group">
+            <label for="precioVenta">Precio Venta:</label>
+            <input type="number" class="form-control" formControlName="precioVenta" id="precioVenta" readonly>
+          </div>
+
+          <div class="form-group">
+            <label for="importe">Total Importe:</label>
+            <input type="number" class="form-control" formControlName="importe" id="importe" readonly>
+          </div>
+
+          <!-- Botón de cerrar y agregar dentro del mismo formulario -->
+          <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary mr-5" data-dismiss="modal" (click)="cerrar()">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+          </div>
+        </form>
+      </div>
+    </div>  
+  </div>    
+</div>

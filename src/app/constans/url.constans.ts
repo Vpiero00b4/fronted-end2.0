@@ -12,6 +12,9 @@ export const dominio = "https://localhost:7143/";
         proveedor:dominio+"Proveedor",
         venta:dominio+"Venta",
         categoria:dominio+"Categoria",
-        cliente:dominio+"Cliente"
+        cliente:dominio+"Cliente",
+        stock:dominio+"Libro/stock",
+        api:dominio+"api",
+        DetalleVenta:dominio+"DetalleVenta/registrar-venta"
     };
     

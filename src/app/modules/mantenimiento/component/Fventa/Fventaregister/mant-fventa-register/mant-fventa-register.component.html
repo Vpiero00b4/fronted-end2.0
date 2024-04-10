@@ -1,37 +1,84 @@
-<div class="container">
+<!-- Formulario de búsqueda de cliente -->
+<form [formGroup]="personaForm" (ngSubmit)="buscarPersona()" class="mb-3">
   <div class="row">
-    <div class="col-md-6">
-      <div class="card mt-4">
-        <div class="card-body">
-          <h5 class="card-title">Agregar Producto</h5>
-          <form>
-            <div class="form-group">
-              <label for="buscarProducto">Buscar Libro:</label>
-              <input type="text" class="form-control" id="buscarProducto" name="buscarProducto" placeholder="Ingrese el título del libro">
-            </div>
-            <div class="form-group">
-              <label for="marca">Marca:</label>
-              <input type="text" class="form-control" id="marca" name="marca" placeholder="Ingrese la marca">
-            </div>
-            <div class="form-group">
-              <label for="cantidad">Cantidad:</label>
-              <input type="number" class="form-control" id="cantidad" name="cantidad" placeholder="Ingrese la cantidad">
-            </div>
-            <div class="form-group">
-              <label for="precioUnitario">Precio Unitario:</label>
-              <input type="number" class="form-control" id="precioUnitario" name="precioUnitario" placeholder="Ingrese el precio unitario">
-            </div>
-            <div class="form-group">
-              <label for="totalImporte">Total Importe:</label>
-              <input type="number" class="form-control" id="totalImporte" name="totalImporte" placeholder="Ingrese el total importe">
-            </div>
-            <button type="submit" class="btn btn-primary">Agregar Producto</button>
-          </form>
-        </div>
-      </div>
+    <div class="col">
+      <label for="tipoDocumento" class="form-label">Tipo de Documento:</label>
+      <select formControlName="tipoDocumento" id="tipoDocumento" class="form-select">
+        <option value="DNI">DNI</option>
+        <option value="RUC">RUC</option>
+        <!-- Agrega más opciones según los tipos de documentos que manejes -->
+      </select>
     </div>
-    <div class="col-md-6">
-      <!-- Aquí irá la lista de productos -->
+    <div class="col">
+      <label for="numeroDocumento" class="form-label">Número de Documento:</label>
+      <input formControlName="numeroDocumento" type="text" id="numeroDocumento" class="form-control">
+    </div>
+    
+    <div class="col d-flex align-items-end">
+      <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">Buscar Cliente</button>
     </div>
   </div>
+</form>
+<!-- Sección para mostrar los resultados de la búsqueda -->
+<div *ngIf="persona" class="mb-3">
+  <h3>Información del Cliente</h3>
+  <div class="row">
+    <div class="col"><strong>Nombre:</strong> {{ persona.nombre }} {{ persona.apellidoPaterno }} {{ persona.apellidoMaterno }}</div>
+    <div class="col"><strong>Documento:</strong> {{ persona.tipoDocumento }} {{ persona.numeroDocumento }}</div>
+    <div class="col"><strong>Correo:</strong> {{ persona.correo }}</div>
+    <div class="col"><strong>Teléfono:</strong> {{ persona.telefono }}</div>
+  </div>
 </div>
+<!-- Formulario para registrar la venta -->
+<form [formGroup]="ventaForm" (ngSubmit)="registrarVenta()">
+  <div>
+    <label for="fechaEmision" class="form-label fecha-label">Fecha de Emisión:</label>
+    <input formControlName="fechaEmision" type="date" id="fechaEmision" class="form-control">
+  </div>
+  <div>
+    <button type="button" (click)="abrirModalProducto()" class="btn btn-primary mb-3">Agregar Producto</button>
+    </div>
+ 
+<div *ngIf="productosAgregados && productosAgregados.length > 0" class="mb-3">
+  <h3>Productos Agregados</h3>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Item/IdlibroProducto</th>
+        <th>ISBN</th>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>ID del Proveedor</th>
+        <th>Cantidad</th>
+        <th>Precio de Venta</th>
+        <th>Importe</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of productosAgregados; let i = index">
+        <!-- <td>{{ i + 1 }}</td> -->
+        <td>{{ producto.idLibro}}</td>
+        <td>{{ producto.isbn }}</td>
+        <td>{{ producto.nombreProducto }}</td>
+        <td>{{ producto.descripcion }}</td>
+        <td>{{ producto.idProveedor }}</td>
+        <td>{{ producto.cantidad }}</td> <!-- Simplemente mostramos la cantidad sin permitir edición -->
+        <td>{{ producto.precioUnit }}</td>
+        <td>{{ producto.cantidad * producto.precioUnit | number:'1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+  
+  <div>
+    <button type="submit" [disabled]="ventaForm.invalid" class="btn btn-success">Registrar Venta</button> 
+   </div>
+</form>
+
+<!-- Modal para agregar productos, se muestra basado en la propiedad 'showModal' -->
+<app-libro-modal-component
+  *ngIf="showModal"
+  (cerrarModal)="cerrarModalProducto()"
+  >
+</app-libro-modal-component>

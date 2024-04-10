@@ -5,6 +5,7 @@ import { AccionMantConst } from '../../../../../constans/general.constans'; // R
 import { LibroResponse } from '../../../../../models/libro-response.models';
 import { LibroService } from '../../../service/libro.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DetalleVentaResponse } from '../../../../../models/detallle-venta-response.models';
 
 @Component({
   selector: 'app-mant-libro-list',
@@ -16,6 +17,7 @@ export class MantLibroListComponent implements OnInit {
   filtroFormCategorias: FormGroup;
   librosFiltrados!: LibroResponse[];
   libros: LibroResponse[] = [];
+  productosAgregados: DetalleVentaResponse[] = [];
   modalRef?: BsModalRef;
   libroSelected: LibroResponse = new LibroResponse();
   titleModal: string = "";
@@ -157,6 +159,7 @@ export class MantLibroListComponent implements OnInit {
     // Filtrar los libros según la consulta
     this.librosFiltrados = this.libros.filter(libro =>
       libro.titulo.toLowerCase().includes(consulta.toLowerCase())
+      //AGREGAR isbn 
     );
   }
   

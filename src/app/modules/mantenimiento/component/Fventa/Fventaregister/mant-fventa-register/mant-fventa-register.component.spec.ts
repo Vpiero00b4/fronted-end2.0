@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MantFventaRegisterComponent } from './mant-fventa-register.component';
+import { FventaRegisterComponent } from './mant-fventa-register.component';
 
 describe('MantFventaRegisterComponent', () => {
-  let component: MantFventaRegisterComponent;
-  let fixture: ComponentFixture<MantFventaRegisterComponent>;
+  let component: FventaRegisterComponent;
+  let fixture: ComponentFixture<FventaRegisterComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MantFventaRegisterComponent]
+      declarations: [FventaRegisterComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(MantFventaRegisterComponent);
+    fixture = TestBed.createComponent(FventaRegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,7 +1,7 @@
 export class LibroResponse {
     idLibro: number = 0;
     titulo: string = "";
-    isbn: number = 0;
+    isbn: string = "";
     tamanno: string = "";
     descripcion: string = "";
     condicion: string = "";
@@ -14,10 +14,8 @@ export class LibroResponse {
     estadoDescripcion:string="";
     precioVenta: number = 0; 
     idPrecios: number=0;
-    porcUtilidad: number=0;
-    // idSucursal: number=0;
-    // stock: number=0;
-    // ultPrecioCosto: number=0;
-    //agregar los campos que faltan
+    porcUtilidad: number=0; 
+    stock: number=0;
+    precio: any;
+    displayText?: string;
 }
-
