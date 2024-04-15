@@ -2,66 +2,61 @@
   <div class="card-header text-center">
     <h1 class="mt-4">LISTADO DE PRODUCTOS :</h1>
   </div>  
-  <form [formGroup]="filtroFormCategorias" (ngSubmit)="filtrarPorCategoria()">
+
+  <form [formGroup]="filtroForm" (ngSubmit)="filtrarPorCategoriaYSubcategoria()">
     <div class="form-group">
-      <label for="idSubcategoria">Filtrar por categoría:</label>
-      <select formControlName="idSubcategoria" class="form-control" id="idSubcategoria">
-        <option value="">Todas las categorías</option>
-        <option value=1>Nivel Inicial</option>
-        <option value=2>Nivel Primaria</option>
-        <option value=3>Nivel Secundaria</option>
-        <option value=4>PreUniversitarios</option>
-        <option value=5>Universitarios</option>
-        <option value=6>Agendas</option>
-        <option value=7>Biblias</option>
-        <option value=8>Cartillas</option>
-        <option value=9>Cuadernos de Trabajo</option>
-        <option value=10>Diccionarios</option>
-        <option value=11>Enciclopedias</option>
-        <option value=12>Literatura</option>
-        <option value=13>Literatura Infantil</option>
-        <option value=14>Literatura Juvenil</option>
-        <option value=15>Superacion Personal y Emprendimiento</option>
-        <option value=16>Comics y Mangas</option>
-        <option value=17>Ciencia y Ficcion</option>
-        <option value=18>Finanzas Personales</option>
-        <option value=19>Negocios e Inversion</option>
-        <option value=20>Tarjetas Lexicas</option>
-        <option value=20>Miscelanea</option>
-        <option value=20>Ofertas</option>
+      <label for="idCategoria">Filtrar por Categoría:</label>
+      <select formControlName="idCategoria" class="form-control">
+        <option value="">Seleccione una Categoría</option>
+        <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">
+          {{ categoria.categoria1 }}
+        </option>
       </select>
     </div>
-    <button type="submit" class="btn btn-primary">Filtrar por categoría</button>
-</form>
-<div class="form-group">
-  <label for="busqueda">Buscar por título:</label>
-  <input type="text" class="form-control" id="busqueda" placeholder="Ingrese el título" (input)="buscarLibro($event)">
-</div>
 
+    <div class="form-group">
+      <label for="idSubcategoria">Filtrar por Subcategoría:</label>
+      <select formControlName="idSubcategoria" class="form-control">
+        <option value="">Seleccione una Subcategoría</option>
+        <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
+          {{ subcategoria.descripcion }}
+        </option>
+      </select>
+    </div>
 
+    <button type="submit" class="btn btn-primary">Filtrar</button>
+  </form>
+
+  <div class="form-group">
+    <label for="busqueda">Buscar por título:</label>
+    <input type="text" class="form-control" id="busqueda" placeholder="Ingrese el título" (input)="buscarLibro($event)">
+  </div>
 
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th>IdLibro</th>
         <th>Titulo</th>
-        <th>Isbn P</th>
-        <th>Tamano M</th>
-        <th>Descripcion M</th>
-        <th>Condicion</th>
-        <th>Impresion</th>
-        <th>TipoTapa</th>
+        <th>Isbn</th>
+        <th>Tamaño</th>
+        <th>Descripción</th>
+        <th>Condición</th>
+        <th>Impresión</th>
+        <th>Tipo Tapa</th>
         <th>Estado</th>
-        <th>IdCategoria</th>
-        <th>IdTipoPapel</th>
-        <th>IdProveedor</th>
+        <th>Subcategoría ID</th>
+        <th>Categoría</th>
+        <th>Tipo Papel ID</th>
+        <th>Proveedor ID</th>
         <th>
+          Acciones
           <button (click)="crearLibro(modalEdit)" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus"></i>
+            <i class="fas fa-plus"></i>Crear Libro
           </button>
         </th>
       </tr>
     </thead>
+
     <tbody>
       <tr *ngFor="let libro of (librosFiltrados ? librosFiltrados : libros)">
         <td>{{ libro.idLibro }}</td>
@@ -72,8 +67,9 @@
         <td>{{ libro.condicion }}</td>
         <td>{{ libro.impresion }}</td>
         <td>{{ libro.tipoTapa }}</td>
-        <td>{{ libro.estadoDescripcion }}</td>
+        <td>{{ libro.estado }}</td>
         <td>{{ libro.idSubcategoria }}</td>
+        <td>{{ getDescripcionCategoria(libro.idSubcategoria) }}</td>
         <td>{{ libro.idTipoPapel }}</td>
         <td>{{ libro.idProveedor }}</td>
         <td>
@@ -87,6 +83,17 @@
       </tr>
     </tbody>
   </table>
+
+  <div *ngIf="totalPages > 0" class="pagination-container">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1" class="btn btn-primary me-2">
+      Anterior
+    </button>
+    <span>Página {{ currentPage }} de {{ totalPages }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages" class="btn btn-primary ms-2">
+      Siguiente
+    </button>
+  </div>
+  
   <ng-template #modalEdit>
     <app-mant-libro-register [title]="titleModal" [libro]="libroSelected" [accion]="accionModal"
       (closeModalEmmit)="getCloseModalEmmit($event)"></app-mant-libro-register>

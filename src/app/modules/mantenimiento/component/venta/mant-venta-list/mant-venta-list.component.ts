@@ -21,6 +21,8 @@ export class MantVentaListComponent implements OnInit {
   ventaSelected: VentaResponse = new VentaResponse();
   titleModal: string = "";
   accionModal: number = 0;
+  fechaInicio: string = ''; // Inicialmente vacías
+  fechaFin: string = ''; // Inicialmente vacías
 
   constructor(
     private sharedService: SharedService,
@@ -92,4 +94,30 @@ export class MantVentaListComponent implements OnInit {
       });
     }
   }
+  descargarPDF(idVenta: number) {
+    this._ventaService.getVentaPDF(idVenta).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.download = `venta_${idVenta}.pdf`;
+      anchor.href = url;
+      anchor.click();
+      window.URL.revokeObjectURL(url);
+    }, error => {
+      console.error("Error al descargar el PDF:", error);
+    });
+  }
+  filtrarPorFechas(fechaInicio: string, fechaFin: string) {
+    this._ventaService.obtenerVentasPorFechas(fechaInicio, fechaFin).subscribe({
+      next: (data: VentaResponse[]) => {
+        this.ventas = data;
+      },
+      error: (err) => {
+        console.log("error", err);
+      },
+      complete: () => {
+        // Hacer algo si es necesario
+      },
+    });
+  }
+
 }

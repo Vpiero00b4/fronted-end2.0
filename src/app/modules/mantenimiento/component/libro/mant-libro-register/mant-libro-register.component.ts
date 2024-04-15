@@ -27,7 +27,8 @@ export class MantLibroRegisterComponent implements OnInit{
   //DECLARANDO CONSTRUCTOR 
   constructor(
     private fb : FormBuilder,
-    private _libroService: LibroService
+    private _libroService: LibroService,
+    
   )
   {
     //nuestro formulario libro request
@@ -44,6 +45,7 @@ export class MantLibroRegisterComponent implements OnInit{
       idSubcategoria: [null, [Validators.required]],
       idTipoPapel: [null, [Validators.required]],
       idProveedor: [null, [Validators.required]],
+      imagen: [null, [Validators.required]],
     });
   }
   ngOnInit(): void {
@@ -52,7 +54,37 @@ export class MantLibroRegisterComponent implements OnInit{
     console.log("title==>", this.libro)
 
     this.myFormL.patchValue(this.libro);
+    if (this.accion === AccionMantConst.crear) {
+      this.myFormL.patchValue({ imagen: '../../../../../../assets/imagenes/sinimagen.jpg' });
+      
+    }
+    
   }
+  cargarLibro(libroId: number) {
+    this._libroService.getLibroById(libroId).subscribe({
+      next: (libro: LibroResponse) => {
+        this.myFormL.patchValue({
+          idLibro: libro.idLibro,
+          titulo: libro.titulo,
+          isbn: libro.isbn,
+          tamanno: libro.tamanno,
+          descripcion: libro.descripcion,
+          condicion: libro.condicion,
+          impresion: libro.impresion,
+          tipoTapa: libro.tipoTapa,
+          estado: libro.estado,
+          idSubcategoria: libro.idSubcategoria,
+          idTipoPapel: libro.idTipoPapel,
+          idProveedor: libro.idProveedor,
+          imagen: libro.imagen // Asegúrate de que este campo está siendo actualizado
+        });
+      },
+      error: (err) => {
+        console.error('Error al cargar el libro: ', err);
+      }
+    });
+  }
+
   guardarlibro(){
     this.libroEnvio = this.myFormL.getRawValue();
     this.libroEnvio.estado=convertToBoolean(this.libroEnvio.estado.toString());
@@ -70,7 +102,6 @@ export class MantLibroRegisterComponent implements OnInit{
   }
   
   crearRegistro(){
-    debugger;
     this._libroService.create(this.libroEnvio).subscribe({
       next: (data: LibroResponse) => {
         alert("creado de forma  correcta");
@@ -108,4 +139,21 @@ export class MantLibroRegisterComponent implements OnInit{
     this.closeModalEmmit.emit(res);
 
   }
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files ? input.files[0] : null; // Asegurarse de que hay un archivo seleccionado
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.myFormL.patchValue({ imagen: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.log("No se ha seleccionado ningún archivo.");
+      // Puedes manejar aquí cómo deseas proceder si no hay archivo seleccionado.
+      // Por ejemplo, podrías dejar la imagen por defecto o mostrar un mensaje al usuario.
+    }
+  }
+  
+  
 }

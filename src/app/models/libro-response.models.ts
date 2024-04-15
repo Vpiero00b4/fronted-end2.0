@@ -14,6 +14,7 @@ export class LibroResponse {
     idSubcategoria: number = 0;
     idTipoPapel: number = 0;
     idProveedor: number = 0;
+    imagen: string = "";
     estadoDescripcion:string="";
     precioVenta: number = 0; 
     idPrecios: number=0;
@@ -24,4 +25,5 @@ export class LibroResponse {
     kardex?:KardexResponse;
     editandoStock: boolean = false;
     stockTemporal?: number;
+    idCategoria: number=0;
 }

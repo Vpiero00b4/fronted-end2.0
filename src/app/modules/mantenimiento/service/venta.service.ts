@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CrudService } from '../../shared/services/crud.service';
@@ -8,6 +8,7 @@ import { VentaRequest } from '../../../models/ventas-request.models';
 import { VentaResponse } from '../../../models/ventas-response.models';
 import { DetalleVentaResponse } from '../../../models/detallle-venta-response.models';
 import { DatalleCarrito } from '../../../models/detallecarrito.models';
+import { Cart } from '../../../models/cart-request.models';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,7 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
     super(http, UrlConstants.venta);
   }
   enviarVenta(venta: VentaRequest): Observable<any> {
-    return this.http.post(`${UrlConstants.api}/Cart`, venta);
+    return this.http.post(`${UrlConstants.api}/Cart1`, venta);
   }
   // Método para buscar productos por nombre u otro criterio
   searchProducts(query: string): Observable<LibroResponse[]> {
@@ -41,6 +42,12 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
     // Asegúrate de tener la URL correcta y cambiar 'apiUrl' por la variable que tengas para tu URL base
     return this.http.post(`${UrlConstants}/api/Cart`, carrito);
   }
-  
-
+  getVentaPDF(idVenta: number): Observable<Blob> {
+    return this.http.get(`https://localhost:7143/Venta/${idVenta}/pdf`, { responseType: 'blob' });
+  }
+  obtenerVentasPorFechas(fechaInicio: string, fechaFin: string): Observable<VentaResponse[]> {
+    const url = `${UrlConstants.venta}/ObtenerPorFechas`;
+    const params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
+    return this.http.get<VentaResponse[]>(url, { params });
+  }
 }

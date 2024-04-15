@@ -1,5 +1,23 @@
 <div class="container-fluid px-4 mt-5">
-  <div class="card bg-light mb-3">
+  <!-- Filtrado por fechas -->
+  <div class="row">
+    <div class="col-md-6">
+      <label for="fechaInicio">Fecha de inicio:</label>
+      <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" [(ngModel)]="fechaInicio">
+    </div>
+    <div class="col-md-6">
+      <label for="fechaFin">Fecha de fin:</label>
+      <input type="date" id="fechaFin" name="fechaFin" class="form-control" [(ngModel)]="fechaFin">
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-md-12">
+      <button class="btn btn-primary" (click)="filtrarPorFechas(fechaInicio, fechaFin)">Filtrar</button>
+    </div>
+  </div>
+
+  <!-- Listado de ventas -->
+  <div class="card bg-light mt-4">
     <div class="card-header text-center">
       <h1 class="mt-4">LISTADO DE COMPROBANTES</h1>
     </div>
@@ -7,39 +25,25 @@
       <table class="table table-bordered table-striped">
         <thead>
           <tr>
-            <th>idVentas</th>
-            <th>totalPrecio</th>
-            <th>tipoComprobante P</th>
-            <th>fechaVenta M</th>
-            <th>nroComprobante M</th>
-            <th>idCliente</th>
-            <th>idUsuario</th>
-            <th>idLibro</th>
-            <th>
-              
-              <a class="nav-link"><i class="fas fa-plus"></i> Ver detalle de venta</a>
-            </th>
+            <th>ID de Venta</th>
+            <th>Tipo de Comprobante</th>
+            <th>Fecha de Venta</th>
+            <th>Número de Comprobante</th>
+            <th>ID de Cliente</th>
+            <th>ID de Usuario</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let venta of ventas">
             <td>{{ venta.idVentas }}</td>
-          <td>{{ venta.totalPrecio }}</td>
-          <td>{{ venta.tipoComprobante }}</td>
-          <td>{{ venta.fechaVenta }}</td>
-          <td>{{ venta.nroComprobante }}</td>
-          <td>{{ venta.idCliente }}</td>
-          <td>{{ venta.idUsuario }}</td>
-          <td>{{ venta.idLibro }}</td>
-
+            <td>{{ venta.tipoComprobante }}</td>
+            <td>{{ venta.fechaVenta }}</td>
+            <td>{{ venta.nroComprobante }}</td>
+            <td>{{ venta.idCliente }}</td>
+            <td>{{ venta.idUsuario }}</td>
             <td>
-              <button (click)="editarVenta(modalEdit,venta)" class="btn btn-primary btn-sm">
-                <i class="fas fa-edit"></i>
-              </button>
-                
-              <button (click)="eliminarRegistro(venta.idVentas)" class="btn btn-danger btn-sm">
-                <i class="fas fa-trash"></i>
-              </button>
+              <button (click)="descargarPDF(venta.idVentas)" class="btn btn-primary">Descargar PDF</button>
             </td>
           </tr>
         </tbody>
@@ -47,11 +51,3 @@
     </div>
   </div>
 </div>
-<ng-template #modalEdit>
-<app-mant-venta-register
-  [title]="titleModal"  
-  [venta]="ventaSelected"
-  [accion]="accionModal"
-  (closeModalEmmit)="getCloseModalEmmit($event)"
-></app-mant-venta-register>
-</ng-template>

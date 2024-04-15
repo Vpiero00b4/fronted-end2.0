@@ -15,7 +15,7 @@
             <nav class="sb-sidenav-menu-nested nav">
                 <a class="nav-link" [routerLink]="['mantenimiento/persona']"> <i class="fas fa-edit"></i>Persona</a>
                 <!-- <a class="nav-link" [routerLink]="['mantenimiento/genero']"> <i class="fas fa-edit"></i>Genero</a> -->
-                <a class="nav-link" [routerLink]="['mantenimiento/cliente']"> <i class="fas fa-edit"></i>Clientes</a>
+                <a class="nav-link" [routerLink]="['mantenimiento/usuario']"><i class="fas fa-edit"></i>Usuarios</a>
             </nav>
         </div>
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVentas"
@@ -51,14 +51,20 @@
                 <a class="nav-link" [routerLink]="['ventas/venta']"> <i class="bi bi-basket2-fill"></i>Listado de Comprobantes</a>
             </nav>
         </div>
+        
         <div class="collapse" id="collapseOtro" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
             <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" [routerLink]="['ventas/mant-venta-registerr']"> <i class="bi bi-basket2-fill"></i>Listado de para hacer ventas</a>
+                <a class="nav-link" [routerLink]="['ventas/mant-venta-registred']"> <i class="bi bi-basket2-fill"></i>Forulario para ventas</a>
             </nav>
         </div>
         <div class="collapse" id="collapseOtro" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
             <nav class="sb-sidenav-menu-nested nav">
-                <a class="nav-link" [routerLink]="['ventas/mant-venta-registred']"> <i class="bi bi-basket2-fill"></i>Forulario para ventas</a>
+                <a class="nav-link" [routerLink]="['ventas/caja-register']"> <i class="bi bi-basket2-fill"></i>Crear Caja</a>
+            </nav>
+        </div>
+        <div class="collapse" id="collapseOtro" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+            <nav class="sb-sidenav-menu-nested nav">
+                <a class="nav-link" [routerLink]="['ventas/caja-list']"> <i class="bi bi-basket2-fill"></i>Caja</a>
             </nav>
         </div>
 

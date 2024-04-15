@@ -1,0 +1,47 @@
+<div class="container-fluid px-4 mt-5">
+    <div class="row">
+      <div class="col-md-6">
+        <input type="date" [(ngModel)]="fechaInicio">
+        <input type="date" [(ngModel)]="fechaFin">
+        <button class="btn btn-primary" (click)="obtenerVentasDelDia()">Filtrar Ventas</button>
+        <h3>Ventas del día</h3>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>ID Ventas</th>
+              <th>Tipo Comprobante</th>
+              <th>Nro Comprobante</th>
+              <th>Fecha Venta</th>
+              <th>Total Precio (S/.)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let venta of ventasDelDia">
+              <td>{{ venta.idVentas }}</td>
+              <td>{{ venta.tipoComprobante }}</td>
+              <td>{{ venta.nroComprobante }}</td>
+              <td>{{ venta.fechaVenta }}</td>
+              <td>{{ venta.totalPrecio | currency:'S/.' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <h3>Detalle de caja</h3>
+        <p>Saldo inicial: {{ saldoInicial | currency:'S/.' }}</p>
+        <p>Total ventas del día: {{ saldoFinal | currency:'S/.' }}</p>
+        <p>Saldo final: {{ saldoFinal | currency:'S/.' }}</p>
+        <div class="mt-3">
+          <label for="ingreso">Registrar ingreso a caja:</label>
+          <input type="number" id="ingreso" name="ingreso" [(ngModel)]="montoIngreso">
+          <button class="btn btn-success" (click)="registrarIngresoACaja(montoIngreso)">Registrar ingreso</button>
+        </div>
+        <div class="mt-3">
+          <label for="retiro">Registrar retiro de caja:</label>
+          <input type="number" id="retiro" name="retiro" [(ngModel)]="montoRetiro">
+          <button class="btn btn-danger" (click)="registrarRetiroDeCaja(montoRetiro)">Registrar retiro</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
