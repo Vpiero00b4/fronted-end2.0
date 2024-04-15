@@ -13,6 +13,7 @@ import { ProveedorResponse } from '../../../models/proveedor-response.models';
 import { PaginatedResponse } from '../../../models/PaginatedResponse';
 import { kardex } from '../../../models/kardex.models';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -60,6 +61,9 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     const url = `${UrlConstants.libro}/Paginator?page=${pageIndex}&pageSize=${pageSize}`;
     return this.http.get<PaginatedResponse<LibroResponse>>(url);
   }
+
+
+
 
 
   

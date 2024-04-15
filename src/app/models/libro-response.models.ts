@@ -1,6 +1,7 @@
 import { KardexResponse } from "./kardex-response.models";
 
 
+
 export class LibroResponse {
     idLibro: number = 0;
     titulo: string = "";
