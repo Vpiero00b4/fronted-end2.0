@@ -1,3 +1,6 @@
+import { KardexResponse } from "./kardex-response.models";
+
+
 export class LibroResponse {
     idLibro: number = 0;
     titulo: string = "";
@@ -18,4 +21,7 @@ export class LibroResponse {
     stock: number=0;
     precio: any;
     displayText?: string;
+    kardex?:KardexResponse;
+    editandoStock: boolean = false;
+    stockTemporal?: number;
 }

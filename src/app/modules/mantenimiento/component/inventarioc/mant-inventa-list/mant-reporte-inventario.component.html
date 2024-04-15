@@ -1,4 +1,5 @@
-  <div class="container">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+ <div class="container">
     <!-- Formulario para seleccionar la sucursal y el stock -->
     <div class="row mb-3">
       <!-- Add your selection form here if needed -->
@@ -40,7 +41,21 @@
                 <td>{{ libro.estado ? 'Disponible' : 'No disponible' }}</td>
                 <td>{{ libro.idTipoPapel }}</td>
                 <td>{{ libro.idProveedor }}</td>
-                <td>{{ libro.stock }}</td>
+                <td>
+                  <div *ngIf="!libro.editandoStock" class="d-flex align-items-center">
+                    {{ libro.stock }}
+                    <button class="btn btn-primary btn-sm ms-2 p-1" style="font-size: 0.8rem;" (click)="toggleEditStock(libro)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </div>
+                  <div *ngIf="libro.editandoStock" class="d-flex align-items-center">
+                    <input type="number" class="form-control form-control-sm me-2" [(ngModel)]="libro.stockTemporal" [ngModelOptions]="{standalone: true}" style="min-width: 50px;">
+                    <button class="btn btn-success btn-sm p-1" style="font-size: 0.8rem;" (click)="saveStock(libro)">
+                      <i class="fas fa-save"></i>
+                    </button>
+                  </div>
+                </td>
+                
               </tr>
             </tbody>
           </table>

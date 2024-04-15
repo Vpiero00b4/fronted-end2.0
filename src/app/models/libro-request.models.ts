@@ -1,3 +1,6 @@
+import { KardexResponse } from "./kardex-response.models";
+
+
 export class LibroRequest {
     idLibro: number = 0;
     titulo: string = "";
@@ -11,4 +14,6 @@ export class LibroRequest {
     idSubcategoria: number = 0;
     idTipoPapel: number = 0;
     idProveedor: number = 0;
+    kardex?:KardexResponse;
+
 }

@@ -42,6 +42,7 @@ import { AuthInterceptor } from './Services/auth.interceptor';
 @NgModule({
   declarations: [
     AppComponent,
+    
    
   ],
   imports: [
@@ -67,6 +68,7 @@ import { AuthInterceptor } from './Services/auth.interceptor';
     MatToolbarModule,
     MatSidenavModule,
     ReactiveFormsModule,
+    
     
     
   ],

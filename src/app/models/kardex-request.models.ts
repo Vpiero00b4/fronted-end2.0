@@ -1,5 +1,5 @@
 export class KardexRequest {
-    idSucursal: number=0;
+    idSucursal: number=1;
     idLibro: number=0;
     cantidadSalida: number =0;
     cantidadEntrada: number =0;

@@ -11,6 +11,7 @@ import { PrecioResponse } from '../../../models/precio-response.models';
 import { SucursalResponse } from '../../../models/sucursal-response.models';
 import { ProveedorResponse } from '../../../models/proveedor-response.models';
 import { PaginatedResponse } from '../../../models/PaginatedResponse';
+import { kardex } from '../../../models/kardex.models';
 
 @Injectable({
   providedIn: 'root'
@@ -28,8 +29,8 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     return this.http.get<LibroResponse>(`${this.url_service}/${id}`);
   }
 
-  getKardexByLibroId(libroId: number): Observable<KardexResponse[]> {
-    return this.http.get<KardexResponse[]>(`${UrlConstants.kardex}/libro/${libroId}`);
+  getKardexByLibroId(libroId: number): Observable<KardexResponse> {
+    return this.http.get<KardexResponse>(`${UrlConstants.kardex}/${libroId}`);
   }
 
   
