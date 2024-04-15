@@ -112,7 +112,8 @@ export class FventaRegisterComponent implements OnInit {
         estado: producto.estado || false,
         idSubcategoria: producto.idSubcategoria || 0,
         idTipoPapel: producto.idTipoPapel || 0,
-        idProveedor: producto.idProveedor || 0
+        idProveedor: producto.idProveedor || 0,
+        imagen: producto.imagen || ''
         // ... y así con el resto de propiedades requeridas
       };
   
@@ -146,7 +147,8 @@ export class FventaRegisterComponent implements OnInit {
             estado: true,
             idSubcategoria: 0,
             idTipoPapel: 0,
-            idProveedor: 0
+            idProveedor: 0,
+            imagen:null
           },
           PrecioVenta: 0,
           Cantidad: 0

@@ -157,6 +157,7 @@ export class LibroModalComponentComponent implements OnInit {
           idProveedor: libroSeleccionado.idProveedor, // Asegúrate de que esta propiedad exista en LibroResponse
           cantidad: formValue.cantidad,
           importe: formValue.importe,
+          imagen: formValue.imagen,
         };
   
         // Emite el evento con el nuevo producto agregado para que el componente padre lo maneje

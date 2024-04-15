@@ -55,7 +55,7 @@ export class MantLibroRegisterComponent implements OnInit{
 
     this.myFormL.patchValue(this.libro);
     if (this.accion === AccionMantConst.crear) {
-      this.myFormL.patchValue({ imagen: '../../../../../../assets/imagenes/sinimagen.jpg' });
+      this.myFormL.patchValue({ imagen: '' });
       
     }
     
@@ -102,6 +102,7 @@ export class MantLibroRegisterComponent implements OnInit{
   }
   
   crearRegistro(){
+    debugger;
     this._libroService.create(this.libroEnvio).subscribe({
       next: (data: LibroResponse) => {
         alert("creado de forma  correcta");
@@ -141,19 +142,14 @@ export class MantLibroRegisterComponent implements OnInit{
   }
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    const file = input.files ? input.files[0] : null; // Asegurarse de que hay un archivo seleccionado
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.myFormL.patchValue({ imagen: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+    if (input.files && input.files.length) {
+        const file = input.files[0];
+        this.myFormL.get('imagen')!.setValue(file);
     } else {
-      console.log("No se ha seleccionado ningún archivo.");
-      // Puedes manejar aquí cómo deseas proceder si no hay archivo seleccionado.
-      // Por ejemplo, podrías dejar la imagen por defecto o mostrar un mensaje al usuario.
+        console.error("No file selected or file input is invalid.");
     }
-  }
+}
+
   
   
 }
