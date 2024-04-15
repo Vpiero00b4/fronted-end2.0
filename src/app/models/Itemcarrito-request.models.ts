@@ -4,4 +4,5 @@ export interface ItemCarrito {
     libro: LibroRequest;
     PrecioVenta: number;
     Cantidad: number;
+    
   }
