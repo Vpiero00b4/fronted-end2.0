@@ -6,20 +6,19 @@
       <select formControlName="tipoDocumento" id="tipoDocumento" class="form-select">
         <option value="DNI">DNI</option>
         <option value="RUC">RUC</option>
-        <!-- Agrega más opciones según los tipos de documentos que manejes -->
       </select>
     </div>
     <div class="col">
       <label for="numeroDocumento" class="form-label">Número de Documento:</label>
       <input formControlName="numeroDocumento" type="text" id="numeroDocumento" class="form-control">
     </div>
-    
     <div class="col d-flex align-items-end">
       <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">Buscar Cliente</button>
     </div>
   </div>
 </form>
-<!-- Sección para mostrar los resultados de la búsqueda -->
+
+<!-- Información del cliente -->
 <div *ngIf="persona" class="mb-3">
   <h3>Información del Cliente</h3>
   <div class="row">
@@ -29,56 +28,58 @@
     <div class="col"><strong>Teléfono:</strong> {{ persona.telefono }}</div>
   </div>
 </div>
-<!-- Formulario para registrar la venta -->
+
+<!-- Formulario de registro de venta -->
 <form [formGroup]="ventaForm" (ngSubmit)="registrarVenta()">
-  <div>
-    <label for="fechaEmision" class="form-label fecha-label">Fecha de Emisión:</label>
+  <div class="mb-3">
+    <label for="fechaEmision" class="form-label">Fecha de Emisión:</label>
     <input formControlName="fechaEmision" type="date" id="fechaEmision" class="form-control">
   </div>
-  <div>
-    <button type="button" (click)="abrirModalProducto()" class="btn btn-primary mb-3">Agregar Producto</button>
-    </div>
- 
-<div *ngIf="productosAgregados && productosAgregados.length > 0" class="mb-3">
-  <h3>Productos Agregados</h3>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Item/IdlibroProducto</th>
-        <th>ISBN</th>
-        <th>Título</th>
-        <th>Descripción</th>
-        <th>ID del Proveedor</th>
-        <th>Cantidad</th>
-        <th>Precio de Venta</th>
-        <th>Importe</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let producto of productosAgregados; let i = index">
-        <!-- <td>{{ i + 1 }}</td> -->
-        <td>{{ producto.idLibro}}</td>
-        <td>{{ producto.isbn }}</td>
-        <td>{{ producto.nombreProducto }}</td>
-        <td>{{ producto.descripcion }}</td>
-        <td>{{ producto.idProveedor }}</td>
-        <td>{{ producto.cantidad }}</td> <!-- Simplemente mostramos la cantidad sin permitir edición -->
-        <td>{{ producto.precioUnit }}</td>
-        <td>{{ producto.cantidad * producto.precioUnit | number:'1.2-2' }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
-  
-  <div>
-    <button type="submit" [disabled]="ventaForm.invalid" class="btn btn-success">Registrar Venta</button> 
-   </div>
+  <div class="mb-3">
+    <button type="button" class="btn btn-primary" (click)="abrirModalProducto()">Agregar Producto</button>
+  </div>
+
+  <!-- Productos agregados -->
+  <div *ngIf="productosAgregados && productosAgregados.length > 0" class="mb-3">
+    <h3>Productos Agregados</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID Libro</th>
+          <th>ISBN</th>
+          <th>Título</th>
+          <th>Descripción</th>
+          <th>ID del Proveedor</th>
+          <th>Cantidad</th>
+          <th>Precio de Venta</th>
+          <th>Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of productosAgregados">
+          <td>{{ producto.idLibro }}</td>
+          <td>{{ producto.isbn }}</td>
+          <td>{{ producto.nombreProducto }}</td>
+          <td>{{ producto.descripcion }}</td>
+          <td>{{ producto.idProveedor }}</td>
+          <td>{{ producto.cantidad }}</td>
+          <td>{{ producto.precioUnit }}</td>
+          <td>{{ producto.cantidad * producto.precioUnit | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Botón para registrar la venta -->
+  <div class="mb-3">
+    <button type="submit" class="btn btn-success" [disabled]="ventaForm.invalid">Registrar Venta</button>
+  </div>
 </form>
 
-<!-- Modal para agregar productos, se muestra basado en la propiedad 'showModal' -->
+<!-- Modal para agregar productos -->
 <app-libro-modal-component
   *ngIf="showModal"
-  (cerrarModal)="cerrarModalProducto()"
-  >
+  (libroAgregado)="onProductoAgregado($event)"
+  (cerrarModal)="cerrarModalProducto()">
 </app-libro-modal-component>

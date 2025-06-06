@@ -37,11 +37,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AuthInterceptor } from './Services/auth.interceptor';
+import { DashboardComponent } from './modules/template/component/dashboard/dashboard.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    DashboardComponent,
     
    
   ],

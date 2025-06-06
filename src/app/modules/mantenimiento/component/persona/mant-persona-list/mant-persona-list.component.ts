@@ -1,7 +1,8 @@
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Component, OnInit, TemplateRef } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Router } from '@angular/router';
-import { AccionMantConst } from './../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
+
+import { AccionMantConst } from './../../../../../constans/general.constans';
 import { PersonaService } from '../../../service/persona.service';
 import { PersonaResponse } from '../../../../../models/persona-response-models';
 
@@ -12,7 +13,8 @@ import { PersonaResponse } from '../../../../../models/persona-response-models';
 })
 export class MantPersonaListComponent implements OnInit {
   personas: PersonaResponse[] = [];
-  modalRef?: BsModalRef;  
+  modalRef?: BsModalRef;
+
   personaSelected: PersonaResponse = new PersonaResponse();
   titleModal: string = "";
   accionModal: number = 0;
@@ -21,64 +23,60 @@ export class MantPersonaListComponent implements OnInit {
     private _route: Router,
     private _personaService: PersonaService,
     private modalService: BsModalService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.listarPersonas();
-
   }
-  listarPersonas() {
+
+  listarPersonas(): void {
     this._personaService.getAll().subscribe({
       next: (data: PersonaResponse[]) => {
         this.personas = data;
       },
       error: (err) => {
-        console.log("error", err);
-      },
-      complete: () => {
-        // Hacer algo
-      },
+        console.error("Error al listar personas", err);
+      }
     });
   }
 
-
-  crearPersona(template: TemplateRef<any>) {
+  crearPersona(template: TemplateRef<any>): void {
     this.personaSelected = new PersonaResponse();
-    this.titleModal = "NUEVO PERSO"
+    this.titleModal = "NUEVO REGISTRO";
     this.accionModal = AccionMantConst.crear;
     this.openModal(template);
   }
-  editarPersona(template: TemplateRef<any>, persona: PersonaResponse) {
-    this.personaSelected = persona;
-    this.titleModal = "EDIT PERSO"
-    this.accionModal = AccionMantConst.editar;
 
+  editarPersona(template: TemplateRef<any>, persona: PersonaResponse): void {
+    this.personaSelected = { ...persona }; // Se clona para evitar side effects
+    this.titleModal = "EDITAR REGISTRO";
+    this.accionModal = AccionMantConst.editar;
     this.openModal(template);
   }
 
-
-
-
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
+  openModal(template: TemplateRef<any>): void {
+    this.modalRef = this.modalService.show(template, {
+      class: 'modal-lg'
+    });
   }
 
-  getCloseModalEmmit(res: boolean) {
+  getCloseModalEmmit(res: boolean): void {
     this.modalRef?.hide();
     if (res) {
       this.listarPersonas();
     }
   }
 
-  eliminarRegistro(id: number) {
-    debugger;
-    let result = confirm("¿Está seguro de eliminar el registro?");
-    if (result) {
+  eliminarRegistro(id: number): void {
+    const confirmacion = confirm("¿Está seguro de eliminar el registro?");
+    if (confirmacion) {
       this._personaService.delete(id).subscribe({
-        next: (data: number) => {
-          alert("Registro eliminado de forma correcta");
+        next: () => {
+          alert("Registro eliminado correctamente");
         },
-        error: () => { },
+        error: (err) => {
+          console.error("Error al eliminar", err);
+        },
         complete: () => {
           this.listarPersonas();
         }

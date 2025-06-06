@@ -5,6 +5,7 @@ export class DetalleVentaResponse {
   precioUnit: number = 0;
   cantidad: number = 0;
   importe: number = 0;
+
   // Propiedades opcionales del libro
   isbn?: string = "";
   descripcion?: string = "";
@@ -16,7 +17,9 @@ export class DetalleVentaResponse {
   tipoTapa?: string = "";
   estado?: boolean = false;
   tamanno?: string = "";
-  imagen: File | null = null; // Cambiado el tipo de dato de number a File | null
+  descuento?:number;
+  
+    imagen: File | null = null; // Cambiado el tipo de dato de number a File | null
 
     constructor() {
         this.imagen = null; // Asignamos null por defecto en el constructor

@@ -1,29 +1,49 @@
 <form [formGroup]="updateForm" class="container mt-4">
-    <div class="mb-3">
-      <label for="saldoInicial" class="form-label">Saldo Inicial</label>
-      <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control" placeholder="Saldo Inicial">
-    </div>
-  
-    <div class="mb-3">
-      <label for="saldoFinal" class="form-label">Saldo Final</label>
-      <input formControlName="saldoFinal" type="number" id="saldoFinal" class="form-control" placeholder="Saldo Final">
-    </div>
-  
-    <div class="mb-3">
-      <label for="fecha" class="form-label">Fecha</label>
-      <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control">
-    </div>
-  
-    <div class="mb-3">
-      <label for="retiroDeCaja" class="form-label">Retiro de Caja</label>
-      <input formControlName="retiroDeCaja" type="number" id="retiroDeCaja" class="form-control" placeholder="Retiro de Caja">
-    </div>
-  
-    <div class="mb-3">
-      <label for="ingresosACaja" class="form-label">Ingresos a Caja</label>
-      <input formControlName="ingresosACaja" type="number" id="ingresosACaja" class="form-control" placeholder="Ingresos a Caja">
-    </div>
-  
-    <button type="button" (click)="crearCaja()" [disabled]="!updateForm.valid" class="btn btn-success">Crear Caja</button>
-  </form>
-  
+  <h4>Abrir nueva caja</h4>
+
+  <div class="mb-3">
+    <label for="saldoInicial" class="form-label">Saldo Inicial</label>
+    <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control" placeholder="Saldo Inicial">
+  </div>
+
+  <div class="mb-3">
+    <label for="fecha" class="form-label">Fecha de Inicio</label>
+    <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control">
+  </div>
+
+  <div class="mb-3">
+    <label for="ingresosACaja" class="form-label">Ingresos a Caja</label>
+    <input formControlName="ingresosACaja" type="number" id="ingresosACaja" class="form-control" placeholder="Ingresos a Caja">
+  </div>
+
+  <button type="button" class="btn btn-success" (click)="crearCaja()" [disabled]="!updateForm.valid">
+    Crear Caja
+  </button>
+</form>
+
+<hr>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Saldo Inicial</th>
+      <th>Saldo Final</th>
+      <th>Fecha</th>
+      <th>Fecha Cierre</th>
+      <th>Ingresos</th>
+      <th>Saldo Digital</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let caja of listaCajas">
+      <td>{{ caja.idCaja }}</td>
+      <td>{{ caja.saldoInicial | currency:'S/.' }}</td>
+      <td>{{ caja.saldoFinal | currency:'S/.' }}</td>
+      <td>{{ caja.fecha | date:'short' }}</td>
+      <td>{{ caja.fechaCierre ? (caja.fechaCierre | date:'short') : 'Abierta' }}</td>
+      <td>{{ caja.ingresosACaja | currency:'S/.' }}</td>
+      <td>{{ caja.saldoDigital | currency:'S/.' }}</td>
+    </tr>
+  </tbody>
+</table>

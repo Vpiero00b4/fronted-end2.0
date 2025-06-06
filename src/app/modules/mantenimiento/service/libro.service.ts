@@ -62,15 +62,12 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     return this.http.get<PaginatedResponse<LibroResponse>>(url);
   }
 
-<<<<<<< HEAD
 
 
 
 
-=======
   createFormData(libroData: FormData): Observable<LibroResponse> {
     return this.http.post<LibroResponse>(this.url_service, libroData);
   }
->>>>>>> 49da0a21442a54b7034707a854ffdcd8a6d0462b
   
 }

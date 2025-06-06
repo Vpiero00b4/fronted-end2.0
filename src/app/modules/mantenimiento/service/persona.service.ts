@@ -43,6 +43,5 @@ export class PersonaService extends CrudService<PersonaRequest, PersonaResponse>
       })
     );
   }
-
   // ...otros métodos y validaciones...
 }

@@ -6,105 +6,122 @@ import { PersonaResponse } from '../../../../../models/persona-response-models';
 import { PersonaRequest } from '../../../../../models/persona-request-models';
 import { UsuarioResponse } from '../../../../../models/usuario-login.response';
 
-
 @Component({
   selector: 'app-mant-persona-register',
   templateUrl: './mant-persona-register.component.html',
-  styleUrl: './mant-persona-register.component.css'
+  styleUrls: ['./mant-persona-register.component.css']
 })
-export class MantPersonaRegisterComponent implements OnInit{
-    //DECLARANDO VARIABLES DE ENTRADA 
-  @Input () title:string=""; 
-  @Input () persona:PersonaResponse= new PersonaResponse; 
-  @Input () usuario:UsuarioResponse= new UsuarioResponse; 
-  @Input () accion:number=0;
-    //DECLARANDO VARIABLES DE ENTRADA 
-  @Output() closeModalEmmit=new EventEmitter<boolean>();
+export class MantPersonaRegisterComponent implements OnInit {
+  @Input() title: string = "";
+  @Input() persona: PersonaResponse = new PersonaResponse();
+  @Input() usuario: UsuarioResponse = new UsuarioResponse();
+  @Input() accion: number = 0;
+  @Output() closeModalEmmit = new EventEmitter<boolean>();
+
+  myForm: FormGroup;
+  personaEnvio: PersonaRequest = new PersonaRequest();
+
+  constructor(
+    private fb: FormBuilder,
+    private _personaService: PersonaService
+  ) {
+    this.myForm = this.fb.group({
+      idPersona: [{ value: 0, disabled: true }, [Validators.required]],
+      tipoDocumento: [null, [Validators.required]],
+      numeroDocumento: [null, [Validators.required]],
+      nombre: [null, [Validators.required]],
+      apellidoPaterno: [null, [Validators.required]],
+      apellidoMaterno: [null, [Validators.required]],
+      correo: [null, [Validators.email]],
+      telefono: [null,
+      [
+
+        Validators.pattern(/^[0-9]*$/),
+        Validators.maxLength(9)
+      ]
+    ]    });
+  }
+  soloNumeros(event: KeyboardEvent): void {
+  const charCode = event.charCode;
+  if (charCode !== 0 && (charCode < 48 || charCode > 57)) {
+    event.preventDefault();
+  }
+}
 
 
-    //DECLARANDO VARIABLES INTERNAS
-    myForm:FormGroup;
-    personaEnvio: PersonaRequest=new PersonaRequest();
-    //DECLARANDO CONSTRUCTOR 
-    constructor (
-      private fb : FormBuilder,
-      private _personaService:PersonaService
-    )
-      {
-        //dasboard/mantenimiento/clientes
-        //nuestro formulario persona request
-        this.myForm=this.fb.group({
-          idPersona:[{value:0, disabled:true},[Validators.required]],
-          nombre: [null,[Validators.required]],
-          apellidoPaterno: [null,[Validators.required]],
-          apellidoMaterno: [null,[Validators.required]],
-          correo: [null,[Validators.required,Validators.email]],
-          tipoDocumento: [null,[Validators.required]],
-          numeroDocumento: [null,[Validators.required]],
-          telefono: [null,[Validators.required]]
-        })
-        
-      }
   ngOnInit(): void {
-    
-    console.log("title==>",this.title)
-    console.log("title==>",this.persona)
+    if (this.accion === AccionMantConst.editar && this.persona) {
+      this.myForm.patchValue(this.persona);
+    }
+  }
 
-    this.myForm.patchValue(this.persona);
-  } 
-   guardar(){
-    this.personaEnvio=this.myForm.getRawValue()
-    
+  buscarPorDocumento(): void {
+    const tipoDoc = this.myForm.get('tipoDocumento')?.value;
+    const numeroDoc = this.myForm.get('numeroDocumento')?.value;
 
-    switch(this.accion){
+    if (!tipoDoc || !numeroDoc) {
+      alert("Debe ingresar tipo y número de documento.");
+      return;
+    }
+
+    this._personaService.obtenerPersonaPorDocumento(tipoDoc, numeroDoc).subscribe({
+      next: (data: PersonaResponse) => {
+        if (!data || !data.nombre) {
+          alert("No se encontraron datos para el documento ingresado.");
+          return;
+        }
+
+        // Cargar valores en el formulario
+        this.myForm.patchValue({
+          idPersona: data.idPersona,
+          nombre: data.nombre,
+          apellidoPaterno: data.apellidoPaterno,
+          apellidoMaterno: data.apellidoMaterno,
+          correo: data.correo,
+          telefono: data.telefono
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        alert("Error al buscar persona. Verifique el documento.");
+      }
+    });
+  }
+
+  guardar(): void {
+    this.personaEnvio = this.myForm.getRawValue();
+
+    switch (this.accion) {
       case AccionMantConst.crear:
         this.crearRegistro();
-      break;
+        break;
       case AccionMantConst.editar:
         this.editarRegistro();
-
-      break;
-      case AccionMantConst.eliminar:
         break;
     }
-   }
-   crearRegistro(){
+  }
+
+  crearRegistro(): void {
     this._personaService.create(this.personaEnvio).subscribe({
-      next:(data:PersonaResponse)=>{
-      alert("creado de forma  coorerctae");
+      next: () => alert("Registro creado correctamente."),
+      error: () => {
+        alert("Error al crear el registro.");
       },
-      
-      error:()=>{
-      debugger;
-      alert("Ocurrio un error en crear");
-      },
-      complete:()=>{
-        this.cerrarModal(true);
-      }
-      
-    })
+      complete: () => this.cerrarModal(true)
+    });
+  }
 
-   }
-   editarRegistro(){
+  editarRegistro(): void {
     this._personaService.update(this.personaEnvio).subscribe({
-      next:(data:PersonaResponse)=>{
-
-      alert("Actualizado de forma correct");
+      next: () => alert("Registro actualizado correctamente."),
+      error: () => {
+        alert("Error al actualizar el registro.");
       },
-      error:()=>{
-      debugger;
-      alert("Ocurrio un error en editar");
-      },
-      complete:()=>{
-      this.cerrarModal(true);
-      }
-    })
-   }
-   cerrarModal(res:boolean)
+      complete: () => this.cerrarModal(true)
+    });
+  }
 
-   {
+  cerrarModal(res: boolean): void {
     this.closeModalEmmit.emit(res);
-
-   }
+  }
 }
- 

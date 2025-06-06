@@ -1,41 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import { PersonaService } from '../../../../service/persona.service';
-import { DetalleVentaService } from '../../../../service/detalleventa.service';
 import { VentasService } from '../../../../service/venta.service';
 import { SharedService } from '../../../../service/sharedservice';
+import { CartService } from '../../../../service/cart.service';
 import { PersonaResponse } from '../../../../../../models/persona-response-models';
 import { DetalleVentaResponse } from '../../../../../../models/detallle-venta-response.models';
-import { VentaResponse } from '../../../../../../models/ventas-response.models';
-import { VentaRequest } from '../../../../../../models/ventas-request.models';
-import { DatalleCarrito } from '../../../../../../models/detallecarrito.models';
-import { Cart } from '../../../../../../models/cart-request.models';
-import { CartService } from '../../../../service/cart.service';
-import { ItemCarrito } from '../../../../../../models/Itemcarrito-request.models';
 import { LibroRequest } from '../../../../../../models/libro-request.models';
+import { Cart } from '../../../../../../models/cart-request.models';
+import { VentaResponse } from '../../../../../../models/ventas-response.models';
+
 @Component({
   selector: 'app-mant-fventa-register',
   templateUrl: './mant-fventa-register.component.html',
   styleUrls: ['./mant-fventa-register.component.css']
 })
-export class FventaRegisterComponent implements OnInit {
+export class FventaRegisterComponent {
   personaForm: FormGroup;
   ventaForm: FormGroup;
   productosAgregados: DetalleVentaResponse[] = [];
   persona: PersonaResponse | null = null;
   showModal: boolean = false;
-  libros: any;
 
   constructor(
     private fb: FormBuilder,
     private personaService: PersonaService,
     private sharedService: SharedService,
     private ventasService: VentasService,
-    private cartService: CartService,
-    private detalleVentaService: DetalleVentaService,
-    private router: Router
+    private cartService: CartService
   ) {
     this.personaForm = this.fb.group({
       tipoDocumento: ['', Validators.required],
@@ -47,14 +39,6 @@ export class FventaRegisterComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.sharedService.productoAgregado$.subscribe(producto => {
-      if (producto) {
-        this.productosAgregados.push(producto);
-      }
-    });
-  }
-
   abrirModalProducto(): void {
     this.showModal = true;
   }
@@ -63,48 +47,35 @@ export class FventaRegisterComponent implements OnInit {
     this.showModal = false;
   }
 
-  buscarPersona(): void {
-    if (this.personaForm.invalid) {
-      return;
+  onProductoAgregado(producto: DetalleVentaResponse): void {
+    if (producto) {
+      this.productosAgregados.push(producto);
     }
+    this.cerrarModalProducto();
+  }
+
+  buscarPersona(): void {
+    if (this.personaForm.invalid) return;
+
     const tipoDocumento = this.personaForm.get('tipoDocumento')!.value;
     const numeroDocumento = this.personaForm.get('numeroDocumento')!.value;
-    
+
     this.personaService.obtenerPersonaPorDocumento(tipoDocumento, numeroDocumento).subscribe({
       next: (persona) => {
         this.persona = persona;
       },
-      error: (error) => {
-        console.error('Error al buscar la persona:', error);
+      error: () => {
         this.persona = null;
       }
     });
   }
 
-  agregarProducto(producto: DetalleVentaResponse): void {
-    const libroInfo = this.libros.find((libro: { idLibro: number; }) => libro.idLibro === producto.idLibro);
-
-    if (libroInfo) {
-      const productoExtendido: DetalleVentaResponse = {
-        ...producto,
-        isbn: libroInfo.isbn,
-        descripcion: libroInfo.descripcion,
-        idProveedor: libroInfo.idProveedor
-      };
-      this.productosAgregados.push(productoExtendido);
-    } else {
-      console.error('Información del libro no disponible');
-    }
-  }
-
   prepararObjetoVenta(): Cart {
     const items = this.productosAgregados.map(producto => {
-      // Construye el objeto libro completo con todas las propiedades requeridas
       const libro: LibroRequest = {
         idLibro: producto.idLibro,
-        titulo: producto.nombreProducto || '', // Suponiendo que estas propiedades existen en 'producto'
+        titulo: producto.nombreProducto || '',
         isbn: producto.isbn || '',
-        tamanno: producto.tamanno || '',
         descripcion: producto.descripcion || '',
         condicion: producto.condicion || '',
         impresion: producto.impresion || '',
@@ -113,63 +84,73 @@ export class FventaRegisterComponent implements OnInit {
         idSubcategoria: producto.idSubcategoria || 0,
         idTipoPapel: producto.idTipoPapel || 0,
         idProveedor: producto.idProveedor || 0,
-        imagen: producto.imagen || ''
-        // ... y así con el resto de propiedades requeridas
+
       };
-  
-      // Ahora 'libro' tiene todas las propiedades necesarias
+
       return {
-        libro: libro,
-        PrecioVenta: producto.precioUnit,
-        Cantidad: producto.cantidad
+        libro,
+        precioVenta: producto.precioUnit,
+        cantidad: producto.cantidad,
+        descuento: producto.descuento || 0
       };
     });
-  
-    const totalAmount = items.reduce((sum, item) => sum + item.PrecioVenta * item.Cantidad, 0);
-  
-    return { items, totalAmount };
-  }
-  
-  
-  sendCartData() {
-    const cartData: Cart = {
-      items: [
-        {
-          libro: {
-            idLibro: 2, // Suponiendo que este es el ID del libro que deseas agregar
-            titulo: "string",
-            isbn: "string",
-            tamanno: "string",
-            descripcion: "string",
-            condicion: "string",
-            impresion: "string",
-            tipoTapa: "string",
-            estado: true,
-            idSubcategoria: 0,
-            idTipoPapel: 0,
-            idProveedor: 0,
-            imagen:null
-          },
-          PrecioVenta: 0,
-          Cantidad: 0
-        }
-        // ... más items si es necesario
-      ],
-      totalAmount: 0
+
+    const totalAmount = items.reduce((sum, item) => sum + (item.precioVenta * item.cantidad) - (item.descuento || 0), 0);
+
+    return {
+      items,
+      totalAmount,
+      persona: {
+        idPersona: this.persona?.idPersona || 0,
+        nombre: this.persona?.nombre || '',
+        apellidoPaterno: this.persona?.apellidoPaterno || '',
+        apellidoMaterno: this.persona?.apellidoMaterno || '',
+        correo: this.persona?.correo || '',
+        tipoDocumento: this.persona?.tipoDocumento || '',
+        numeroDocumento: this.persona?.numeroDocumento || '',
+        telefono: this.persona?.telefono || '',
+        sub: ''
+      },
+      tipoComprobante: 'Boleta',
+      tipoPago: 'Efectivo'
     };
   }
-    registrarVenta(): void {
-      const cartData = this.prepararObjetoVenta();
-    
-      this.cartService.addToCart(cartData).subscribe({
-        next: (response) => {
-          console.log('Venta registrada con éxito', response);
-          // Aquí puedes agregar lógica adicional, como redirigir al usuario
-        },
-        error: (error) => {
-          console.error('Error al registrar la venta', error);
-          // Aquí puedes manejar errores, como mostrar un mensaje al usuario
-        }
-      });
+
+  registrarVenta(): void {
+    if (!this.persona?.idPersona) {
+      console.error('No hay cliente seleccionado o válido para la venta');
+      return;
     }
+
+    if (this.productosAgregados.length === 0) {
+      console.error('No hay productos agregados a la venta');
+      return;
+    }
+
+    const cartData = this.prepararObjetoVenta();
+
+    if (cartData.totalAmount <= 0) {
+      console.error('El total de la venta debe ser mayor que cero');
+      return;
+    }
+
+    this.cartService.addToCart(cartData).subscribe({
+      next: (response: VentaResponse) => {
+        alert(`Venta registrada con N° de comprobante: ${response.nroComprobante || 'N/D'}`);
+
+        this.limpiarFormulario();
+        this.sharedService.ventaRegistrada();
+      },
+      error: (error) => {
+        console.error('Error al registrar la venta', error);
+      }
+    });
   }
+
+  private limpiarFormulario(): void {
+    this.productosAgregados = [];
+    this.persona = null;
+    this.personaForm.reset();
+    this.ventaForm.patchValue({ fechaEmision: new Date().toISOString().split('T')[0] });
+  }
+}

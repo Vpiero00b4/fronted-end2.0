@@ -38,6 +38,8 @@ export class MantVentaListComponent implements OnInit {
 
   }
   listarVentas() {
+    console.log("🟡 Listando ventas sin filtros");
+    // this.isLoading = true;
     this._ventaService.getAll().subscribe({
       next: (data: VentaResponse[]) => {
         this.ventas = data;
@@ -54,6 +56,8 @@ export class MantVentaListComponent implements OnInit {
   escucharRegistroDeVentas() {
     this.subscription.add(this.sharedService.ventaRegistrada$.subscribe((registrada) => {
       if (registrada) {
+        this.fechaInicio = '';
+      this.fechaFin = '';
         this.listarVentas();
       }
     }));
@@ -118,6 +122,9 @@ export class MantVentaListComponent implements OnInit {
         // Hacer algo si es necesario
       },
     });
+  }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
 }

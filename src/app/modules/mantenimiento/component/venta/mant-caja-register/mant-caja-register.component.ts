@@ -7,47 +7,58 @@ import { CajaService } from '../../../service/caja.service';
   templateUrl: './mant-caja-register.component.html',
   styleUrls: ['./mant-caja-register.component.css']
 })
-export class MantCajaRegisterComponent  {
-  // Inicialización directa con un FormGroup vacío
-  updateForm: FormGroup = this.fb.group({
-    idCaja: [null],
-    saldoInicial: ['', [Validators.required, Validators.min(0)]],
-    fechaInicio: ['', Validators.required],
-    fechaFin: ['', Validators.required]
-  });
+export class MantCajaRegisterComponent implements OnInit {
+  updateForm: FormGroup;
+  listaCajas: any[] = [];
 
   constructor(private fb: FormBuilder, private cajaService: CajaService) {
     this.updateForm = this.fb.group({
-      saldoInicial: ['', [Validators.required, Validators.min(0)]],
-      saldoFinal: ['', [Validators.required, Validators.min(0)]],
-      fecha: ['', Validators.required],
-      retiroDeCaja: ['', Validators.min(0)],
-      ingresosACaja: ['', Validators.min(0)]
+      idCaja: [0],
+      saldoInicial: [null, [Validators.required, Validators.min(0)]],
+      saldoFinal: [0],
+      fecha: [this.getFechaActual(), Validators.required],
+      ingresosACaja: [0],
+      fechaCierre: [null],
+      saldoDigital: [0]
     });
   }
-  
+
+  ngOnInit(): void {
+    this.cargarCajas();
+  }
+
+  cargarCajas() {
+    this.cajaService.getCajas().subscribe({
+      next: (res) => this.listaCajas = res,
+      error: (err) => alert('Error al cargar las cajas: ' + err.message)
+    });
+  }
 
   crearCaja() {
     if (this.updateForm.valid) {
-      this.cajaService.createCaja(this.updateForm.value).subscribe({
-        next: (res) => {
+      const payload = this.updateForm.value;
+
+      this.cajaService.createCaja(payload).subscribe({
+        next: () => {
           alert('Caja creada con éxito!');
-          console.log(res);
+          this.cargarCajas();
+          this.updateForm.reset({
+            idCaja: 0,
+            saldoInicial: null,
+            saldoFinal: 0,
+            fecha: this.getFechaActual(),
+            ingresosACaja: 0,
+            fechaCierre: null,
+            saldoDigital: 0
+          });
         },
         error: (err) => alert('Error al crear la caja: ' + err.message)
       });
     }
   }
 
-  actualizarCaja() {
-    if (this.updateForm.valid) {
-      this.cajaService.updateCaja(this.updateForm.value).subscribe({
-        next: (res) => {
-          alert('Caja actualizada con éxito!');
-          console.log(res);
-        },
-        error: (err) => alert('Error al actualizar la caja: ' + err.message)
-      });
-    }
+  private getFechaActual(): string {
+    const ahora = new Date();
+    return ahora.toISOString().slice(0, 16); // compatible con datetime-local
   }
 }

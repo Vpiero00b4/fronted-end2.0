@@ -13,6 +13,8 @@
               <th>Nro Comprobante</th>
               <th>Fecha Venta</th>
               <th>Total Precio (S/.)</th>
+              <th>Tipo de Pago</th>
+
             </tr>
           </thead>
           <tbody>
@@ -22,6 +24,8 @@
               <td>{{ venta.nroComprobante }}</td>
               <td>{{ venta.fechaVenta }}</td>
               <td>{{ venta.totalPrecio | currency:'S/.' }}</td>
+              <td>{{ venta.tipoPago }}</td>
+
             </tr>
           </tbody>
         </table>
@@ -40,6 +44,8 @@
           <label for="retiro">Registrar retiro de caja:</label>
           <input type="number" id="retiro" name="retiro" [(ngModel)]="montoRetiro">
           <button class="btn btn-danger" (click)="registrarRetiroDeCaja(montoRetiro)">Registrar retiro</button>
+          <button class="btn btn-warning mt-3" (click)="cerrarCaja()">Cerrar caja</button>
+
         </div>
       </div>
     </div>

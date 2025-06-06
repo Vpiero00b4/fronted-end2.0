@@ -18,7 +18,7 @@ export const dominio = "https://localhost:7143/";
         DetalleVenta:dominio+"DetalleVenta/registrar-venta",
         caja: dominio + "Caja",
         subcategoria: dominio + "Subcategoria",
-
+        vacio: dominio + "", 
 
     };
     
