@@ -1,0 +1,63 @@
+<div class="dashboard-container">
+  <!-- Encabezado -->
+  <div class="dashboard-header">
+    <div class="header-icon">
+      <i class="bi bi-graph-up-arrow"></i>
+    </div>
+    <h1>TASA DE ROTACIÓN</h1>
+    <div class="header-divider"></div>
+  </div>
+
+  <!-- Tarjeta del gráfico -->
+  <div class="chart-card">
+    <div class="chart-header">
+      <div class="header-content">
+        <i class="bi bi-speedometer"></i>
+        <h2>Rotación de Productos</h2>
+      </div>
+      
+      <div class="chart-tabs">
+        <button class="tab-btn" 
+                [class.active]="vistaActual === 'tasa'" 
+                (click)="cambiarVista('tasa')">
+          <i class="bi bi-percent"></i> Por Tasa
+        </button>
+        <button class="tab-btn" 
+                [class.active]="vistaActual === 'total'" 
+                (click)="cambiarVista('total')">
+          <i class="bi bi-bar-chart"></i> Por Total
+        </button>
+      </div>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvas baseChart
+        [data]="rotacionChartData"
+        [options]="rotacionChartOptions"
+        [type]="rotacionChartType">
+      </canvas>
+    </div>
+
+    <!-- Controles -->
+    <div class="chart-controls">
+      <span class="info-text">
+        <i class="bi bi-info-circle"></i>
+        Mostrando {{productosRotacion.length}} productos
+      </span>
+      
+      <div class="control-buttons">
+        <button class="control-btn secondary" 
+                (click)="cargarDatosRotacion(true)"
+                *ngIf="offset > 0">
+          <i class="bi bi-arrow-counterclockwise"></i> Reiniciar
+        </button>
+        
+        <button class="control-btn primary" 
+                (click)="verMas()"
+                [disabled]="!hayMasDatos">
+          <i class="bi bi-arrow-right"></i> Siguientes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

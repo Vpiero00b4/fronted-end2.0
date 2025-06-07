@@ -7,6 +7,9 @@ import { TemplateFooterComponent } from './component/template-footer/template-fo
 import { TemplateSidebarComponent } from './component/template-sidebar/template-sidebar.component';
 import { TemplateComponent } from './component/template/template.component';
 import { SharedModule } from '../shared/shared.module';
+import { TasaRotacionComponent } from './component/dashboard/tasa-rotacion/tasa-rotacion.component';
+import { NgChartsModule } from 'ng2-charts';
+import { DashboardComponent } from './component/dashboard/dashboard.component';
 
 
 @NgModule({
@@ -14,13 +17,20 @@ import { SharedModule } from '../shared/shared.module';
     TemplateHeaderComponent,
     TemplateFooterComponent,
     TemplateSidebarComponent,
-    TemplateComponent
+    TemplateComponent,
+    TasaRotacionComponent,
+    DashboardComponent,
   ],
   imports: [
     CommonModule,
     TemplateRoutingModule,
-    SharedModule
-    
-  ]
+    SharedModule,
+    NgChartsModule, 
+  ],
+  exports: [
+  TasaRotacionComponent
+]
+
+
 })
 export class TemplateModule { }
