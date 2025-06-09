@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -38,13 +38,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AuthInterceptor } from './Services/auth.interceptor';
 import { DashboardComponent } from './modules/template/component/dashboard/dashboard.component';
+import { NgChartsModule } from 'ng2-charts';
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
-    
+
+
    
   ],
   imports: [
@@ -70,6 +72,8 @@ import { DashboardComponent } from './modules/template/component/dashboard/dashb
     MatToolbarModule,
     MatSidenavModule,
     ReactiveFormsModule,
+    NgChartsModule,
+    FormsModule,
     
     
     
