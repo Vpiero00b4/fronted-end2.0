@@ -30,4 +30,5 @@ export class LibroResponse {
     constructor() {
         this.imagen = null; // Asignamos null por defecto en el constructor
     }
+    [key: string]: any;
 }

@@ -7,11 +7,6 @@ import { Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { DetalleVentaResponse } from '../../../../../models/detallle-venta-response.models';
 import { SharedService } from '../../../service/sharedservice';
-//import { SharedModule } from '../../../../shared/shared.module';
-// @NgModule({
-//   declarations: [LibroModalComponentComponent],
-//   imports: [SharedModule],
-// })
 @Component({
   selector: 'app-libro-modal-component',
   templateUrl: './libro-modal-component.component.html',
@@ -57,8 +52,8 @@ export class LibroModalComponentComponent implements OnInit {
   
     // Gestiona la lógica de autocompletado y filtrado de libros con debouncing y distinción de cambios.
     this.libroForm.get('busqueda')?.valueChanges.pipe(
-      debounceTime(300), // Espera 300 ms después de la última pulsación de tecla para emitir el último valor.
-      distinctUntilChanged(), // Solo emite si el valor actual es diferente al último.
+      debounceTime(300), 
+      distinctUntilChanged(), 
       switchMap(value => this.buscarLibro(value)) // Filtra los libros en base a la entrada del usuario.
     ).subscribe(libros => {
       this.librosFiltrados = libros.map(libro => ({
@@ -86,17 +81,13 @@ export class LibroModalComponentComponent implements OnInit {
 
   buscarLibro(consulta: string): Observable<LibroResponse[]> {
     if (!consulta.trim()) {
-      // Si la consulta está vacía, devuelve una lista predeterminada (por ejemplo, los primeros 10 libros)
       return of(this.libros.slice(0, 10));
     } else {
-      // Filtra los libros cuyo título o ISBN contengan la consulta, sin importar mayúsculas o minúsculas
       const resultadosFiltrados = this.libros.filter(libro =>
         libro.titulo.toLowerCase().includes(consulta.toLowerCase()) ||
         libro.isbn.toLowerCase().includes(consulta.toLowerCase())
         
       ).slice(0, 10); // Limita los resultados a los primeros 10 para mejorar la performance y la usabilidad
-      // console.log("Consulta:", consulta.toLowerCase());
-      // this.libros.forEach(libro => console.log("Título:", libro.titulo.toLowerCase()));
       
       return of(resultadosFiltrados);
     }
@@ -160,13 +151,10 @@ export class LibroModalComponentComponent implements OnInit {
           imagen: formValue.imagen,
         };
   
-        // Emite el evento con el nuevo producto agregado para que el componente padre lo maneje
         this.libroAgregado.emit(detalleVenta);
   
-        // Mensaje de confirmación
         alert('Producto agregado correctamente para la venta.');
   
-        // Cierra el modal
         this.cerrar();
       } else {
         console.log("Libro no encontrado en la lista", formValue.idLibro);
@@ -179,15 +167,11 @@ export class LibroModalComponentComponent implements OnInit {
   
   limpiarBusqueda(): void {
     this.libroForm.patchValue({ busqueda: '' });
-    // No ocultar las opciones aquí, ya que esto interfiere con la visualización de la ruedita
   }
   mostrarOpcionesDeLibros(): void {
-    // Suponiendo que tienes una variable booleana que controla la visibilidad de las opciones
     this.mostrarOpciones = true;
   
-    // Además, si estás filtrando los libros basado en la entrada actual, querrás asegurarte
-    // de que la lista completa de opciones esté disponible cuando el campo obtiene el foco:
-    this.librosFiltrados = this.libros; // o alguna lógica para establecer los libros filtrados
+    this.librosFiltrados = this.libros; 
   }
   
 }

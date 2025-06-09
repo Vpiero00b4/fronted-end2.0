@@ -1,85 +1,149 @@
-<!-- Formulario de búsqueda de cliente -->
-<form [formGroup]="personaForm" (ngSubmit)="buscarPersona()" class="mb-3">
-  <div class="row">
-    <div class="col">
-      <label for="tipoDocumento" class="form-label">Tipo de Documento:</label>
-      <select formControlName="tipoDocumento" id="tipoDocumento" class="form-select">
-        <option value="DNI">DNI</option>
-        <option value="RUC">RUC</option>
-      </select>
-    </div>
-    <div class="col">
-      <label for="numeroDocumento" class="form-label">Número de Documento:</label>
-      <input formControlName="numeroDocumento" type="text" id="numeroDocumento" class="form-control">
-    </div>
-    <div class="col d-flex align-items-end">
-      <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">Buscar Cliente</button>
-    </div>
-  </div>
-</form>
+<div class="container py-4">
 
-<!-- Información del cliente -->
-<div *ngIf="persona" class="mb-3">
-  <h3>Información del Cliente</h3>
-  <div class="row">
-    <div class="col"><strong>Nombre:</strong> {{ persona.nombre }} {{ persona.apellidoPaterno }} {{ persona.apellidoMaterno }}</div>
-    <div class="col"><strong>Documento:</strong> {{ persona.tipoDocumento }} {{ persona.numeroDocumento }}</div>
-    <div class="col"><strong>Correo:</strong> {{ persona.correo }}</div>
-    <div class="col"><strong>Teléfono:</strong> {{ persona.telefono }}</div>
+  <div class="row g-4">
+    <!-- 🧍‍♂️ Sección Izquierda: Cliente y Venta -->
+    <div class="col-lg-5">
+
+      <!-- Búsqueda de Cliente -->
+      <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+          <h5 class="fw-semibold mb-3">Buscar Cliente</h5>
+          <form [formGroup]="personaForm" (ngSubmit)="buscarPersona()">
+            <div class="row g-3 align-items-end">
+              <div class="col-6">
+                <label for="tipoDocumento" class="form-label">Tipo Documento</label>
+                <select id="tipoDocumento" formControlName="tipoDocumento" class="form-select">
+                  <option value="DNI">DNI</option>
+                  <option value="RUC">RUC</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="numeroDocumento" class="form-label">N° Documento</label>
+                <input type="text" id="numeroDocumento" formControlName="numeroDocumento"
+                       class="form-control" placeholder="Ingrese número" autocomplete="off">
+              </div>
+              <div class="col-12 d-grid">
+                <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">
+                  <i class="fas fa-search me-1"></i> Buscar Cliente
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Datos del Cliente -->
+      <div *ngIf="persona" class="card shadow-sm border-0 rounded-4 mb-4 bg-light">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-3">Datos del Cliente</h6>
+          <div class="row g-2">
+            <div class="col-12"><strong>Nombre:</strong> {{ persona.nombre }} {{ persona.apellidoPaterno }} {{ persona.apellidoMaterno }}</div>
+            <div class="col-6"><strong>Documento:</strong> {{ persona.tipoDocumento }} {{ persona.numeroDocumento }}</div>
+            <div class="col-6"><strong>Teléfono:</strong> {{ persona.telefono }}</div>
+            <div class="col-12"><strong>Correo:</strong> {{ persona.correo }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos Venta -->
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+          <h6 class="fw-semibold mb-3">Datos de Venta</h6>
+          <form [formGroup]="ventaForm">
+            <div class="mb-3">
+              <label for="fechaEmision" class="form-label">Fecha Emisión</label>
+              <input type="date" id="fechaEmision" formControlName="fechaEmision" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Comprobante</label><br />
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" formControlName="tipoComprobante" id="boleta" value="Boleta" />
+                <label class="form-check-label" for="boleta">Boleta</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" formControlName="tipoComprobante" id="factura" value="Factura" />
+                <label class="form-check-label" for="factura">Factura</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Tipo de Pago</label><br />
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" formControlName="tipoPago" id="efectivo" value="Efectivo" />
+                <label class="form-check-label" for="efectivo">Efectivo</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" formControlName="tipoPago" id="digital" value="Digital" />
+                <label class="form-check-label" for="digital">Digital</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 📦 Sección Derecha: Productos -->
+    <div class="col-lg-7">
+
+      <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-semibold mb-0">Productos Agregados</h5>
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="abrirModalProducto()">
+              <i class="fas fa-plus me-1"></i> Agregar Producto
+            </button>
+          </div>
+
+          <div *ngIf="productosAgregados && productosAgregados.length > 0; else sinProductos">
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>ID</th>
+                    <th>ISBN</th>
+                    <th>Título</th>
+                    <th>Cant.</th>
+                    <th>P. Unit</th>
+                    <th>Importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of productosAgregados">
+                    <td>{{ p.idLibro }}</td>
+                    <td>{{ p.isbn }}</td>
+                    <td>{{ p.nombreProducto }}</td>
+                    <td>{{ p.cantidad }}</td>
+                    <td>{{ p.precioUnit | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>{{ (p.cantidad * p.precioUnit) | currency:'PEN':'symbol':'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-template #sinProductos>
+            <p class="text-muted fst-italic">No se han agregado productos aún.</p>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Botón Final -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-success btn-lg" [disabled]="ventaForm.invalid" (click)="registrarVenta()">
+
+          <i class="fas fa-check-circle me-1"></i> Registrar Venta 
+        </button>
+      </div>
+
+    </div>
   </div>
+
+  <!-- Modal de Libros -->
+  <app-libro-modal-component
+    *ngIf="showModal"
+    (libroAgregado)="onProductoAgregado($event)"
+    (cerrarModal)="cerrarModalProducto()">
+  </app-libro-modal-component>
+
 </div>
-
-<!-- Formulario de registro de venta -->
-<form [formGroup]="ventaForm" (ngSubmit)="registrarVenta()">
-  <div class="mb-3">
-    <label for="fechaEmision" class="form-label">Fecha de Emisión:</label>
-    <input formControlName="fechaEmision" type="date" id="fechaEmision" class="form-control">
-  </div>
-
-  <div class="mb-3">
-    <button type="button" class="btn btn-primary" (click)="abrirModalProducto()">Agregar Producto</button>
-  </div>
-
-  <!-- Productos agregados -->
-  <div *ngIf="productosAgregados && productosAgregados.length > 0" class="mb-3">
-    <h3>Productos Agregados</h3>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>ID Libro</th>
-          <th>ISBN</th>
-          <th>Título</th>
-          <th>Descripción</th>
-          <th>ID del Proveedor</th>
-          <th>Cantidad</th>
-          <th>Precio de Venta</th>
-          <th>Importe</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let producto of productosAgregados">
-          <td>{{ producto.idLibro }}</td>
-          <td>{{ producto.isbn }}</td>
-          <td>{{ producto.nombreProducto }}</td>
-          <td>{{ producto.descripcion }}</td>
-          <td>{{ producto.idProveedor }}</td>
-          <td>{{ producto.cantidad }}</td>
-          <td>{{ producto.precioUnit }}</td>
-          <td>{{ producto.cantidad * producto.precioUnit | number:'1.2-2' }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Botón para registrar la venta -->
-  <div class="mb-3">
-    <button type="submit" class="btn btn-success" [disabled]="ventaForm.invalid">Registrar Venta</button>
-  </div>
-</form>
-
-<!-- Modal para agregar productos -->
-<app-libro-modal-component
-  *ngIf="showModal"
-  (libroAgregado)="onProductoAgregado($event)"
-  (cerrarModal)="cerrarModalProducto()">
-</app-libro-modal-component>

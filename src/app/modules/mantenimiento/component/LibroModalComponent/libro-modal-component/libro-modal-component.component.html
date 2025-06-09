@@ -1,57 +1,71 @@
-<div class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
+<div class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-modal="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content shadow-lg rounded-4 border-0">
+      
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white rounded-top">
         <h5 class="modal-title" id="modalLabel">Agregar Libro</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cerrar()">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" (click)="cerrar()"></button>
       </div>
+
+      <!-- Body -->
       <div class="modal-body">
-        <!-- Asegúrate de que solo haya un atributo formGroup para el formulario -->
         <form [formGroup]="libroForm" (ngSubmit)="agregarLibro()">
-          <div class="form-group">
-            <label for="busquedaLibro">Buscar Libro por ISBN o Título:</label>
-            <input type="text" class="form-control" formControlName="busqueda" id="busquedaLibro"
-            placeholder="Ingrese el título"
-            (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" [attr.autocomplete]="'off'">
-     
-          </div>
           
-          <!-- Sección de opciones de autocompletado -->
-          <div class="autocomplete-options" *ngIf="mostrarOpciones && librosFiltrados.length > 0">
-            <div class="list-group" style="max-height: 200px; overflow-y: auto;">
-              <a *ngFor="let libro of librosFiltrados" 
-                 (click)="seleccionarLibro(libro.idLibro); mostrarOpciones=false" 
-                 class="list-group-item list-group-item-action">
+          <!-- Buscador -->
+          <div class="mb-3">
+            <label for="busquedaLibro" class="form-label">Buscar por ISBN o Título</label>
+            <input
+              type="text"
+              id="busquedaLibro"
+              class="form-control"
+              formControlName="busqueda"
+              placeholder="Ej. Clean Code, 9780132350884"
+              autocomplete="off"
+              (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
+          </div>
+
+          <!-- Autocompletado -->
+          <div *ngIf="mostrarOpciones && librosFiltrados.length > 0" class="border rounded p-2 mb-3 bg-light shadow-sm" style="max-height: 200px; overflow-y: auto;" role="listbox">
+            <div class="list-group">
+              <button
+                *ngFor="let libro of librosFiltrados"
+                type="button"
+                (click)="seleccionarLibro(libro.idLibro); mostrarOpciones=false"
+                class="list-group-item list-group-item-action">
                 {{ libro.displayText }}
-              </a>
+              </button>
             </div>
           </div>
+
+          <!-- Datos del Libro -->
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="cantidad" class="form-label">Cantidad</label>
+              <input type="number" id="cantidad" class="form-control" formControlName="cantidad" min="1" />
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label for="precioVenta" class="form-label">Precio Unitario (S/)</label>
+              <input type="number" id="precioVenta" class="form-control" formControlName="precioVenta" readonly />
+            </div>
+
+            <div class="col-md-4 mb-3">
+              <label for="importe" class="form-label">Importe Total (S/)</label>
+              <input type="number" id="importe" class="form-control" formControlName="importe" readonly />
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-outline-secondary" (click)="cerrar()">Cancelar</button>
+            <button type="submit" class="btn btn-success" [disabled]="!libroForm.valid">
+              <i class="fas fa-plus-circle"></i> Agregar Libro
+            </button>
+          </div>
           
-          <!-- Resto de campos del formulario -->
-          <div class="form-group">
-            <label for="cantidad">Cantidad:</label>
-            <input type="number" class="form-control" formControlName="cantidad" id="cantidad" min="1">
-          </div>
-
-          <div class="form-group">
-            <label for="precioVenta">Precio Venta:</label>
-            <input type="number" class="form-control" formControlName="precioVenta" id="precioVenta" readonly>
-          </div>
-
-          <div class="form-group">
-            <label for="importe">Total Importe:</label>
-            <input type="number" class="form-control" formControlName="importe" id="importe" readonly>
-          </div>
-
-          <!-- Botón de cerrar y agregar dentro del mismo formulario -->
-          <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary mr-5" data-dismiss="modal" (click)="cerrar()">Cerrar</button>
-            <button type="submit" class="btn btn-primary">Agregar</button>
-          </div>
         </form>
       </div>
-    </div>  
-  </div>    
+    </div>
+  </div>
 </div>

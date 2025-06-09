@@ -49,5 +49,10 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
     const url = `${UrlConstants.venta}/ObtenerPorFechas`;
     const params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
     return this.http.get<VentaResponse[]>(url, { params });
+    
   }
+  getVentas(): Observable<VentaResponse[]> {
+  return this.http.get<VentaResponse[]>(UrlConstants.venta);
+}
+
 }

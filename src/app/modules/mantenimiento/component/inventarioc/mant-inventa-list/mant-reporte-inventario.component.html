@@ -1,75 +1,93 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
- <div class="container">
-    <!-- Formulario para seleccionar la sucursal y el stock -->
-    <div class="row mb-3">
-      <!-- Add your selection form here if needed -->
+<div class="container py-4">
+
+  <!-- ✅ Selector de Columnas -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body">
+      <h5 class="fw-semibold mb-3">Columnas a Mostrar</h5>
+      <form class="d-flex flex-wrap gap-3">
+        <label class="form-check-label" *ngFor="let col of columnasDisponibles">
+          <input type="checkbox"
+                 class="form-check-input me-1"
+                 [(ngModel)]="mostrarColumnas[col.key]"
+                 name="{{col.key}}"
+                 [ngModelOptions]="{standalone: true}">
+          {{ col.label }}
+        </label>
+      </form>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <div *ngIf="libros && libros.length > 0" class="table-responsive">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>ID Libro</th>
-                <th>Nombre del libro</th>
-                <th>Precio de venta</th>
-                <th>Porcentaje de utilidad</th>
-                <th>ID Precios</th>
-                <th>ISBN</th>
-                <th>Tamaño</th>
-                <th>Descripción</th>
-                <th>Condición</th>
-                <th>Impresión</th>
-                <th>Estado</th>
-                <th>ID Tipo de Papel</th>
-                <th>ID Proveedor</th>
-                <th>Stock</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let libro of libros">
-                <td>{{ libro.idLibro }}</td>
-                <td>{{ libro.titulo }}</td>
-                <td>{{ libro.precioVenta }}</td>
-                <td>{{ libro.porcUtilidad }}</td>
-                <td>{{ libro.idPrecios }}</td>
-                <td>{{ libro.isbn }}</td>
-                <td>{{ libro.tamanno }}</td>
-                <td>{{ libro.descripcion }}</td>
-                <td>{{ libro.condicion }}</td>
-                <td>{{ libro.impresion }}</td>
-                <td>{{ libro.estado ? 'Disponible' : 'No disponible' }}</td>
-                <td>{{ libro.idTipoPapel}}</td>
-                <td>{{ libro.idProveedor }}</td>
-                <td>
-                  <div *ngIf="!libro.editandoStock" class="d-flex align-items-center">
-                    {{ libro.stock }}
-                    <button class="btn btn-primary btn-sm ms-2 p-1" style="font-size: 0.8rem;" (click)="toggleEditStock(libro)">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                  </div>
-                  <div *ngIf="libro.editandoStock" class="d-flex align-items-center">
-                    <input type="number" class="form-control form-control-sm me-2" [(ngModel)]="libro.stockTemporal" [ngModelOptions]="{standalone: true}" style="min-width: 50px;">
-                    <button class="btn btn-success btn-sm p-1" style="font-size: 0.8rem;" (click)="saveStock(libro)">
-                      <i class="fas fa-save"></i>
-                    </button>
-                  </div>
-                </td>
-                
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div *ngIf="!libros || libros.length === 0">
-          <p>No se encontraron libros.</p>
-        </div>
+  </div>
+
+  <!-- ✅ Tabla de Libros -->
+  <div class="card shadow-sm border-0 rounded-4 mb-4">
+    <div class="card-body">
+      <div *ngIf="libros && libros.length > 0" class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead class="table-light">
+            <tr>
+              <th *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]">
+                {{ col.label }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let libro of libros">
+              <td *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]">
+                <ng-container [ngSwitch]="col.key">
+
+                  <!-- Columna editable: Stock -->
+                  <ng-container *ngSwitchCase="'stock'">
+                    <div *ngIf="!libro.editandoStock" class="d-flex align-items-center">
+                      {{ libro.stock }}
+                      <button class="btn btn-outline-primary btn-sm ms-2 p-1" style="font-size: 0.75rem;" (click)="toggleEditStock(libro)">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="libro.editandoStock" class="d-flex align-items-center">
+                      <input type="number"
+                             class="form-control form-control-sm me-2"
+                             [(ngModel)]="libro.stockTemporal"
+                             [ngModelOptions]="{standalone: true}"
+                             style="max-width: 80px;">
+                      <button class="btn btn-success btn-sm p-1" style="font-size: 0.75rem;" (click)="saveStock(libro)">
+                        <i class="fas fa-save"></i>
+                      </button>
+                    </div>
+                  </ng-container>
+
+                  <!-- Columnas normales -->
+                  <ng-container *ngSwitchDefault>
+                    {{ libro[col.key] }}
+                  </ng-container>
+
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 🛈 Sin resultados -->
+      <div *ngIf="!libros || libros.length === 0" class="text-muted fst-italic">
+        <p>No se encontraron libros.</p>
       </div>
     </div>
-
-    <div *ngIf="totalPages > 0">
-      <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Anterior</button>
-      <span>Página {{ currentPage }} de {{ totalPages }}</span>
-      <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">Siguiente</button>
-    </div>
-    
   </div>
+
+  <!-- ✅ Paginación -->
+  <div *ngIf="totalPages > 0" class="d-flex justify-content-center align-items-center gap-3">
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="onPageChange(currentPage - 1)"
+            [disabled]="currentPage === 1">
+      <i class="fas fa-chevron-left"></i> Anterior
+    </button>
+
+    <span class="fw-medium">Página {{ currentPage }} de {{ totalPages }}</span>
+
+    <button class="btn btn-outline-secondary btn-sm"
+            (click)="onPageChange(currentPage + 1)"
+            [disabled]="currentPage === totalPages">
+      Siguiente <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+</div>

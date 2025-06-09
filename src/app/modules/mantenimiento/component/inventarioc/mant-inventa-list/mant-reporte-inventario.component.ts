@@ -18,6 +18,24 @@ export class MantReporteInventarioComponent implements OnInit {
   totalPages: number = 0;
   totalItems: number = 0;
   stock:number=0;
+  columnasDisponibles = [
+  { key: 'idLibro', label: 'ID Libro' },
+  { key: 'titulo', label: 'Nombre del libro' },
+  { key: 'precioVenta', label: 'Precio de venta' },
+  { key: 'porcUtilidad', label: '% Utilidad' },
+  { key: 'idPrecios', label: 'ID Precios' },
+  { key: 'isbn', label: 'ISBN' },
+  { key: 'tamanno', label: 'Tamaño' },
+  { key: 'descripcion', label: 'Descripción' },
+  { key: 'condicion', label: 'Condición' },
+  { key: 'impresion', label: 'Impresión' },
+  { key: 'estado', label: 'Estado' },
+  { key: 'idTipoPapel', label: 'ID Tipo de Papel' },
+  { key: 'idProveedor', label: 'ID Proveedor' },
+  { key: 'stock', label: 'Stock' }
+  
+];
+mostrarColumnas: { [key: string]: boolean } = {};
 
 
   constructor(private libroService: LibroService,
@@ -26,6 +44,9 @@ export class MantReporteInventarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadInventoryData(this.currentPage, 10);
+    this.columnasDisponibles.forEach(c => {
+    this.mostrarColumnas[c.key] = ['idLibro', 'titulo', 'precioVenta', 'stock'].includes(c.key);
+  });
   }
 
   loadInventoryData(pageIndex: number, pageSize: number): void {
@@ -105,7 +126,7 @@ export class MantReporteInventarioComponent implements OnInit {
       libro.stockTemporal = libro.stock;
     }
   }
-  
+
   saveStock(libro: LibroResponse): void {
     if (libro.stockTemporal != null) {
       this.updateKardex(libro.idLibro, libro.stockTemporal);
@@ -114,9 +135,6 @@ export class MantReporteInventarioComponent implements OnInit {
     libro.editandoStock = false; // Dejamos de editar
   }
   
-  
-
-
   
   onPageChange(newPageIndex: number): void {
     this.currentPage = newPageIndex;

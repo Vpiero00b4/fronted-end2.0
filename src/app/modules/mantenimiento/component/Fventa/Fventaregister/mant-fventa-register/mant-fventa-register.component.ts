@@ -35,8 +35,9 @@ export class FventaRegisterComponent {
     });
 
     this.ventaForm = this.fb.group({
-      fechaEmision: [new Date().toISOString().split('T')[0], Validators.required]
-    });
+      fechaEmision: [new Date().toISOString().split('T')[0], Validators.required],
+      tipoComprobante: ['Boleta', Validators.required],  // valor por defecto
+      tipoPago: ['Efectivo', Validators.required]     });
   }
 
   abrirModalProducto(): void {
@@ -70,82 +71,89 @@ export class FventaRegisterComponent {
     });
   }
 
-  prepararObjetoVenta(): Cart {
-    const items = this.productosAgregados.map(producto => {
-      const libro: LibroRequest = {
-        idLibro: producto.idLibro,
-        titulo: producto.nombreProducto || '',
-        isbn: producto.isbn || '',
-        descripcion: producto.descripcion || '',
-        condicion: producto.condicion || '',
-        impresion: producto.impresion || '',
-        tipoTapa: producto.tipoTapa || '',
-        estado: producto.estado || false,
-        idSubcategoria: producto.idSubcategoria || 0,
-        idTipoPapel: producto.idTipoPapel || 0,
-        idProveedor: producto.idProveedor || 0,
-
-      };
-
-      return {
-        libro,
-        precioVenta: producto.precioUnit,
-        cantidad: producto.cantidad,
-        descuento: producto.descuento || 0
-      };
-    });
-
-    const totalAmount = items.reduce((sum, item) => sum + (item.precioVenta * item.cantidad) - (item.descuento || 0), 0);
+prepararObjetoVenta(): Cart {
+  const items = this.productosAgregados.map(producto => {
+    const libro: LibroRequest = {
+      idLibro: producto.idLibro,
+      titulo: producto.nombreProducto || '',
+      isbn: producto.isbn || '',
+      descripcion: producto.descripcion || '',
+      condicion: producto.condicion || '',
+      impresion: producto.impresion || '',
+      tipoTapa: producto.tipoTapa || '',
+      estado: producto.estado || false,
+      idSubcategoria: producto.idSubcategoria || 0,
+      idTipoPapel: producto.idTipoPapel || 0,
+      idProveedor: producto.idProveedor || 0,
+    };
 
     return {
-      items,
-      totalAmount,
-      persona: {
-        idPersona: this.persona?.idPersona || 0,
-        nombre: this.persona?.nombre || '',
-        apellidoPaterno: this.persona?.apellidoPaterno || '',
-        apellidoMaterno: this.persona?.apellidoMaterno || '',
-        correo: this.persona?.correo || '',
-        tipoDocumento: this.persona?.tipoDocumento || '',
-        numeroDocumento: this.persona?.numeroDocumento || '',
-        telefono: this.persona?.telefono || '',
-        sub: ''
-      },
-      tipoComprobante: 'Boleta',
-      tipoPago: 'Efectivo'
+      libro,
+      precioVenta: producto.precioUnit,
+      cantidad: producto.cantidad,
+      descuento: producto.descuento || 0
     };
+  });
+
+  const totalAmount = items.reduce((sum, item) => sum + (item.precioVenta * item.cantidad) - (item.descuento || 0), 0);
+
+  const personaParaVenta = this.persona ? {
+    idPersona: this.persona.idPersona,
+    nombre: this.persona.nombre,
+    apellidoPaterno: this.persona.apellidoPaterno,
+    apellidoMaterno: this.persona.apellidoMaterno,
+    correo: this.persona.correo,
+    tipoDocumento: this.persona.tipoDocumento,
+    numeroDocumento: this.persona.numeroDocumento,
+    telefono: this.persona.telefono,
+    sub: ''
+  } : {
+    idPersona: 0,
+    nombre: 'Cliente',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    correo: '',
+    tipoDocumento: '',
+    numeroDocumento: '',
+    telefono: '',
+    sub: ''
+  };
+
+  return {
+    items,
+    totalAmount,
+    persona: personaParaVenta,
+    tipoComprobante: this.ventaForm.get('tipoComprobante')!.value,
+    tipoPago: this.ventaForm.get('tipoPago')!.value
+  };
+}
+
+registrarVenta(): void {
+  // Eliminamos la validación de persona
+
+  if (this.productosAgregados.length === 0) {
+    console.error('No hay productos agregados a la venta');
+    return;
   }
 
-  registrarVenta(): void {
-    if (!this.persona?.idPersona) {
-      console.error('No hay cliente seleccionado o válido para la venta');
-      return;
-    }
+  const cartData = this.prepararObjetoVenta();
 
-    if (this.productosAgregados.length === 0) {
-      console.error('No hay productos agregados a la venta');
-      return;
-    }
-
-    const cartData = this.prepararObjetoVenta();
-
-    if (cartData.totalAmount <= 0) {
-      console.error('El total de la venta debe ser mayor que cero');
-      return;
-    }
-
-    this.cartService.addToCart(cartData).subscribe({
-      next: (response: VentaResponse) => {
-        alert(`Venta registrada con N° de comprobante: ${response.nroComprobante || 'N/D'}`);
-
-        this.limpiarFormulario();
-        this.sharedService.ventaRegistrada();
-      },
-      error: (error) => {
-        console.error('Error al registrar la venta', error);
-      }
-    });
+  if (cartData.totalAmount <= 0) {
+    console.error('El total de la venta debe ser mayor que cero');
+    return;
   }
+
+  this.cartService.addToCart(cartData).subscribe({
+    next: (response: VentaResponse) => {
+      alert(`Venta registrada con N° de comprobante: ${response.nroComprobante || 'N/D'}`);
+      this.limpiarFormulario();
+      this.sharedService.ventaRegistrada();
+    },
+    error: (error) => {
+      console.error('Error al registrar la venta', error);
+    }
+  });
+}
 
   private limpiarFormulario(): void {
     this.productosAgregados = [];

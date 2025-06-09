@@ -1,3 +1,5 @@
+import { DetalleVentaRequest } from "./detallle-venta-request.models";
+
 export class VentaResponse {
   idVentas: number = 0;
   totalPrecio: number = 0;
@@ -8,4 +10,6 @@ export class VentaResponse {
   idUsuario: number = 0;
   idCaja: number = 0;
   tipoPago: string = "";
+  detallesVenta: DetalleVentaRequest[] = [];
+  
 }

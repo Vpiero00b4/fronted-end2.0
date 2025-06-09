@@ -1,49 +1,66 @@
-<form [formGroup]="updateForm" class="container mt-4">
-  <h4>Abrir nueva caja</h4>
+<div class="container mt-4">
 
-  <div class="mb-3">
-    <label for="saldoInicial" class="form-label">Saldo Inicial</label>
-    <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control" placeholder="Saldo Inicial">
+  <div class="card shadow-sm rounded mb-4">
+    <div class="card-body">
+      <h4 class="card-title mb-4">Abrir nueva caja</h4>
+
+      <form [formGroup]="updateForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="saldoInicial" class="form-label">Saldo Inicial</label>
+            <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control" placeholder="Saldo Inicial">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="fecha" class="form-label">Fecha de Inicio</label>
+            <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="ingresosACaja" class="form-label">Ingresos a Caja</label>
+            <input formControlName="ingresosACaja" type="number" id="ingresosACaja" class="form-control" placeholder="Ingresos a Caja">
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <button type="button" class="btn btn-success" (click)="crearCaja()" [disabled]="!updateForm.valid">
+            Crear Caja
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="fecha" class="form-label">Fecha de Inicio</label>
-    <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control">
+  <div class="card shadow-sm rounded">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Historial de Cajas</h5>
+      <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Saldo Inicial</th>
+              <th>Saldo Final</th>
+              <th>Fecha</th>
+              <th>Fecha Cierre</th>
+              <th>Ingresos</th>
+              <th>Saldo Digital</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let caja of listaCajas">
+              <td>{{ caja.idCaja }}</td>
+              <td>{{ caja.saldoInicial | currency:'S/.' }}</td>
+              <td>{{ caja.saldoFinal | currency:'S/.' }}</td>
+              <td>{{ caja.fecha | date:'short' }}</td>
+              <td>{{ caja.fechaCierre ? (caja.fechaCierre | date:'short') : 'Abierta' }}</td>
+              <td>{{ caja.ingresosACaja | currency:'S/.' }}</td>
+              <td>{{ caja.saldoDigital | currency:'S/.' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <div class="mb-3">
-    <label for="ingresosACaja" class="form-label">Ingresos a Caja</label>
-    <input formControlName="ingresosACaja" type="number" id="ingresosACaja" class="form-control" placeholder="Ingresos a Caja">
-  </div>
-
-  <button type="button" class="btn btn-success" (click)="crearCaja()" [disabled]="!updateForm.valid">
-    Crear Caja
-  </button>
-</form>
-
-<hr>
-
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Saldo Inicial</th>
-      <th>Saldo Final</th>
-      <th>Fecha</th>
-      <th>Fecha Cierre</th>
-      <th>Ingresos</th>
-      <th>Saldo Digital</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let caja of listaCajas">
-      <td>{{ caja.idCaja }}</td>
-      <td>{{ caja.saldoInicial | currency:'S/.' }}</td>
-      <td>{{ caja.saldoFinal | currency:'S/.' }}</td>
-      <td>{{ caja.fecha | date:'short' }}</td>
-      <td>{{ caja.fechaCierre ? (caja.fechaCierre | date:'short') : 'Abierta' }}</td>
-      <td>{{ caja.ingresosACaja | currency:'S/.' }}</td>
-      <td>{{ caja.saldoDigital | currency:'S/.' }}</td>
-    </tr>
-  </tbody>
-</table>
+</div>

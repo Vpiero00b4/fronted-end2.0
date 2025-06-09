@@ -101,55 +101,55 @@ export class MantLibroRegisterComponent implements OnInit{
     }
   }
   
-  crearRegistro(){
-    debugger;
-    this._libroService.create(this.libroEnvio).subscribe({
-      next: (data: LibroResponse) => {
-        alert("creado de forma  correcta");
-      },
-
-      error: () => {
-        
-        alert("Ocurrio un error en crear libro");
-      },
-      complete: () => {
-        this.cerrarModal(true);
-      }
-
-    })
-
-  }
-  editarRegistro(){
-    this._libroService.update(this.libroEnvio).subscribe({
-      next: (data: LibroResponse) => {
-
-        alert("Actualizado de forma correct");
-      },
-      error: () => {
-        
-        alert("Ocurrio un error en editar");
-      },
-      complete: () => {
-        this.cerrarModal(true);
-      }
-    })
-  }
-  cerrarModal(res: boolean)
-
-  {
-    this.closeModalEmmit.emit(res);
-
-  }
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length) {
-        const file = input.files[0];
-        this.myFormL.get('imagen')!.setValue(file);
-    } else {
-        console.error("No file selected or file input is invalid.");
+crearRegistro() {
+  debugger;
+  this._libroService.create(this.libroEnvio).subscribe({
+    next: (data: LibroResponse) => {
+      alert("Creado de forma correcta");
+    },
+    error: () => {
+      alert("Ocurrió un error al crear libro");
+    },
+    complete: () => {
+      this.cerrarModal();  // Sin parámetro
     }
+  });
 }
 
-  
-  
+editarRegistro() {
+  this._libroService.update(this.libroEnvio).subscribe({
+    next: (data: LibroResponse) => {
+      alert("Actualizado de forma correcta");
+    },
+    error: () => {
+      alert("Ocurrió un error al editar");
+    },
+    complete: () => {
+      this.cerrarModal();  // Sin parámetro
+    }
+  });
+}
+
+cerrarModal() {
+  // Implementa el cierre real del modal aquí, por ej:
+  // this.bsModalRef?.hide(); // si usas ngx-bootstrap
+  // o
+  // this.activeModal?.dismiss();
+  // o el método que uses para cerrar modal
+  console.log("Cerrar modal llamado");
+}
+
+onFileSelected(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    const file = input.files[0];
+    // Si el formControl espera un string, no un File, maneja el file aparte.
+    // Por ejemplo, guardalo en una variable local para luego subirlo.
+    // Si querés setearlo igual, asegurate que el tipo de formControl acepte File:
+    this.myFormL.get('imagen')!.setValue(file);
+  } else {
+    console.error("No se seleccionó archivo o input inválido");
+  }
+}
+
 }

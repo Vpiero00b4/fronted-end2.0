@@ -1,125 +1,137 @@
-html:  <div class="modal-header">
-    <h4 class="modal-title pull-left">{{ title }}</h4>
-    <!-- Agrega el atributo (click) para cerrar el modal -->
-  </div>
-  
-  <div class="modal-body">
-    <form [formGroup]="myFormL">
-        <div class="row">
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="idLibro">idLibro</label>
-                    <input formControlName="idLibro" type="text" class="form-control" id="idLibro" placeholder="Ingrese el IdLibro">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="titulo">titulo</label>
-                    <input formControlName="titulo" type="text" class="form-control" id="titulo" placeholder="Ingrese el titulo">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="isbn">isbn P</label>
-                    <input formControlName="isbn" type="text" class="form-control" id="isbn" placeholder="Ingrese el Isbn">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="tamanno">tamanno M</label>
-                    <input formControlName="tamanno" type="text" class="form-control" id="tamanno" placeholder="Ingrese el Tamanno materno">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="descripcion">descripcion</label>
-                    <input formControlName="descripcion" type="text" class="form-control" id="descripcion" placeholder="Ingrese el Descripcion">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="condicion">condicion</label>
-                    <select formControlName="condicion" class="form-control" id="condicion">
-                        <option value="Nuevo">Nuevo</option>
-                        <option value="Usado">Usado</option>
-                    </select>
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="impresion">Número de Impresion</label>
-                    <input formControlName="impresion" type="text" class="form-control" id="impresion" placeholder="Ingrese el número de documento">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="tipoTapa">tipoTapa</label>
-                    <select formControlName="tipoTapa" class="form-control" id="tipoTapa">
-                        <option value="TapaDura">TapaDura</option>
-                        <option value="TapaBlanda">TapaBlanda</option>
-                    </select>
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="estado">estado</label>
-                    <select formControlName="estado" class="form-control" id="estado">
-                        <option value=true>Nuevo</option>
-                        <option value=false>Usado</option>
-                    </select>
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="idSubcategoria">idSubcategoria</label>
-                    <input formControlName="idSubcategoria" type="text" class="form-control" id="idSubcategoria" placeholder="Ingrese el número de Estado">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="idTipoPapel">iIdTipoPapel</label>
-                    <select formControlName="idTipoPapel" class="form-control" id="iIdTipoPapel">
-                        <option value=1>Bond</option>
-                        <option value=2>Periodico</option>
-                    </select>
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="idProveedor">id_Proveedor</label>
-                    <input formControlName="idProveedor" type="text" class="form-control" id="idProveedor" placeholder="Ingrese el número de Estado">
-                </div>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <div class="form-group">
-                    <label for="imagen">Imagen</label>
-                    <input formControlName="imagen" type="text" class="form-control" id="imagen" placeholder="Ingrese una Imagen" readonly>
-                    <!-- Input de tipo file para permitir al usuario seleccionar una imagen de su dispositivo -->
-                    <input type="file" (change)="onFileSelected($event)" class="form-control mt-2">
-                </div>
-            </div>
-  
-            <!-- Botones para GUARDAR y CANCELAR -->
-            <div class="col-md-6 col-sm-12 mt-3">
-                <!-- Asegúrate[disabled]="!myFormL.valid" de que la función se llame correctamente en el evento (click) -->
-                <button  (click)="guardarlibro()" class="btn-block btn btn-primary btn-sm">GUARDAR</button>
-            </div>
-  
-            <div class="col-md-6 col-sm-12 mt-3">
-                <button class="btn-block btn btn-danger btn-sm">CANCELAR</button>
-            </div>
+<div class="modal-header bg-light">
+  <h4 class="modal-title">{{ title }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="cerrarModal()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <form [formGroup]="myFormL">
+    <div class="row g-3">
+
+      <!-- idLibro -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="idLibro">ID del Libro</label>
+          <input formControlName="idLibro" type="text" class="form-control" id="idLibro" placeholder="Ingrese el ID del libro">
         </div>
-    </form>
-  </div>
+      </div>
+
+      <!-- Título -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="titulo">Título</label>
+          <input formControlName="titulo" type="text" class="form-control" id="titulo" placeholder="Ingrese el título">
+        </div>
+      </div>
+
+      <!-- ISBN -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="isbn">ISBN</label>
+          <input formControlName="isbn" type="text" class="form-control" id="isbn" placeholder="Ingrese el ISBN">
+        </div>
+      </div>
+
+      <!-- Tamaño -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="tamanno">Tamaño</label>
+          <input formControlName="tamanno" type="text" class="form-control" id="tamanno" placeholder="Ingrese el tamaño">
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <input formControlName="descripcion" type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción">
+        </div>
+      </div>
+
+      <!-- Condición -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="condicion">Condición</label>
+          <select formControlName="condicion" class="form-control" id="condicion">
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Número de impresión -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="impresion">Nº de Impresión</label>
+          <input formControlName="impresion" type="text" class="form-control" id="impresion" placeholder="Ingrese el número de impresión">
+        </div>
+      </div>
+
+      <!-- Tipo de Tapa -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="tipoTapa">Tipo de Tapa</label>
+          <select formControlName="tipoTapa" class="form-control" id="tipoTapa">
+            <option value="TapaDura">Tapa Dura</option>
+            <option value="TapaBlanda">Tapa Blanda</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Estado -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <select formControlName="estado" class="form-control" id="estado">
+            <option [value]="true">Nuevo</option>
+            <option [value]="false">Usado</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Subcategoría -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="idSubcategoria">ID Subcategoría</label>
+          <input formControlName="idSubcategoria" type="text" class="form-control" id="idSubcategoria" placeholder="Ingrese el ID de subcategoría">
+        </div>
+      </div>
+
+      <!-- Tipo de Papel -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="idTipoPapel">Tipo de Papel</label>
+          <select formControlName="idTipoPapel" class="form-control" id="idTipoPapel">
+            <option value="1">Bond</option>
+            <option value="2">Periódico</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Proveedor -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="idProveedor">ID Proveedor</label>
+          <input formControlName="idProveedor" type="text" class="form-control" id="idProveedor" placeholder="Ingrese el ID del proveedor">
+        </div>
+      </div>
+
+      <!-- Imagen -->
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="imagen">Imagen</label>
+          <input formControlName="imagen" type="text" class="form-control" id="imagen" placeholder="Nombre de la imagen" readonly>
+          <input type="file" (change)="onFileSelected($event)" class="form-control mt-2">
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!myFormL.valid" (click)="guardarlibro()">Guardar</button>
+      </div>
+
+    </div>
+  </form>
+</div>
