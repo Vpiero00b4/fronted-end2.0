@@ -28,7 +28,7 @@ export class LibroResponse {
     stockTemporal?: number;
     idCategoria?: number=0;
     constructor() {
-        this.imagen = null; // Asignamos null por defecto en el constructor
-    }
-    [key: string]: any;
+    this.imagen = null; // Asignamos null por defecto en el constructor
+     }
+     [key: string]: any;
 }

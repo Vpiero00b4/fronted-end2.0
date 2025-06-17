@@ -11,6 +11,8 @@ import { SubcategoriaService } from '../../../service/subcategoria.service';
 import { SubcategoriaResponse } from '../../../../../models/subcategoria-response.models';
 import { LibroService } from '../../../service/libro.service';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-mant-libro-list',
@@ -37,6 +39,7 @@ export class MantLibroListComponent implements OnInit {
 
   constructor(
     private _route: Router,
+    private snackBar: MatSnackBar,
     private _libroService: LibroService,
     private modalService: BsModalService,
     private _categoriaService: CategoriaService,
@@ -307,7 +310,12 @@ export class MantLibroListComponent implements OnInit {
     });
   }
   
-  
+   verDescripcionCompleta(libro: any) {
+  this.snackBar.open(libro.descripcion, 'Cerrar', {
+    duration: 5000,
+  });
+}
+
   onPageChange(newPageIndex: number): void {
     this.currentPage = newPageIndex;
     this.loadInventoryData(newPageIndex, 10);

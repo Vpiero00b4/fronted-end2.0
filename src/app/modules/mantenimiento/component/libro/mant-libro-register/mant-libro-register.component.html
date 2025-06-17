@@ -94,7 +94,7 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="idSubcategoria">ID Subcategoría</label>
-          <input formControlName="idSubcategoria" type="text" class="form-control" id="idSubcategoria" placeholder="Ingrese el ID de subcategoría">
+          <input formControlName="idSubcategoria" type="number" class="form-control" id="idSubcategoria" placeholder="Ingrese el ID de subcategoría">
         </div>
       </div>
 
@@ -103,8 +103,8 @@
         <div class="form-group">
           <label for="idTipoPapel">Tipo de Papel</label>
           <select formControlName="idTipoPapel" class="form-control" id="idTipoPapel">
-            <option value="1">Bond</option>
-            <option value="2">Periódico</option>
+            <option [ngValue]="1">Bond</option>
+            <option [ngValue]="2">>Periódico</option>
           </select>
         </div>
       </div>
@@ -113,18 +113,25 @@
       <div class="col-md-6">
         <div class="form-group">
           <label for="idProveedor">ID Proveedor</label>
-          <input formControlName="idProveedor" type="text" class="form-control" id="idProveedor" placeholder="Ingrese el ID del proveedor">
+          <input formControlName="idProveedor" type="number" class="form-control" id="idProveedor" placeholder="Ingrese el ID del proveedor">
         </div>
       </div>
 
-      <!-- Imagen -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="imagen">Imagen</label>
-          <input formControlName="imagen" type="text" class="form-control" id="imagen" placeholder="Nombre de la imagen" readonly>
-          <input type="file" (change)="onFileSelected($event)" class="form-control mt-2">
-        </div>
-      </div>
+     <!-- Imagen (editable o null manualmente) -->
+<div class="col-md-6">
+  <div class="form-group">
+    <label for="imagen">Imagen</label>
+    
+    <select formControlName="imagen" class="form-control">
+      <option [ngValue]="null">Sin imagen</option>
+      <option [ngValue]="'url'">Ingresar manualmente</option>
+    </select>
+    
+    <!-- Subida de archivo opcional -->
+    <input type="file" (change)="onFileSelected($event)" class="form-control mt-2">
+  </div>
+</div>
+
 
       <!-- Botones -->
       <div class="col-12 d-flex justify-content-end gap-2 mt-4">

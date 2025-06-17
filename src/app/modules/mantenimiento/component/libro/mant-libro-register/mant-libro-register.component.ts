@@ -4,7 +4,7 @@ import { LibroResponse } from '../../../../../models/libro-response.models';
 import { LibroRequest } from '../../../../../models/libro-request.models';
 import { LibroService } from '../../../service/libro.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { convertToBoolean } from '../../../../../../functions/general.functions';
+import { alert_error, alert_success, convertToBoolean } from '../../../../../../functions/general.functions';
 
 @Component({
   selector: 'app-mant-libro-register',
@@ -45,7 +45,7 @@ export class MantLibroRegisterComponent implements OnInit{
       idSubcategoria: [null, [Validators.required]],
       idTipoPapel: [null, [Validators.required]],
       idProveedor: [null, [Validators.required]],
-      imagen: [null, [Validators.required]],
+      imagen: [null,],
     });
   }
   ngOnInit(): void {
@@ -119,10 +119,10 @@ crearRegistro() {
 editarRegistro() {
   this._libroService.update(this.libroEnvio).subscribe({
     next: (data: LibroResponse) => {
-      alert("Actualizado de forma correcta");
+     alert_success("Guardado exitoso");//sweet
     },
     error: () => {
-      alert("Ocurrió un error al editar");
+     alert_error("Formulario inválido", "Por favor completa los campos obligatorios.");//sweetalert2
     },
     complete: () => {
       this.cerrarModal();  // Sin parámetro
@@ -131,25 +131,31 @@ editarRegistro() {
 }
 
 cerrarModal() {
-  // Implementa el cierre real del modal aquí, por ej:
-  // this.bsModalRef?.hide(); // si usas ngx-bootstrap
-  // o
-  // this.activeModal?.dismiss();
-  // o el método que uses para cerrar modal
-  console.log("Cerrar modal llamado");
+  this.closeModalEmmit.emit(true);
 }
+
 
 onFileSelected(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files.length > 0) {
     const file = input.files[0];
-    // Si el formControl espera un string, no un File, maneja el file aparte.
-    // Por ejemplo, guardalo en una variable local para luego subirlo.
-    // Si querés setearlo igual, asegurate que el tipo de formControl acepte File:
-    this.myFormL.get('imagen')!.setValue(file);
+
+    // Si querés ignorar el archivo y dejar el campo como null
+    this.myFormL.get('imagen')!.setValue(null);
+    
+    // Opcional: podrías guardar file en una variable si querés usarlo luego
+    // this.archivoSeleccionado = file;
+  }
+}
+normalizarImagen(valor: string) {
+  const imagenControl = this.myFormL.get('imagen');
+  if (!imagenControl) return;
+
+  if (valor.trim().toLowerCase() === 'null' || valor.trim() === '') {
+    imagenControl.setValue(null);
   } else {
-    console.error("No se seleccionó archivo o input inválido");
+    imagenControl.setValue(valor);
   }
 }
 
-}
+} 

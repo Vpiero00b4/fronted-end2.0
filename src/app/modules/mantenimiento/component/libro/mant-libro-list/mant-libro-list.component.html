@@ -80,7 +80,15 @@
             <td>{{ libro.titulo }}</td>
             <td>{{ libro.isbn }}</td>
             <td>{{ libro.tamanno }}</td>
-            <td>{{ libro.descripcion }}</td>
+            <td>
+              <span *ngIf="libro.descripcion && libro.descripcion.length > 100">
+                  {{ libro.descripcion | slice:0:100 }}...
+                  <a (click)="verDescripcionCompleta(libro)">ver más</a>
+                </span>
+                <span *ngIf="libro.descripcion && libro.descripcion.length <= 100">
+                  {{ libro.descripcion }}
+                </span>
+            </td>
             <td>{{ libro.condicion }}</td>
             <td>{{ libro.impresion }}</td>
             <td>{{ libro.tipoTapa }}</td>
