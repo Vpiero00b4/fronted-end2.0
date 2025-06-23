@@ -16,6 +16,11 @@ export class MantUsuarioListComponent implements OnInit {
   usuarioSelected: UsuarioResponse = new UsuarioResponse();
   titleModal: string = "";
   accionModal: number = 0;
+  paginaActual: number = 1;
+  tamanioPagina: number = 10;
+  totalRegistros: number = 0;
+  paginas: number[] = [];
+
 
   constructor(
     private _route: Router,
@@ -28,18 +33,27 @@ export class MantUsuarioListComponent implements OnInit {
 
   }
   listarUsuarios() {
-    this._usuarioService.getAll().subscribe({
-      next: (data: UsuarioResponse[]) => {
-        this.usuarios = data;
-      },
-      error: (err) => {
-        console.log("error", err);
-      },
-      complete: () => {
-        // Hacer algo
-      },
-    });
+  this._usuarioService.obtenerUsuariosPaginados(this.paginaActual, this.tamanioPagina).subscribe({
+    next: (res) => {
+      this.usuarios = res.data;
+      this.totalRegistros = res.total;
+      const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
+      this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+    },
+    error: (err) => {
+      console.log("Error al listar usuarios paginados", err);
+    }
+  });
+  
+}
+cambiarPagina(pagina: number): void {
+  if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
+    this.paginaActual = pagina;
+    this.listarUsuarios();
   }
+}
+
+
 
 
   crearUsuario(template: TemplateRef<any>) {

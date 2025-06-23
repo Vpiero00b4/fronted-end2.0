@@ -11,27 +11,24 @@ import { alert_error, alert_success, convertToBoolean } from '../../../../../../
   templateUrl: './mant-libro-register.component.html',
   styleUrl: './mant-libro-register.component.css'
 })
-
-export class MantLibroRegisterComponent implements OnInit{
-  //DECLARANDO VARIABLES DE ENTRADA 
+export class MantLibroRegisterComponent implements OnInit {
+  // VARIABLES DE ENTRADA
   @Input() title: string = "";
-  @Input() libro: LibroResponse = new LibroResponse;
+  @Input() libro: LibroResponse = new LibroResponse();
   @Input() accion: number = 0;
-  //DECLARANDO VARIABLES DE SALIDA 
+  // VARIABLES DE SALIDA
   @Output() closeModalEmmit = new EventEmitter<boolean>();
 
-
-  //DECLARANDO VARIABLES INTERNAS
+  // VARIABLES INTERNAS
   myFormL: FormGroup;
   libroEnvio: LibroRequest = new LibroRequest();
-  //DECLARANDO CONSTRUCTOR 
+  archivoSeleccionado: File | null = null;   // <- Debe ser propiedad de la clase
+
   constructor(
-    private fb : FormBuilder,
-    private _libroService: LibroService,
-    
-  )
-  {
-    //nuestro formulario libro request
+    private fb: FormBuilder,
+    private _libroService: LibroService
+  ) {
+    // Construcción del formulario reactivo
     this.myFormL = this.fb.group({
       idLibro: [{ value: 0, disabled: true }, [Validators.required]],
       titulo: [null, [Validators.required]],
@@ -45,21 +42,28 @@ export class MantLibroRegisterComponent implements OnInit{
       idSubcategoria: [null, [Validators.required]],
       idTipoPapel: [null, [Validators.required]],
       idProveedor: [null, [Validators.required]],
-      imagen: [null,],
+      imagen: [null]
     });
   }
+
   ngOnInit(): void {
-
-    console.log("title==>", this.title)
-    console.log("title==>", this.libro)
-
     this.myFormL.patchValue(this.libro);
     if (this.accion === AccionMantConst.crear) {
       this.myFormL.patchValue({ imagen: '' });
-      
     }
-    
   }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.archivoSeleccionado = input.files[0];
+    } else {
+      this.archivoSeleccionado = null;
+    }
+    // Si quieres limpiar el control imagen:
+    this.myFormL.get('imagen')?.setValue(null);
+  }
+
   cargarLibro(libroId: number) {
     this._libroService.getLibroById(libroId).subscribe({
       next: (libro: LibroResponse) => {
@@ -76,7 +80,7 @@ export class MantLibroRegisterComponent implements OnInit{
           idSubcategoria: libro.idSubcategoria,
           idTipoPapel: libro.idTipoPapel,
           idProveedor: libro.idProveedor,
-          imagen: libro.imagen // Asegúrate de que este campo está siendo actualizado
+          imagen: libro.imagen
         });
       },
       error: (err) => {
@@ -85,77 +89,79 @@ export class MantLibroRegisterComponent implements OnInit{
     });
   }
 
-  guardarlibro(){
+  guardarlibro() {
     this.libroEnvio = this.myFormL.getRawValue();
-    this.libroEnvio.estado=convertToBoolean(this.libroEnvio.estado.toString());
+    this.libroEnvio.estado = convertToBoolean(this.libroEnvio.estado.toString());
     switch (this.accion) {
       case AccionMantConst.crear:
         this.crearRegistro();
         break;
       case AccionMantConst.editar:
         this.editarRegistro();
-
         break;
       case AccionMantConst.eliminar:
         break;
     }
   }
-  
-crearRegistro() {
-  debugger;
-  this._libroService.create(this.libroEnvio).subscribe({
-    next: (data: LibroResponse) => {
-      alert("Creado de forma correcta");
-    },
-    error: () => {
-      alert("Ocurrió un error al crear libro");
-    },
-    complete: () => {
-      this.cerrarModal();  // Sin parámetro
+
+  crearRegistro() {
+    const formData = new FormData();
+    const valores = this.myFormL.getRawValue();
+
+    formData.append('Titulo', valores.titulo);
+    formData.append('Isbn', valores.isbn);
+    formData.append('Tamanno', valores.tamanno);
+    formData.append('Descripcion', valores.descripcion);
+    formData.append('Condicion', valores.condicion);
+    formData.append('Impresion', valores.impresion);
+    formData.append('TipoTapa', valores.tipoTapa);
+    formData.append('Estado', valores.estado ? 'true' : 'false');
+    formData.append('IdSubcategoria', valores.idSubcategoria.toString());
+    formData.append('IdTipoPapel', valores.idTipoPapel.toString());
+    formData.append('IdProveedor', valores.idProveedor.toString());
+
+    if (this.archivoSeleccionado) {
+      formData.append('imageFile', this.archivoSeleccionado);
     }
-  });
-}
 
-editarRegistro() {
-  this._libroService.update(this.libroEnvio).subscribe({
-    next: (data: LibroResponse) => {
-     alert_success("Guardado exitoso");//sweet
-    },
-    error: () => {
-     alert_error("Formulario inválido", "Por favor completa los campos obligatorios.");//sweetalert2
-    },
-    complete: () => {
-      this.cerrarModal();  // Sin parámetro
+    this._libroService.crearLibro(formData).subscribe({
+      next: (data: LibroResponse) => {
+        alert_success("Creado de forma correcta");
+        this.cerrarModal();
+      },
+      error: () => {
+        alert_error("Error", "Ocurrió un error al crear libro");
+      }
+    });
+  }
+
+  editarRegistro() {
+    this._libroService.update(this.libroEnvio).subscribe({
+      next: (data: LibroResponse) => {
+        alert_success("Guardado exitoso");
+      },
+      error: () => {
+        alert_error("Formulario inválido", "Por favor completa los campos obligatorios.");
+      },
+      complete: () => {
+        this.cerrarModal();
+      }
+    });
+  }
+
+  cerrarModal() {
+    this.closeModalEmmit.emit(true);
+  }
+
+  // Si usas normalizarImagen, puedes dejarlo:
+  normalizarImagen(valor: string) {
+    const imagenControl = this.myFormL.get('imagen');
+    if (!imagenControl) return;
+
+    if (valor.trim().toLowerCase() === 'null' || valor.trim() === '') {
+      imagenControl.setValue(null);
+    } else {
+      imagenControl.setValue(valor);
     }
-  });
-}
-
-cerrarModal() {
-  this.closeModalEmmit.emit(true);
-}
-
-
-onFileSelected(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    const file = input.files[0];
-
-    // Si querés ignorar el archivo y dejar el campo como null
-    this.myFormL.get('imagen')!.setValue(null);
-    
-    // Opcional: podrías guardar file en una variable si querés usarlo luego
-    // this.archivoSeleccionado = file;
   }
 }
-normalizarImagen(valor: string) {
-  const imagenControl = this.myFormL.get('imagen');
-  if (!imagenControl) return;
-
-  if (valor.trim().toLowerCase() === 'null' || valor.trim() === '') {
-    imagenControl.setValue(null);
-  } else {
-    imagenControl.setValue(valor);
-  }
-}
-
-} 

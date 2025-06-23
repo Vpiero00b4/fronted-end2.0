@@ -1,39 +1,30 @@
+<!-- ==============================
+     template.component.html
+     ============================== -->
 <!-- start header -->
 <app-template-header></app-template-header>
 <!-- end header -->
 <div id="layoutSidenav">
   <div id="layoutSidenav_nav">
-    
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
       <!-- inicio menu lateral -->
       <div class="sb-sidenav-menu">
-
-        
         <app-template-sidebar></app-template-sidebar> 
       </div>
-      <div class="sb-sidenav-footer" style="background-color: #0792D8;">
+      <div class="sb-sidenav-footer">
         <div class="small">Inicio sesión en:</div>
         Libreria Saber como Administrador 
-    </div>
+      </div>
       <!-- fin menu lateral -->
     </nav>
   </div>
- 
   <div id="layoutSidenav_content">
     <main>
-      
-      <!-- start work space -->
-      <div>
-        
-      </div>
-      <!--vamos a renderizar los mantenimientos-->
-        
+    <div class="main-content-container">
       <router-outlet></router-outlet>
-      <!-- end work space -->
-    </main>
-    
-    <!-- start footer-->
+    </div>
+  </main>
+
     <app-template-footer></app-template-footer>
-    <!-- end footer-->
   </div>
 </div>

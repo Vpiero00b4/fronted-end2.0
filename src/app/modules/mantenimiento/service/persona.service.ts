@@ -43,5 +43,20 @@ export class PersonaService extends CrudService<PersonaRequest, PersonaResponse>
       })
     );
   }
-  // ...otros métodos y validaciones...
+  obtenerPersonasPaginadas(page: number, pageSize: number): Observable<{ data: PersonaResponse[], total: number }> {
+  const url = `${UrlConstants.persona}/Paginator?page=${page}&pageSize=${pageSize}`;
+  return this.http.get<any>(url).pipe(
+    map(res => ({
+      data: res.persona,          // ✅ persona ya es un array
+      total: res.totalItems       // ✅ total global
+    })),
+    catchError(error => {
+      console.error('Error al obtener personas paginadas', error);
+      return throwError(() => error);
+    })
+  );
+}
+
+
+
 }

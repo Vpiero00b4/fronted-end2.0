@@ -10,6 +10,11 @@ import { CajaService } from '../../../service/caja.service';
 export class MantCajaRegisterComponent implements OnInit {
   updateForm: FormGroup;
   listaCajas: any[] = [];
+  paginaActual: number = 1;
+  tamanioPagina: number = 10;
+  totalRegistros: number = 0;
+  paginas: number[] = [];
+
 
   constructor(private fb: FormBuilder, private cajaService: CajaService) {
     this.updateForm = this.fb.group({
@@ -27,12 +32,24 @@ export class MantCajaRegisterComponent implements OnInit {
     this.cargarCajas();
   }
 
-  cargarCajas() {
-    this.cajaService.getCajas().subscribe({
-      next: (res) => this.listaCajas = res,
-      error: (err) => alert('Error al cargar las cajas: ' + err.message)
-    });
+  cargarCajas(): void {
+  this.cajaService.obtenerCajasPaginadas(this.paginaActual, this.tamanioPagina).subscribe({
+    next: (res) => {
+      this.listaCajas = res.data;
+      this.totalRegistros = res.total;
+      const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
+      this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+    },
+    error: (err) => alert('Error al cargar las cajas: ' + err.message)
+  });
+}
+cambiarPagina(pagina: number): void {
+  if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
+    this.paginaActual = pagina;
+    this.cargarCajas();
   }
+}
+
 
   crearCaja() {
     if (this.updateForm.valid) {

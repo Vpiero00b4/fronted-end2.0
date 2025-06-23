@@ -1,3 +1,63 @@
+/* ==============================
+   template.component.css
+   ============================== */
 .sb-sidenav-dark {
-    background-color:#0172AA; /* Cambiar el color a azul */
-  }
+  background: var(--clr-primary-dark);
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, width 0.3s;
+}
+.sb-sidenav-dark.collapsed {
+  width: 80px;
+}
+.sb-sidenav-dark .sb-sidenav-menu {
+  flex: 1;
+  padding: 1.5rem 0.5rem;
+  overflow-y: auto;
+}
+.sb-sidenav-dark .sb-sidenav-menu a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  color: var(--clr-text-invert);
+  font-weight: 500;
+  border-radius: 0.5rem;
+  margin: 0.25rem 0;
+  transition: background 0.2s, color 0.2s, padding-left 0.3s;
+}
+.sb-sidenav-dark .sb-sidenav-menu a i {
+  margin-right: 0.75rem;
+  font-size: 1.2rem;
+}
+.sb-sidenav-dark.collapsed .sb-sidenav-menu a {
+  justify-content: center;
+  padding: 0.75rem 0;
+}
+.sb-sidenav-dark.collapsed .sb-sidenav-menu a i {
+  margin: 0;
+}
+.sb-sidenav-dark .sb-sidenav-menu a:hover {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+}
+.sb-sidenav-dark .sb-sidenav-menu a.active {
+  background: var(--clr-secondary-dark);
+  color: var(--clr-text-invert);
+}
+.sb-sidenav-dark .sb-sidenav-footer {
+  background: var(--clr-primary);
+  color: var(--clr-text-invert);
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid var(--clr-border);
+  font-size: 0.85rem;
+  transition: background 0.3s;
+  
+}
+
+.table th, .table td {
+  padding: 1.1rem 0.8rem !important;
+  font-size: 1.05rem;
+}
+

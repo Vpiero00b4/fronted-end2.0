@@ -12,8 +12,20 @@
   </div>
   <div class="row mt-3">
     <div class="col-md-12">
-      <button class="btn btn-primary" (click)="filtrarPorFechas(fechaInicio, fechaFin)">Filtrar</button>
+      <button class="btn btn-primary"
+              (click)="filtrarPorFechas(fechaInicio, fechaFin)"
+              [disabled]="!fechaInicio || !fechaFin">
+        Filtrar
+      </button>
+      <button class="btn btn-secondary ms-2" (click)="resetFiltros()" *ngIf="fechaInicio || fechaFin">
+        Quitar Filtros
+      </button>
     </div>
+  </div>
+
+  <!-- Mensaje de feedback -->
+  <div *ngIf="mensaje" class="alert alert-info mt-3 text-center">
+    {{ mensaje }}
   </div>
 
   <!-- Listado de ventas -->
@@ -35,10 +47,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let venta of ventas">
+          <tr *ngFor="let venta of ventasFiltradas">
             <td>{{ venta.idVentas }}</td>
             <td>{{ venta.tipoComprobante }}</td>
-            <td>{{ venta.fechaVenta }}</td>
+            <td>{{ venta.fechaVenta | date: 'short' }}</td>
             <td>{{ venta.nroComprobante }}</td>
             <td>{{ venta.idPersona }}</td>
             <td>{{ venta.idUsuario }}</td>
@@ -46,8 +58,31 @@
               <button (click)="descargarPDF(venta.idVentas)" class="btn btn-primary">Descargar PDF</button>
             </td>
           </tr>
+          <tr *ngIf="ventasFiltradas.length === 0 && !mensaje">
+            <td colspan="7" class="text-center text-muted">No hay ventas en este rango de fechas.</td>
+          </tr>
         </tbody>
       </table>
+
+      <!-- Paginador -->
+      <nav *ngIf="paginas.length > 1" class="mt-3">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+          </li>
+
+          <li class="page-item"
+              *ngFor="let p of paginas"
+              [class.active]="paginaActual === p">
+            <button class="page-link" (click)="cambiarPagina(p)">{{ p }}</button>
+          </li>
+
+          <li class="page-item" [class.disabled]="paginaActual === paginas[paginas.length - 1]">
+            <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+          </li>
+        </ul>
+      </nav>
+
     </div>
   </div>
 </div>

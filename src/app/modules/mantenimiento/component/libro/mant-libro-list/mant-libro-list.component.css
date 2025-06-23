@@ -1,0 +1,226 @@
+.card {
+  border-radius: 1.5rem !important;
+  overflow: hidden;
+}
+
+.card-header {
+  background: var(--clr-card-bg);
+  border-bottom: 1px solid var(--clr-border);
+  padding: 2rem 1.5rem 1.5rem 1.5rem !important;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.card-body {
+  padding: 2.2rem 1.5rem 2rem 1.5rem;
+}
+
+form.bg-light {
+  background: var(--clr-bg) !important;
+  border: 1px solid var(--clr-border);
+  margin-bottom: 2.5rem !important;
+}
+
+.form-label {
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* FILTROS */
+.row.g-3 > div {
+  padding-bottom: 0.4rem;
+}
+@media (min-width: 992px) {
+  .row.g-3 > div {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+}
+
+/* TABLA */
+.table-responsive {
+  border-radius: 1.1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(30,64,175,0.06);
+  margin-bottom: 1.8rem;
+  background: var(--clr-card-bg);
+}
+
+.table {
+  margin-bottom: 0 !important;
+  border-radius: 1.1rem;
+  font-size: 1rem;
+  min-width: 1080px;
+  background: var(--clr-card-bg);
+}
+
+.table thead th {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  border-bottom: 2px solid var(--clr-border) !important;
+  font-weight: 700;
+  padding: 1.1rem 0.6rem;
+  font-size: 1.03rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.table tbody tr {
+  transition: background 0.2s, box-shadow 0.18s;
+}
+
+.table tbody tr:hover {
+  background: var(--clr-hover-bg);
+  /* Elimina el minizoom, solo sombra ligera */
+  box-shadow: 0 2px 10px 0 rgba(37, 99, 235, 0.08);
+}
+
+.table td, .table th {
+  padding: 0.95rem 0.7rem;
+  vertical-align: middle !important;
+  background: var(--clr-card-bg);
+  border-top: 1px solid var(--clr-border);
+  font-size: 1.04rem;
+}
+
+/* Limita ancho de Descripción para evitar que se expanda la tabla */
+.table td:nth-child(4) {
+  max-width: 230px;
+  min-width: 120px;
+  white-space: normal;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Agrupación de datos en celdas: aire y separación visual */
+.table td > div {
+  margin-bottom: 0.15rem;
+  line-height: 1.4;
+}
+.table td > div:last-child {
+  margin-bottom: 0;
+}
+
+.table tbody tr:nth-child(even) td {
+  background: #181c1f; /* más oscuro para modo dark */
+}
+.table tbody tr:nth-child(odd) td {
+  background: #121417;
+}
+
+.table .btn {
+  font-size: 0.96rem;
+  padding: 0.36rem 0.65rem;
+  border-radius: 0.6rem;
+}
+
+.btn-success {
+  background: var(--clr-success);
+  color: #fff;
+  border: none;
+}
+.btn-success:hover, .btn-success:focus-visible {
+  background: #159f46;
+}
+
+.btn-outline-primary {
+  border: 1.5px solid var(--clr-primary);
+  color: var(--clr-primary-dark);
+  background: #fff;
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus-visible {
+  background: var(--clr-primary);
+  color: #fff;
+}
+
+.btn-outline-danger {
+  border: 1.5px solid var(--clr-danger);
+  color: var(--clr-danger);
+  background: #fff;
+}
+.btn-outline-danger:hover, .btn-outline-danger:focus-visible {
+  background: var(--clr-danger);
+  color: #fff;
+}
+
+/* "ver más" link */
+.table a {
+  color: var(--clr-secondary-dark);
+  font-size: 0.96em;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-left: 0.2em;
+}
+.table a:hover {
+  color: var(--clr-primary-dark);
+}
+
+.d-flex.gap-2 {
+  gap: 0.6rem;
+}
+
+.pagination {
+  margin: 2rem 0 0 0;
+  gap: 1.2rem;
+}
+
+/* Columnas de acciones y categoría: ancho mínimo */
+.table th:last-child, .table td:last-child {
+  min-width: 95px;
+  width: 100px;
+}
+.table th:nth-child(7), .table td:nth-child(7) {
+  min-width: 110px;
+}
+
+@media (max-width: 1100px) {
+  .table-responsive {
+    min-width: 700px;
+  }
+  .table {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .table-responsive {
+    min-width: 300px;
+    overflow-x: auto;
+  }
+  .card-body {
+    padding: 1.2rem 0.7rem !important;
+  }
+  .table th, .table td {
+    padding: 0.65rem 0.3rem !important;
+    font-size: 0.97em;
+  }
+  /* Limita aún más la descripción en móviles */
+  .table td:nth-child(4) {
+    max-width: 120px;
+    min-width: 60px;
+    font-size: 0.93em;
+  }
+}
+
+@media (max-width: 600px) {
+  .table {
+    font-size: 0.92em;
+  }
+  .table th, .table td {
+    padding: 0.44rem 0.2rem !important;
+  }
+  .card-header, .card-body {
+    padding: 0.8rem 0.3rem !important;
+  }
+}
+
+/* Opcional: para que el header de la tabla no desaparezca al scrollear horizontal/vertical */
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--clr-primary-light);
+  z-index: 3;
+}

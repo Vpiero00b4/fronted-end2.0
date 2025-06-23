@@ -4,32 +4,67 @@
     <!-- 🧍‍♂️ Sección Izquierda: Cliente y Venta -->
     <div class="col-lg-5">
 
-      <!-- Búsqueda de Cliente -->
-      <div class="card shadow-sm border-0 rounded-4 mb-4">
-        <div class="card-body">
-          <h5 class="fw-semibold mb-3">Buscar Cliente</h5>
-          <form [formGroup]="personaForm" (ngSubmit)="buscarPersona()">
-            <div class="row g-3 align-items-end">
-              <div class="col-6">
-                <label for="tipoDocumento" class="form-label">Tipo Documento</label>
-                <select id="tipoDocumento" formControlName="tipoDocumento" class="form-select">
-                  <option value="DNI">DNI</option>
-                  <option value="RUC">RUC</option>
-                </select>
-              </div>
-              <div class="col-6">
-                <label for="numeroDocumento" class="form-label">N° Documento</label>
-                <input type="text" id="numeroDocumento" formControlName="numeroDocumento"
-                       class="form-control" placeholder="Ingrese número" autocomplete="off">
-              </div>
-              <div class="col-12 d-grid">
-                <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">
-                  <i class="fas fa-search me-1"></i> Buscar Cliente
-                </button>
-              </div>
+    <!-- Búsqueda de Cliente -->
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+  <div class="card-body">
+    <h5 class="fw-semibold mb-3">Buscar Cliente</h5>
+    <form [formGroup]="personaForm" (ngSubmit)="buscarPersona()">
+      <div class="row g-3 align-items-end">
+        <div class="col-6">
+          <label for="tipoDocumento" class="form-label">Tipo Documento</label>
+          <select id="tipoDocumento" formControlName="tipoDocumento" class="form-select">
+            <option value="" disabled selected>Seleccione</option>
+            <option value="DNI">DNI</option>
+            <option value="RUC">RUC</option>
+          </select>
+          <div
+            *ngIf="personaForm.get('tipoDocumento')?.touched && personaForm.get('tipoDocumento')?.invalid"
+            class="text-danger small"
+          >
+            <div *ngIf="personaForm.get('tipoDocumento')?.errors?.['required']">
+              El tipo de documento es obligatorio.
             </div>
-          </form>
+          </div>
         </div>
+        <div class="col-6">
+          <label for="numeroDocumento" class="form-label">N° Documento</label>
+          <input
+            type="text"
+            id="numeroDocumento"
+            formControlName="numeroDocumento"
+            class="form-control"
+            placeholder="Ingrese número"
+            autocomplete="off"
+          />
+          <div
+            *ngIf="personaForm.get('numeroDocumento')?.touched && personaForm.get('numeroDocumento')?.invalid"
+            class="text-danger small"
+          >
+            <div *ngIf="personaForm.get('numeroDocumento')?.errors?.['required']">
+              El número de documento es obligatorio.
+            </div>
+            <div *ngIf="personaForm.get('numeroDocumento')?.errors?.['minlength']">
+              Debe tener mínimo 8 dígitos.
+            </div>
+          </div>
+        </div>
+        <div class="col-12 d-grid">
+          <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">
+            <i class="fas fa-search me-1"></i> Buscar Cliente
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+      <!-- Spinner de carga -->
+      <div *ngIf="cargando" class="text-center my-3">
+        <div class="spinner-border text-primary" role="status"></div>
+        <span class="ms-2">Procesando...</span>
       </div>
 
       <!-- Datos del Cliente -->
@@ -81,7 +116,6 @@
           </form>
         </div>
       </div>
-
     </div>
 
     <!-- 📦 Sección Derecha: Productos -->
@@ -98,7 +132,7 @@
 
           <div *ngIf="productosAgregados && productosAgregados.length > 0; else sinProductos">
             <div class="table-responsive">
-              <table class="table table-bordered align-middle table-hover">
+              <table class="table table-bordered table-striped align-middle table-hover">
                 <thead class="table-light">
                   <tr>
                     <th>ID</th>
@@ -107,16 +141,22 @@
                     <th>Cant.</th>
                     <th>P. Unit</th>
                     <th>Importe</th>
+                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let p of productosAgregados">
+                  <tr *ngFor="let p of productosAgregados; let i = index">
                     <td>{{ p.idLibro }}</td>
                     <td>{{ p.isbn }}</td>
                     <td>{{ p.nombreProducto }}</td>
                     <td>{{ p.cantidad }}</td>
                     <td>{{ p.precioUnit | currency:'PEN':'symbol':'1.2-2' }}</td>
                     <td>{{ (p.cantidad * p.precioUnit) | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td>
+                      <button class="btn btn-outline-danger btn-sm" (click)="confirmarEliminarProducto(i)">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -130,8 +170,7 @@
 
       <!-- Botón Final -->
       <div class="d-grid">
-        <button type="submit" class="btn btn-success btn-lg" [disabled]="ventaForm.invalid" (click)="registrarVenta()">
-
+        <button type="button" class="btn btn-success btn-lg" [disabled]="ventaForm.invalid" (click)="registrarVenta()">
           <i class="fas fa-check-circle me-1"></i> Registrar Venta 
         </button>
       </div>

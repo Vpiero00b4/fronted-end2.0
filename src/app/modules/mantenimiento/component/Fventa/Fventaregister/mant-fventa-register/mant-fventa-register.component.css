@@ -1,9 +1,48 @@
-/* Estilos personalizados para la etiqueta de fecha de emisión */
-.fecha-label {
-  font-weight: bold;
-  color: #333; /* Cambia el color según tus preferencias */
-  font-size: 16px; /* Cambia el tamaño de fuente según tus preferencias */
-  margin-bottom: 10px; /* Añade margen inferior para separar visualmente del input */
+:root {
+  --main-radius: 1.5rem;
+  --header-bg: #153769;
+  --primary: #1d3557;
+  --input-bg: #f8fafc;
+  --input-border: #c8d6e5;
+  --input-focus: #fff;
+  --table-head-bg: #e9f1fa;
+  --table-hover-bg: #e3eefa;
+  --table-stripe-bg: #f7fbfd;
+  --btn-shadow: 0 2px 8px 0 rgba(40,100,190,0.06);
+  --danger: #2865c0;
+  --spinner: #2865c0;
 }
 
-  
+body { background: #f5f8fc; }
+
+.card, .table { border-radius: var(--main-radius); box-shadow: 0 2px 12px rgba(60,60,120,0.06), 0 1.5px 6px rgba(90,90,160,0.09); border: none; }
+.card-header, .modal-header { border-radius: var(--main-radius) var(--main-radius) 0 0; font-weight: bold; background: var(--header-bg); color: #fff; }
+.card-body { padding: 1.8rem 1.5rem 1.2rem; }
+@media (max-width: 992px) { .card-body { padding: 1.1rem 0.6rem; } }
+
+label.form-label { font-weight: 600; color: var(--primary); }
+input.form-control, select.form-select {
+  border-radius: 0.75rem; border: 1.2px solid var(--input-border);
+  background: var(--input-bg); font-size: 1.07rem; transition: border-color .2s;
+}
+input.form-control:focus, select.form-select:focus {
+  border-color: var(--primary); background: var(--input-focus);
+  box-shadow: 0 0 0 2px rgba(30,92,190,0.08);
+}
+
+.form-check-input:checked { background: var(--danger); border-color: var(--danger); }
+
+.btn, .btn-outline-danger.btn-sm { border-radius: 0.9rem; padding: 0.52rem 1.4rem; font-weight: 600; font-size: 1.03rem; transition: background .18s, box-shadow .16s; }
+.btn-primary, .btn-success { box-shadow: var(--btn-shadow); }
+.btn-outline-primary:hover, .btn-outline-danger:hover {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+
+.table { overflow: hidden; margin-bottom: 0; }
+.table thead { background: var(--table-head-bg); font-weight: 600; color: var(--primary);}
+.table-striped tbody tr:nth-of-type(odd) { background: var(--table-stripe-bg);}
+.table-hover tbody tr:hover { background: var(--table-hover-bg); transition: background .14s;}
+.table td, .table th { vertical-align: middle; font-size: 1.04rem;}
+
+.spinner-border { width: 2rem; height: 2rem; border-width: .25em; color: var(--spinner);}
+.text-danger.small { margin-top: .2rem; margin-left: .12rem; font-size: .97rem; font-weight: 500;}

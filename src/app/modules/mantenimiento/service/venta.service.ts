@@ -54,5 +54,15 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
   getVentas(): Observable<VentaResponse[]> {
   return this.http.get<VentaResponse[]>(UrlConstants.venta);
 }
+getVentasPaginadas(page: number, pageSize: number) {
+  const params = new HttpParams()
+    .set('page', page.toString())
+    .set('pageSize', pageSize.toString());
+
+  return this.http.get<any>(`${UrlConstants.venta}/Paginator`, { params });
+}
+
+
+
 
 }

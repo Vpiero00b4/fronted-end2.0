@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { VentaResponse } from '../../../../../../models/ventas-response.models';
 import { VentasService } from '../../../../service/venta.service';
 import { CajaService } from '../../../../service/caja.service';
-import { formatDate } from '@angular/common'; // ✅ Necesario para formatear fecha
 
 @Component({
   selector: 'app-mant-caja-list',
@@ -13,18 +12,26 @@ export class MantCajaListComponent implements OnInit {
   ventasDelDia: VentaResponse[] = [];
   fechaFiltro: string;
 
-  saldoInicial: number = 0;
-  saldoDigital: number = 0;
-  totalVentas: number = 0;
-  totalEfectivo: number = 0;
-  saldoFinal: number = 0;
+  // Saldos y montos
+  saldoInicial = 0;
+  saldoDigital = 0;
+  saldoFinal = 0;
+  totalVentas = 0;
+  totalEfectivo = 0;
+  montoIngreso = 0;
+  montoRetiro = 0;
 
-  montoIngreso: number = 0;
-  montoRetiro: number = 0;
-  nuevoIngreso: number = 0;
-  nuevoRetiro: number = 0;
+  nuevoIngreso = 0;
+  nuevoRetiro = 0;
 
-  cajaAbierta: any = null;
+  cajaActual: any = null;  // Caja para la fecha seleccionada
+  mensajeCaja: string = '';
+
+  // PAGINADO
+  paginaActual: number = 1;
+  pageSize: number = 10;
+  totalVentasDia: number = 0;
+  totalPaginas: number = 0;
 
   constructor(
     private ventaService: VentasService,
@@ -35,67 +42,82 @@ export class MantCajaListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.obtenerCajaAbierta();
-    this.obtenerVentasDelDia();
+    this.filtrarPorFecha();
   }
 
-  obtenerCajaAbierta() {
+  filtrarPorFecha(): void {
+    this.limpiarDatos();
+
     this.cajaService.getCajas().subscribe({
       next: (cajas: any[]) => {
-        this.cajaAbierta = cajas.find(c => !c.fechaCierre);
-        if (this.cajaAbierta) {
-          this.saldoInicial = this.cajaAbierta.saldoInicial || 0;
-          this.saldoDigital = this.cajaAbierta.saldoDigital || 0;
+        const caja = cajas.find(c => c.fecha && c.fecha.startsWith(this.fechaFiltro));
+        if (caja) {
+          this.cajaActual = caja;
+          this.asignarDatosDeCaja(caja);
+          this.paginaActual = 1;
         } else {
-          this.saldoInicial = 0;
-          this.saldoDigital = 0;
+          this.mensajeCaja = 'No existe una caja registrada para esta fecha.';
         }
-        this.calcularSaldoFinal();
       },
-      error: err => console.error("Error al obtener caja:", err)
+      error: (err: any) => {
+        this.mensajeCaja = 'Error al obtener datos de caja.';
+        this.limpiarDatos();
+      }
     });
   }
 
-  obtenerVentasDelDia() {
-    if (this.fechaFiltro && this.cajaAbierta) {
-      const fecha = formatDate(this.fechaFiltro, 'yyyy-MM-dd', 'en-US');
-      this.ventaService.obtenerVentasPorFechas(fecha, fecha).subscribe({
-        next: (ventas: VentaResponse[]) => {
-          this.ventasDelDia = ventas;
+  // Para paginar ventas del día usando tu endpoint paginado}
 
-          // Reinicia totales
-          this.totalVentas = 0;
-          this.saldoDigital = 0;
-          this.totalEfectivo = 0;
-
-          // Calcular sumas
-          ventas.forEach(venta => {
-            const monto = venta.totalPrecio || 0;
-            this.totalVentas += monto;
-
-            if (venta.tipoPago?.toLowerCase() === 'digital') {
-              this.saldoDigital += monto;
-            } else if (venta.tipoPago?.toLowerCase() === 'efectivo') {
-              this.totalEfectivo += monto;
-            }
-          });
-
-          this.calcularSaldoFinal();
-        },
-        error: err => {
-          console.error('Error al obtener ventas del día', err);
-        }
-      });
-    } else {
-      this.ventasDelDia = [];
-      this.totalVentas = 0;
-      this.saldoDigital = 0;
-      this.totalEfectivo = 0;
-      this.calcularSaldoFinal();
-    }
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas) return;
+    this.paginaActual = nuevaPagina;
   }
 
-  calcularSaldoFinal() {
+  asignarDatosDeCaja(caja: any): void {
+    this.saldoInicial = caja.saldoInicial ?? 0;
+    this.saldoFinal = caja.saldoFinal ?? 0;
+    this.saldoDigital = caja.saldoDigital ?? 0;
+    this.montoIngreso = caja.ingresosACaja ?? 0;
+    // Si tu backend trae retiros u otros campos, asígnalos aquí.
+  }
+
+  limpiarDatos(): void {
+    this.cajaActual = null;
+    this.saldoInicial = 0;
+    this.saldoFinal = 0;
+    this.saldoDigital = 0;
+    this.totalVentas = 0;
+    this.totalEfectivo = 0;
+    this.montoIngreso = 0;
+    this.montoRetiro = 0;
+    this.ventasDelDia = [];
+    this.mensajeCaja = '';
+    this.paginaActual = 1;
+    this.totalPaginas = 0;
+    this.totalVentasDia = 0;
+  }
+
+  registrarIngresoACaja(): void {
+    if (this.nuevoIngreso <= 0) {
+      alert('Ingrese un monto válido para el ingreso.');
+      return;
+    }
+    this.montoIngreso += this.nuevoIngreso;
+    this.nuevoIngreso = 0;
+    this.calcularSaldoFinalLocal();
+  }
+
+  registrarRetiroDeCaja(): void {
+    if (this.nuevoRetiro <= 0) {
+      alert('Ingrese un monto válido para el retiro.');
+      return;
+    }
+    this.montoRetiro += this.nuevoRetiro;
+    this.nuevoRetiro = 0;
+    this.calcularSaldoFinalLocal();
+  }
+
+  calcularSaldoFinalLocal(): void {
     this.saldoFinal =
       this.saldoInicial +
       this.montoIngreso +
@@ -103,39 +125,26 @@ export class MantCajaListComponent implements OnInit {
       this.montoRetiro;
   }
 
-  registrarIngresoACaja() {
-    if (this.nuevoIngreso <= 0) {
-      alert("Ingrese un monto válido para el ingreso.");
+  cerrarCaja(): void {
+    if (!this.cajaActual) {
+      alert('No hay Caja Abierta.');
+      this.limpiarDatos();
+      this.mensajeCaja = 'No existe una caja registrada para esta fecha.';
       return;
     }
 
-    this.montoIngreso += this.nuevoIngreso;
-    this.nuevoIngreso = 0;
-    this.calcularSaldoFinal();
-  }
-
-  registrarRetiroDeCaja() {
-    if (this.nuevoRetiro <= 0) {
-      alert("Ingrese un monto válido para el retiro.");
-      return;
-    }
-
-    this.montoRetiro += this.nuevoRetiro;
-    this.nuevoRetiro = 0;
-    this.calcularSaldoFinal();
-  }
-
-  cerrarCaja() {
-    if (!this.cajaAbierta) {
-      alert("No hay caja abierta para cerrar.");
+    if (this.cajaActual.fechaCierre) {
+      alert('No hay Caja Abierta.');
+      this.limpiarDatos();
+      this.mensajeCaja = 'La caja ya está cerrada para esta fecha.';
       return;
     }
 
     const cajaCierre = {
-      idCaja: this.cajaAbierta.idCaja,
-      saldoInicial: this.cajaAbierta.saldoInicial,
+      idCaja: this.cajaActual.idCaja,
+      saldoInicial: this.cajaActual.saldoInicial,
       saldoFinal: this.saldoFinal,
-      fecha: this.cajaAbierta.fechaInicio || this.cajaAbierta.fecha,
+      fecha: this.cajaActual.fecha,
       ingresosACaja: this.montoIngreso,
       saldoDigital: this.saldoDigital,
       fechaCierre: new Date().toISOString()
@@ -143,23 +152,15 @@ export class MantCajaListComponent implements OnInit {
 
     this.cajaService.updateCaja(cajaCierre).subscribe({
       next: () => {
-        alert("Caja cerrada correctamente.");
-        this.cajaAbierta = null;
-        this.saldoInicial = 0;
-        this.saldoDigital = 0;
-        this.totalVentas = 0;
-        this.totalEfectivo = 0;
-        this.saldoFinal = 0;
-        this.montoIngreso = 0;
-        this.montoRetiro = 0;
-        this.nuevoIngreso = 0;
-        this.nuevoRetiro = 0;
-        this.ventasDelDia = [];
+        alert('Caja cerrada correctamente.');
+        this.limpiarDatos();
+        this.mensajeCaja = 'No existe una caja registrada para esta fecha.';
       },
-      error: err => {
-        console.error("Error al cerrar la caja detalle:", err);
-        alert("Error al cerrar la caja: " + (err.message || JSON.stringify(err)));
+      error: (err: any) => {
+        console.error('Error al cerrar la caja detalle:', err);
+        alert('Error al cerrar la caja: ' + (err.message || JSON.stringify(err)));
       }
     });
   }
+  
 }

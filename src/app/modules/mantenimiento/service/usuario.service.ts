@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { CrudService } from '../../shared/services/crud.service';
 import { UrlConstants } from '../../../constans/url.constans';
 import { UsuarioResponse } from '../../../models/usuario-login.response';
@@ -17,22 +17,19 @@ export class UsuarioService extends CrudService<UsuarioRequest,UsuarioResponse> 
       super(http,UrlConstants.usuario);
       
     }
+   
+  obtenerUsuariosPaginados(page: number, pageSize: number): Observable<{ data: UsuarioResponse[], total: number }> {
+  const url = `${UrlConstants.usuario}/paginado?page=${page}&pageSize=${pageSize}`;
+  return this.http.get<any>(url).pipe(
+    map(res => ({
+      data: res.items,       // ✅ usuarios están aquí
+      total: res.total       // ✅ total global
+    })),
+    catchError(error => {
+      console.error('Error al obtener usuarios paginados', error);
+      return throwError(() => error);
+    })
+  );
+}
 
-  //  getAll():Observable<UsuarioResponse[]>{
-    
-    
-  //    return this._http.get<UsuarioResponse[]>(UrlConstants.traerUsuario,);
-  //  }
-  //  create(request:UsuarioRequest):Observable<UsuarioResponse>{
-  //    return this._http.post<UsuarioResponse>(UrlConstants.guardarUsuario,request);
-  //  }
-  //  update(request:UsuarioRequest):Observable<UsuarioResponse>{
-  //    return this._http.put<UsuarioResponse>(UrlConstants.actualizarUsuario,request);
-
-  //  }
-
-  //  delete(id:number):Observable<number>{
-  //    return this._http.delete<number>(`${UrlConstants.eliminarUsuario}${id}`);
-
-  //  }
 }

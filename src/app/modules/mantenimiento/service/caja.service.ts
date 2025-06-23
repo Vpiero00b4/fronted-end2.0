@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { UrlConstants } from '../../../constans/url.constans';
 
 @Injectable({
@@ -24,6 +24,19 @@ export class CajaService {
 
   updateCaja(cajaData: any): Observable<any> {
   return this.http.put(`${UrlConstants.caja}`, cajaData);
+}
+obtenerCajasPaginadas(page: number, pageSize: number): Observable<{ data: any[], total: number }> {
+  const url = `${UrlConstants.caja}/paginado?page=${page}&pageSize=${pageSize}`;
+  return this.http.get<any>(url).pipe(
+    map(res => ({
+      data: res.items,   // ✅ cajas están aquí
+      total: res.total   // ✅ total global
+    })),
+    catchError(error => {
+      console.error('Error al obtener cajas paginadas', error);
+      return throwError(() => error);
+    })
+  );
 }
 
 }

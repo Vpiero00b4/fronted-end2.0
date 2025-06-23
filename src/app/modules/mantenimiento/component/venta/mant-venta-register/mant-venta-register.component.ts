@@ -119,7 +119,7 @@ guardar() {
       sub: this.usuario.sub || ''
     },
     tipoComprobante: this.myForm.get('tipoComprobante')?.value,
-    tipoPago: 'EFECTIVO'
+    tipoPago: 'Efectivo'
   };
 
   console.log('DETALLE CARRITO A ENVIAR:', JSON.stringify(detalleCarrito, null, 2));

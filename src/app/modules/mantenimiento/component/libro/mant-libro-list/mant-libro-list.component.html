@@ -1,6 +1,10 @@
 <div class="card bg-white mb-5 shadow-sm rounded-4 border-0">
-  <div class="card-header bg-white border-bottom text-center py-4">
+  <div class="card-header bg-white border-bottom text-center py-4 position-relative">
     <h3 class="fw-bold text-uppercase mb-0">Listado de Productos</h3>
+    <!-- Botón flotante de agregar -->
+    <button class="btn btn-success fab-add" (click)="crearLibro(modalEdit)" aria-label="Agregar nuevo libro">
+      <i class="fas fa-plus"></i>
+    </button>
   </div>
 
   <div class="card-body">
@@ -19,7 +23,6 @@
             </option>
           </select>
         </div>
-
         <div class="col-md-6">
           <label for="idSubcategoria" class="form-label fw-semibold">Subcategoría:</label>
           <select formControlName="idSubcategoria" id="idSubcategoria" class="form-select">
@@ -30,7 +33,6 @@
           </select>
         </div>
       </div>
-
       <div class="d-flex justify-content-end mt-3">
         <button type="submit" class="btn btn-primary px-4">
           <i class="fas fa-filter me-1"></i> Filtrar
@@ -48,61 +50,78 @@
              (input)="buscarLibro($event)">
     </div>
 
-    <!-- 📋 Tabla de productos -->
+    <!-- 📋 Tabla modular, menos columnas -->
     <div class="table-responsive">
-      <table class="table table-hover table-bordered align-middle text-center">
+      <table class="table table-hover table-bordered align-middle">
         <thead class="table-light text-nowrap">
           <tr>
             <th>ID</th>
-            <th>Título</th>
-            <th>ISBN</th>
-            <th>Tamaño</th>
+            <th>Título &amp; ISBN</th>
+            <th class="d-none d-lg-table-cell">Tamaño</th>
             <th>Descripción</th>
-            <th>Condición</th>
-            <th>Impresión</th>
-            <th>Tipo Tapa</th>
-            <th>Estado</th>
-            <th>Subcategoría</th>
+            <th class="d-none d-md-table-cell">Características</th>
+            <th class="d-none d-lg-table-cell">Info Extra</th>
             <th>Categoría</th>
-            <th>Tipo Papel</th>
-            <th>Proveedor</th>
-            <th class="text-center">
-              Acciones
-              <button class="btn btn-sm btn-success ms-2" (click)="crearLibro(modalEdit)">
-                <i class="fas fa-plus"></i>
-              </button>
-            </th>
+            <th class="text-center">Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let libro of (librosFiltrados || libros)">
-            <td>{{ libro.idLibro }}</td>
-            <td>{{ libro.titulo }}</td>
-            <td>{{ libro.isbn }}</td>
-            <td>{{ libro.tamanno }}</td>
             <td>
-              <span *ngIf="libro.descripcion && libro.descripcion.length > 100">
-                  {{ libro.descripcion | slice:0:100 }}...
+              <span class="fw-bold">{{ libro.idLibro }}</span>
+            </td>
+            <td>
+              <div class="fw-bold mb-1">{{ libro.titulo }}</div>
+              <small class="text-muted">ISBN: {{ libro.isbn }}</small>
+            </td>
+            <td class="d-none d-lg-table-cell">
+              {{ libro.tamanno }}
+            </td>
+            <td>
+              <ng-container *ngIf="libro.descripcion && libro.descripcion.length > 80; else breveDesc">
+                <span>
+                  {{ libro.descripcion | slice:0:80 }}...
                   <a (click)="verDescripcionCompleta(libro)">ver más</a>
                 </span>
-                <span *ngIf="libro.descripcion && libro.descripcion.length <= 100">
-                  {{ libro.descripcion }}
-                </span>
+              </ng-container>
+              <ng-template #breveDesc>
+                <span>{{ libro.descripcion }}</span>
+              </ng-template>
             </td>
-            <td>{{ libro.condicion }}</td>
-            <td>{{ libro.impresion }}</td>
-            <td>{{ libro.tipoTapa }}</td>
-            <td>{{ libro.estado }}</td>
-            <td>{{ libro.idSubcategoria }}</td>
-            <td>{{ getDescripcionCategoria(libro.idSubcategoria) }}</td>
-            <td>{{ libro.idTipoPapel }}</td>
-            <td>{{ libro.idProveedor }}</td>
+            <!-- Características agrupadas -->
+            <td class="d-none d-md-table-cell">
+              <dl class="mb-0 small">
+                <dt>Condición:</dt>
+                <dd>{{ libro.condicion }}</dd>
+                <dt>Tapa:</dt>
+                <dd>{{ libro.tipoTapa }}</dd>
+                <dt>Papel:</dt>
+                <dd>{{ libro.idTipoPapel }}</dd>
+              </dl>
+            </td>
+            <!-- Info extra agrupada, solo en desktop -->
+            <td class="d-none d-lg-table-cell">
+              <dl class="mb-0 small">
+                <dt>Estado:</dt>
+                <dd>{{ libro.estado }}</dd>
+                <dt>Impresión:</dt>
+                <dd>{{ libro.impresion }}</dd>
+                <dt>Proveedor:</dt>
+                <dd>{{ libro.idProveedor }}</dd>
+              </dl>
+            </td>
+            <!-- Categoría y subcategoría -->
+            <td>
+              <div><b>Subcat:</b> {{ libro.idSubcategoria }}</div>
+              <div><b>Cat:</b> {{ getDescripcionCategoria(libro.idSubcategoria) }}</div>
+            </td>
+            <!-- Acciones -->
             <td>
               <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-outline-primary" (click)="editarLibro(modalEdit, libro)">
+                <button class="btn btn-sm btn-outline-primary" (click)="editarLibro(modalEdit, libro)" aria-label="Editar libro">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button class="btn btn-sm btn-outline-danger" (click)="eliminarRegistro(libro.idLibro)">
+                <button class="btn btn-sm btn-outline-danger" (click)="eliminarRegistro(libro.idLibro)" aria-label="Eliminar libro">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </div>

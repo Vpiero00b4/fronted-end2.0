@@ -1,7 +1,6 @@
-<div class="modal fade show d-block" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-modal="true">
+<div class="modal fade show d-block custom-modal-zoom" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-modal="true">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content shadow-lg rounded-4 border-0">
-      
       <!-- Header -->
       <div class="modal-header bg-primary text-white rounded-top">
         <h5 class="modal-title" id="modalLabel">Agregar Libro</h5>
@@ -23,6 +22,11 @@
               placeholder="Ej. Clean Code, 9780132350884"
               autocomplete="off"
               (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
+            <div *ngIf="libroForm.get('busqueda')?.touched && libroForm.get('busqueda')?.invalid" class="text-danger small">
+              <div *ngIf="libroForm.get('busqueda')?.errors?.['required']">
+                Debes ingresar un criterio de búsqueda.
+              </div>
+            </div>
           </div>
 
           <!-- Autocompletado -->
@@ -42,7 +46,15 @@
           <div class="row">
             <div class="col-md-4 mb-3">
               <label for="cantidad" class="form-label">Cantidad</label>
-              <input type="number" id="cantidad" class="form-control" formControlName="cantidad" min="1" />
+              <input type="number" id="cantidad" class="form-control" formControlName="cantidad" min="1" #cantidadInput/>
+              <div *ngIf="libroForm.get('cantidad')?.touched && libroForm.get('cantidad')?.invalid" class="text-danger small">
+                <div *ngIf="libroForm.get('cantidad')?.errors?.['required']">
+                  Debe ingresar una cantidad.
+                </div>
+                <div *ngIf="libroForm.get('cantidad')?.errors?.['min']">
+                  Debe ser mínimo 1.
+                </div>
+              </div>
             </div>
 
             <div class="col-md-4 mb-3">

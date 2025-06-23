@@ -1,14 +1,19 @@
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-info">
+<!-- ==============================
+     template-header.component.html
+     ============================== -->
+<nav class="sb-topnav navbar navbar-expand">
   <!-- Navbar Brand-->
-  <a class="navbar-brand ps-3" href="index.html" style="color: black;">P.A LIBRERIA_SABER</a>
+  <a class="navbar-brand ps-3" href="index.html">P.A LIBRERIA_SABER</a>
   <!-- Sidebar Toggle-->
-  <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+  <button class="btn btn-navbar btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+  </button>
   <!-- Navbar Search-->
   <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-      <div class="input-group">
-          <input class="form-control" type="text" placeholder="Search..." aria-label="Search..." aria-describedby="btnNavbarSearch" />
-          <button class="btn btn-info" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-      </div>
+    <div class="input-group">
+      <input class="form-control" type="text" placeholder="Buscar..." aria-label="Buscar..." />
+      <button class="btn btn-navbar" type="button"><i class="fas fa-search"></i></button>
+    </div>
   </form>
   <!-- Navbar-->
   <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
@@ -17,10 +22,10 @@
         <i class="fas fa-user fa-fw"></i>
       </a>
       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-        <li><a class="dropdown-item nav-link" [routerLink]="['mantenimiento/usuario']" href="#!"><span class="text-black">Configuración Usuario </span></a></li>
-        <li><a class="dropdown-item" href="#!">Actividad Hisssstórica</a></li>
+        <li><a class="dropdown-item nav-link" [routerLink]="['mantenimiento/usuario']"><span>Configuración Usuario</span></a></li>
+        <li><a class="dropdown-item" href="#">Actividad Histórica</a></li>
         <li><hr class="dropdown-divider" /></li>
-        <li class="bg-danger"><a class="dropdown-item" href="#!">Cerrar Sesión</a></li>
+        <li class="bg-danger"><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
       </ul>
     </li>
   </ul>    

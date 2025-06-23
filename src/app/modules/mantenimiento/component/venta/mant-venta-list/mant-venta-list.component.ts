@@ -1,8 +1,7 @@
-
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Component, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccionMantConst } from './../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
+import { AccionMantConst } from './../../../../../constans/general.constans';
 import { VentaResponse } from '../../../../../models/ventas-response.models';
 import { VentasService } from '../../../service/venta.service';
 import { Subscription } from 'rxjs';
@@ -13,16 +12,22 @@ import { SharedService } from '../../../service/sharedservice';
   templateUrl: './mant-venta-list.component.html',
   styleUrls: ['./mant-venta-list.component.css']
 })
-export class MantVentaListComponent implements OnInit {
-  //PARA EL LISTADO DE COMPROBANTES(LISTA DE VENTAS REALIZADAS)
-  private subscription: Subscription = new Subscription(); 
-  ventas: VentaResponse[] = [];
-  modalRef?: BsModalRef;  
+export class MantVentaListComponent implements OnInit, OnDestroy {
+  private subscription = new Subscription();
+  ventasFiltradas: VentaResponse[] = [];
+  modalRef?: BsModalRef;
   ventaSelected: VentaResponse = new VentaResponse();
   titleModal: string = "";
   accionModal: number = 0;
-  fechaInicio: string = ''; // Inicialmente vacías
-  fechaFin: string = ''; // Inicialmente vacías
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  mensaje: string = '';
+
+  // PAGINACIÓN
+  paginaActual: number = 1;
+  pageSize: number = 10;
+  totalRegistros: number = 0;
+  paginas: number[] = [];
 
   constructor(
     private sharedService: SharedService,
@@ -31,74 +36,90 @@ export class MantVentaListComponent implements OnInit {
     private modalService: BsModalService
   ) { }
 
-
   ngOnInit(): void {
-    this.listarVentas();
+    this.listarVentasPaginadas();
     this.escucharRegistroDeVentas();
-
   }
-  listarVentas() {
-    console.log("🟡 Listando ventas sin filtros");
-    // this.isLoading = true;
-    this._ventaService.getAll().subscribe({
-      next: (data: VentaResponse[]) => {
-        this.ventas = data;
+
+    listarVentasPaginadas(): void {
+    this._ventaService.getVentasPaginadas(this.paginaActual, this.pageSize).subscribe({
+      next: (res: any) => {
+        console.log('Respuesta paginada:', res);
+
+        this.ventasFiltradas = Array.isArray(res.venta) ? res.venta : [];
+
+        this.totalRegistros = res.totalItems || this.ventasFiltradas.length;
+
+        const totalPaginas = Math.ceil(this.totalRegistros / this.pageSize);
+        this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
       },
-      error: (err) => {
-        console.log("error", err);
-      },
-      complete: () => {
-        // Hacer algo
-      },
+      error: () => {
+        this.mensaje = 'Ocurrió un error al listar ventas paginadas.';
+        this.ventasFiltradas = [];
+        this.paginas = [];
+      }
     });
   }
 
-  escucharRegistroDeVentas() {
-    this.subscription.add(this.sharedService.ventaRegistrada$.subscribe((registrada) => {
-      if (registrada) {
-        this.fechaInicio = '';
-      this.fechaFin = '';
-        this.listarVentas();
-      }
-    }));
+
+
+  cambiarPagina(nuevaPagina: number): void {
+    if (nuevaPagina < 1 || nuevaPagina > this.paginas.length) return;
+    this.paginaActual = nuevaPagina;
+    this.listarVentasPaginadas();
   }
 
+  resetFiltros(): void {
+    this.fechaInicio = '';
+    this.fechaFin = '';
+    this.mensaje = '';
+    this.paginaActual = 1;
+    this.listarVentasPaginadas();
+  }
 
-  editarVenta(template: TemplateRef<any>, venta: VentaResponse) {
+  escucharRegistroDeVentas(): void {
+    this.subscription.add(
+      this.sharedService.ventaRegistrada$.subscribe((registrada) => {
+        if (registrada) {
+          this.resetFiltros();
+        }
+      })
+    );
+  }
+
+  editarVenta(template: TemplateRef<any>, venta: VentaResponse): void {
     this.ventaSelected = venta;
-    this.titleModal = "Editar Venta"
+    this.titleModal = "Editar Venta";
     this.accionModal = AccionMantConst.editar;
-
     this.openModal(template);
   }
 
-  openModal(template: TemplateRef<any>) {
+  openModal(template: TemplateRef<any>): void {
     this.modalRef = this.modalService.show(template);
   }
 
-  getCloseModalEmmit(res: boolean) {
+  getCloseModalEmmit(res: boolean): void {
     this.modalRef?.hide();
     if (res) {
-      this.listarVentas();
+      this.listarVentasPaginadas();
     }
   }
 
-  eliminarRegistro(id: number) {
-    debugger;
-    let result = confirm("¿Está seguro de eliminar el registro?");
-    if (result) {
+  eliminarRegistro(id: number): void {
+    if (confirm("¿Está seguro de eliminar el registro?")) {
       this._ventaService.delete(id).subscribe({
-        next: (data: number) => {
+        next: (_: number) => {
           alert("Registro eliminado de forma correcta");
         },
-        error: () => { },
+        error: () => {},
         complete: () => {
-          this.listarVentas();
+          this.listarVentasPaginadas();
         }
       });
     }
   }
-  descargarPDF(idVenta: number) {
+
+  descargarPDF(idVenta: number): void {
     this._ventaService.getVentaPDF(idVenta).subscribe(blob => {
       const url = window.URL.createObjectURL(blob);
       const anchor = document.createElement('a');
@@ -106,25 +127,38 @@ export class MantVentaListComponent implements OnInit {
       anchor.href = url;
       anchor.click();
       window.URL.revokeObjectURL(url);
-    }, error => {
+    }, (error: any) => {
       console.error("Error al descargar el PDF:", error);
     });
   }
-  filtrarPorFechas(fechaInicio: string, fechaFin: string) {
+
+  filtrarPorFechas(fechaInicio: string, fechaFin: string): void {
+    this.mensaje = '';
+    if (!fechaInicio || !fechaFin) {
+      this.mensaje = 'Debe ingresar ambas fechas para filtrar.';
+      return;
+    }
     this._ventaService.obtenerVentasPorFechas(fechaInicio, fechaFin).subscribe({
       next: (data: VentaResponse[]) => {
-        this.ventas = data;
+        this.ventasFiltradas = data;
+        this.totalRegistros = data.length;
+        this.paginaActual = 1;
+        const totalPaginas = Math.ceil(this.totalRegistros / this.pageSize);
+        this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+        if (data.length === 0) {
+          this.mensaje = 'No hay ventas en ese rango de fechas.';
+        }
       },
-      error: (err) => {
-        console.log("error", err);
-      },
-      complete: () => {
-        // Hacer algo si es necesario
-      },
+      error: () => {
+        this.mensaje = 'Ocurrió un error al filtrar las ventas.';
+        this.ventasFiltradas = [];
+        this.paginas = [];
+      }
     });
   }
+  
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
 }

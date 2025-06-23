@@ -43,6 +43,23 @@
           </tr>
         </tbody>
       </table>
+      <nav *ngIf="paginas.length > 1">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="paginaActual === 1">
+      <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+    </li>
+
+    <li class="page-item" *ngFor="let pagina of paginas"
+        [class.active]="pagina === paginaActual">
+      <a class="page-link" (click)="cambiarPagina(pagina)">{{ pagina }}</a>
+    </li>
+
+    <li class="page-item" [class.disabled]="paginaActual === paginas.length">
+      <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+    </li>
+  </ul>
+</nav>
+
     </div>
   </div>
 </div>
