@@ -1,144 +1,151 @@
-<div class="modal-header bg-light">
-  <h4 class="modal-title">{{ title }}</h4>
-  <button type="button" class="close" aria-label="Close" (click)="cerrarModal()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
+<!-- Modal Bootstrap 5 -->
+<div class="modal d-block fade show" tabindex="-1" style="background-color: rgba(0,0,0,0.75); z-index: 1050;">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content p-4">
 
-<div class="modal-body">
-  <form [formGroup]="myFormL">
-    <div class="row g-3">
+      <h2 class="h3 text-center mb-4">
+        {{ isEditMode ? 'Actualizar Libro' : 'Crear Libro' }}
+      </h2>
 
-      <!-- idLibro -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="idLibro">ID del Libro</label>
-          <input formControlName="idLibro" type="text" class="form-control" id="idLibro" placeholder="Ingrese el ID del libro">
-        </div>
+      <!-- Alerta de éxito -->
+      <div *ngIf="showSuccessAlert" class="alert alert-success d-flex align-items-center">
+        <i class="bi bi-check-circle me-2"></i>
+        <div>{{ successMessage }}</div>
       </div>
 
-      <!-- Título -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="titulo">Título</label>
-          <input formControlName="titulo" type="text" class="form-control" id="titulo" placeholder="Ingrese el título">
-        </div>
+      <!-- Alerta de error -->
+      <div *ngIf="showErrorAlert" class="alert alert-danger d-flex align-items-center">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <div>{{ errorMessage }}</div>
       </div>
 
-      <!-- ISBN -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="isbn">ISBN</label>
-          <input formControlName="isbn" type="text" class="form-control" id="isbn" placeholder="Ingrese el ISBN">
-        </div>
-      </div>
+      <form (ngSubmit)="onSubmit()" #libroForm="ngForm" class="row g-3">
 
-      <!-- Tamaño -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="tamanno">Tamaño</label>
-          <input formControlName="tamanno" type="text" class="form-control" id="tamanno" placeholder="Ingrese el tamaño">
+        <!-- Título -->
+        <div class="col-md-6">
+          <label for="titulo" class="form-label">Título</label>
+          <input type="text" class="form-control" id="titulo" name="titulo" [(ngModel)]="libro.titulo" required />
         </div>
-      </div>
 
-      <!-- Descripción -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="descripcion">Descripción</label>
-          <input formControlName="descripcion" type="text" class="form-control" id="descripcion" placeholder="Ingrese la descripción">
+        <!-- ISBN -->
+        <div class="col-md-6">
+          <label for="isbn" class="form-label">ISBN</label>
+          <input type="text" class="form-control" id="isbn" name="isbn" [(ngModel)]="libro.isbn" />
         </div>
-      </div>
 
-      <!-- Condición -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="condicion">Condición</label>
-          <select formControlName="condicion" class="form-control" id="condicion">
-            <option value="Nuevo">Nuevo</option>
-            <option value="Usado">Usado</option>
+        <!-- Tamaño -->
+        <div class="col-md-6">
+          <label for="tamanno" class="form-label">Tamaño</label>
+          <input type="text" class="form-control" id="tamanno" name="tamanno" [(ngModel)]="libro.tamanno" />
+        </div>
+
+        <!-- Autor -->
+        <div class="col-md-6 position-relative">
+          <label for="buscarAutor" class="form-label">Autor</label>
+          <div class="input-group">
+            <input type="text" id="buscarAutor" placeholder="Buscar autor..." [(ngModel)]="buscarAutor" [ngModelOptions]="{standalone: true}" class="form-control" />
+            <button class="btn btn-primary" type="button" (click)="buscarAutores()">Buscar</button>
+          </div>
+          <ul *ngIf="autoresFiltrados.length > 0" class="list-group position-absolute w-100 mt-1 zindex-dropdown overflow-auto" style="max-height: 160px;">
+            <li *ngFor="let autor of autoresFiltrados" (click)="seleccionarAutor(autor)" class="list-group-item list-group-item-action">
+              {{ autor.nombre }} {{ autor.apellido }}
+            </li>
+          </ul>
+          <div *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje" class="form-text">No se encontraron resultados.</div>
+          <button *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje" type="button" (click)="abrirCrearAutorModal()" class="btn btn-success btn-sm mt-2">Crear Autor</button>
+        </div>
+        <app-autor *ngIf="mostrarModalCrearAutor" (autorCreado)="recibirAutorCreado($event)" (cerrarModal)="cerrarCrearAutorModal()"></app-autor>
+
+        <!-- Descripción -->
+        <div class="col-12">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea class="form-control" id="descripcion" name="descripcion" rows="3" [(ngModel)]="libro.descripcion"></textarea>
+        </div>
+
+        <!-- Condición -->
+        <div class="col-md-6">
+          <label for="condicion" class="form-label">Condición</label>
+          <input type="text" class="form-control" id="condicion" name="condicion" [(ngModel)]="libro.condicion" />
+        </div>
+
+        <!-- Impresión -->
+        <div class="col-md-6">
+          <label for="impresion" class="form-label">Impresión</label>
+          <input type="text" class="form-control" id="impresion" name="impresion" [(ngModel)]="libro.impresion" />
+        </div>
+
+        <!-- Tipo de Tapa -->
+        <div class="col-md-6">
+          <label for="tipoTapa" class="form-label">Tipo de Tapa</label>
+          <input type="text" class="form-control" id="tipoTapa" name="tipoTapa" [(ngModel)]="libro.tipoTapa" />
+        </div>
+
+        <!-- Estado -->
+        <div class="col-md-6 d-flex align-items-center pt-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="estado" name="estado" [(ngModel)]="libro.estado" />
+            <label class="form-check-label" for="estado">Estado</label>
+          </div>
+        </div>
+
+        <!-- Subcategoría -->
+        <div class="col-md-6">
+          <label for="idSubcategoria" class="form-label">Subcategoría</label>
+          <select class="form-select" id="idSubcategoria" name="idSubcategoria" [(ngModel)]="libro.idSubcategoria" required>
+            <option *ngFor="let sub of subCategoria" [value]="sub.id">{{ sub.descripcion }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- Número de impresión -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="impresion">Nº de Impresión</label>
-          <input formControlName="impresion" type="text" class="form-control" id="impresion" placeholder="Ingrese el número de impresión">
-        </div>
-      </div>
-
-      <!-- Tipo de Tapa -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="tipoTapa">Tipo de Tapa</label>
-          <select formControlName="tipoTapa" class="form-control" id="tipoTapa">
-            <option value="TapaDura">Tapa Dura</option>
-            <option value="TapaBlanda">Tapa Blanda</option>
+        <!-- Tipo de Papel -->
+        <div class="col-md-6">
+          <label for="idTipoPapel" class="form-label">Tipo de Papel</label>
+          <select class="form-select" id="idTipoPapel" name="idTipoPapel" [(ngModel)]="libro.idTipoPapel" required>
+            <option *ngFor="let tipo of tiposPapel" [value]="tipo.idTipoPapel">{{ tipo.descripcion }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- Estado -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="estado">Estado</label>
-          <select formControlName="estado" class="form-control" id="estado">
-            <option [value]="true">Nuevo</option>
-            <option [value]="false">Usado</option>
+        <!-- Proveedor -->
+        <div class="col-md-6">
+          <label for="idProveedor" class="form-label">Proveedor</label>
+          <select class="form-select" id="idProveedor" name="idProveedor" [(ngModel)]="libro.idProveedor" required>
+            <option *ngFor="let prov of provedor" [value]="prov.idProveedor">{{ prov.razonSocial }}</option>
           </select>
         </div>
-      </div>
 
-      <!-- Subcategoría -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="idSubcategoria">ID Subcategoría</label>
-          <input formControlName="idSubcategoria" type="number" class="form-control" id="idSubcategoria" placeholder="Ingrese el ID de subcategoría">
+        <!-- Precio de Venta -->
+        <div class="col-md-6">
+          <label for="precioVenta" class="form-label">Precio de Venta</label>
+          <input type="number" class="form-control" id="precioVenta" name="precioVenta" [(ngModel)]="precioVenta" required />
         </div>
-      </div>
 
-      <!-- Tipo de Papel -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="idTipoPapel">Tipo de Papel</label>
-          <select formControlName="idTipoPapel" class="form-control" id="idTipoPapel">
-            <option [ngValue]="1">Bond</option>
-            <option [ngValue]="2">>Periódico</option>
-          </select>
+        <!-- Stock -->
+        <div class="col-md-6">
+          <label for="Stock" class="form-label">Stock</label>
+          <input type="number" class="form-control" id="Stock" name="Stock" [(ngModel)]="Stock" required />
         </div>
-      </div>
 
-      <!-- Proveedor -->
-      <div class="col-md-6">
-        <div class="form-group">
-          <label for="idProveedor">ID Proveedor</label>
-          <input formControlName="idProveedor" type="number" class="form-control" id="idProveedor" placeholder="Ingrese el ID del proveedor">
+        <!-- Imagen previsualizada -->
+        <div *ngIf="imageUrl" class="col-12 text-center">
+          <label class="form-label">Imagen Previsualizada</label>
+          <div class="border rounded p-2 position-relative mx-auto" style="width: 300px; height: 300px;">
+            <img [src]="imageUrl" alt="Previsualización" class="img-fluid h-100 object-fit-contain" />
+            <button (click)="removeImage()" type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
+          </div>
         </div>
-      </div>
 
-     <!-- Imagen (editable o null manualmente) -->
-<div class="col-md-6">
-  <div class="form-group">
-    <label for="imagen">Imagen</label>
-    
-    <select formControlName="imagen" class="form-control">
-      <option [ngValue]="null">Sin imagen</option>
-      <option [ngValue]="'url'">Ingresar manualmente</option>
-    </select>
-    
-    <!-- Subida de archivo opcional -->
-    <input type="file" (change)="onFileSelected($event)" class="form-control mt-2">
-  </div>
-</div>
+        <!-- Subir imagen -->
+        <div class="col-12">
+          <label for="imagen" class="form-label">Imagen</label>
+          <input class="form-control" type="file" id="imagen" name="imagen" (change)="onImageSelected($event)" />
+        </div>
 
+        <!-- Botones -->
+        <div class="col-12 d-flex justify-content-end gap-3 mt-3">
+          <button type="button" (click)="onClose()" class="btn btn-danger">Cancelar</button>
+          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+        </div>
 
-      <!-- Botones -->
-      <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-        <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="!myFormL.valid" (click)="guardarlibro()">Guardar</button>
-      </div>
-
+      </form>
     </div>
-  </form>
+  </div>
 </div>

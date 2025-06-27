@@ -1,5 +1,5 @@
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccionMantConst } from '../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
 import { LibroResponse } from '../../../../../models/libro-response.models';
@@ -12,6 +12,8 @@ import { SubcategoriaResponse } from '../../../../../models/subcategoria-respons
 import { LibroService } from '../../../service/libro.service';
 import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Autor, Categoria, Libro, Precio, SubCategoria } from '../../../../../models/libro-request.models';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -19,305 +21,170 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   templateUrl: './mant-libro-list.component.html',
   styleUrls: ['./mant-libro-list.component.css']
 })
-export class MantLibroListComponent implements OnInit {
-  filtroForm: FormGroup;
-  filtroFormCategorias: FormGroup;
-  librosFiltrados!: LibroResponse[];
-  libros: LibroResponse[] = [];
-  subcategorias: SubcategoriaResponse[] = [];
-  categorias: CategoriaResponse[] = [];
-  
-  productosAgregados: DetalleVentaResponse[] = [];
-  modalRef?: BsModalRef;
-  libroSelected: LibroResponse = new LibroResponse();
-  titleModal: string = "";
-  accionModal: number = 0;
-  currentPage: number = 1;
-  totalPages: number = 0;
-  totalItems: number = 0;
-  // myFormFilter: FormGroup;
+export class MantLibroListComponent {
+  libros: Libro[] = [];
+  subCategorias: SubCategoria[] = [];
+  subCategoriasPaginas: SubCategoria[] = [];
+  totalSubCategorias: number = 0;
+  categoriasMap: Map<number, string> = new Map();
+  currentPage = 1;
+  pageSize = 10;
+  currentPageSubCategorias = 1;
+  isModalOpen: boolean = false;
+  isEditMode: boolean = false;
+  libroSeleccionado: Libro | null = null;
+  precio: Precio[] = [];  // Inicializa el precio
+  Stock: number = 0;
+  precioVenta: number = 0;
+  categorias: Categoria[] = [];
+  subcategoria: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
+  subcategoriaSeleccionada: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
+  categoria: Categoria = { idCategoria: 0, categoria1: '' }; // Nueva categoría
+  isEditSubcategoriaMode = false;
+  isCategoriaModalOpen = false;
+  isSubcategoriaModalOpen: boolean = false;
+  estadoSeleccionado?: boolean;
+  tituloBuscado: string = '';
+  totalItems: number = 0; // Total de libros obtenidos de la API
+  totalPages: number = 0; // Número total de páginas
+  hasMoreData: boolean = true; // Indica si hay más datos para mostrar
 
   constructor(
-    private _route: Router,
-    private snackBar: MatSnackBar,
-    private _libroService: LibroService,
-    private modalService: BsModalService,
-    private _categoriaService: CategoriaService,
-    private _subcategoriaService: SubcategoriaService,
-    private formBuilder: FormBuilder)
-    {
-      this.filtroFormCategorias = this.formBuilder.group({
-        idSubcategoria: ['']  // Asegúrate de que coincide con el formControlName en el HTML.
-      });
-    
-  
-    // Inicializa el formulario de filtro dentro del constructor
-    this.filtroForm = this.formBuilder.group({
-      
-      idCategoria: [''],
-      estadoDescripcion: [false], // Campo para filtrar por estado
-      idSubcategoria: [''], // Campo para filtrar por categoría
-    },
-    
-    this.filtroFormCategorias = this.formBuilder.group({
-      idSubcategoria: [6] // Campo para filtrar por categoría
-    }));
-
-    // Inicializa el formulario de filtro dentro del constructor
-    this.filtroFormCategorias = this.formBuilder.group({
-      idLibro: [{ value: 0, disabled: true }, [Validators.required]],
-      titulo: [null, []],
-      isbn: [null, []],
-      tamanno: [null, []],
-      descripcion: [null, []],
-      condicion: [null, []],
-      impresion: [null, []],
-      tipoTapa: [null, []],
-      estado: [null, []],
-      idSubcategoria: [''],
-      idTipoPapel: [null, []],
-      idProveedor: [null, []],
-      estadoDescripcion: [null, []],
-      tipoPapelDescripcion: [null, []],
-      idCategoria: ['', Validators.required],
-            });
+    private libroService: LibroService,) { }
+  ngOnInit() {
+    this.getLibrosPaginados(this.currentPage);
   }
-
-  ngOnInit(): void {
-    this.cargarCategorias();
-    this.cargarSubcategorias();
-    this.listarLibros();
-    this.loadInventoryData(this.currentPage, 15);
-
-  }
-  cargarSubcategorias() {
-    this._subcategoriaService.getSubcategorias().subscribe(subcategorias => {
-      this.subcategorias = subcategorias;
-    });
-  }
-  cargarCategorias() {
-    this._categoriaService.getCategorias().subscribe(categorias => {
-      this.categorias = categorias;
-      console.log('Categorías cargadas:', this.categorias); // Esto te mostrará las categorías cargadas
-    }, error => {
-      console.error('Error al cargar categorías:', error);
-    });
-  }
-  getDescripcionCategoria(idSubcategoria: number): string {
-    // Encuentra la subcategoría correspondiente al libro
-    const subcategoria = this.subcategorias.find(sc => sc.id === idSubcategoria);
-  
-    // Si se encuentra la subcategoría, utiliza su Id_Categoria para encontrar la categoría correspondiente
-    if (subcategoria) {
-      const categoria = this.categorias.find(c => c.idCategoria === subcategoria.idCategoria);
-      // Asegúrate de devolver el nombre de la categoría, no el ID.
-      return categoria ? categoria.categoria1 : 'Categoría no encontrada';
-    } else {
-      return 'Subcategoría no encontrada';
-    }
-  }
-  
-  listarLibros() {
-    this._libroService.getAll().subscribe({
-      next: (data: LibroResponse[]) => {
-        this.libros = data;
-        console.log('Libros cargados:', this.libros); // Aquí puedes revisar cada idCategoria de los libros.
-        // Por ejemplo, para probar si las categorías coinciden
-        this.libros.forEach(libro => {
-          const categoria = this.categorias.find(c => c.idCategoria === libro.idCategoria);
-        });
-      },
-      error: (err) => {
-        console.log("error", err);
-      }
-    });
-  }
-  
-
-  crearLibro(template: TemplateRef<any>) {
-    this.libroSelected = new LibroResponse();
-    this.titleModal = "NUEVO LIBRO"
-    this.accionModal = AccionMantConst.crear;
-    this.openModal(template);
-  }
-
-  editarLibro(template: TemplateRef<any>, libro: LibroResponse) {
-    this.libroSelected = libro;
-    this.titleModal = "EDIT LIBRO"
-    this.accionModal = AccionMantConst.editar;
-    this.openModal(template);
-  }
-
-  openModal(template: TemplateRef<any>) {
-    this.modalRef = this.modalService.show(template);
-  }
-
-  getCloseModalEmmit(res: boolean) {
-    this.modalRef?.hide();
-    if (res) {
-      this.listarLibros();
-    }
-  }
-
-  eliminarRegistro(id: number) {
-    let result = confirm("¿Está seguro de eliminar el registro?");
-    if (result) {
-      this._libroService.delete(id).subscribe({
-        next: (data: number) => {
-          alert("Registro eliminado de forma correcta");
-        },
-        error: () => { },
-        complete: () => {
-          this.listarLibros();
-        }
-      });
-    }
-  }
-
-  filtrar() {
-    const estadoDescripcion = this.filtroForm.value.estadoDescripcion;
-  
-    // Filtrar los libros según el estado seleccionado
-    this.librosFiltrados = this.libros.filter(libro =>
-      (!estadoDescripcion || libro.estadoDescripcion === estadoDescripcion)
-    );
-  }
-  filtrarPorCategoria() {
-    const idCategoria = this.filtroForm.value.idCategoria;
-    console.log("Filtrando por categoría con ID:", idCategoria); // Muestra el ID de la categoría seleccionada
-  
-    if (idCategoria) {
-      this._categoriaService.getCategoriasConLibros(idCategoria).subscribe({
-        next: (libros: LibroResponse[]) => {
-          console.log("Libros recibidos para la categoría:", libros); // Muestra los libros recibidos
-          this.librosFiltrados = libros;
-        },
-        error: (err) => {
-          console.error('Error fetching books for category:', err);
-        }
-      });
-    } else {
-      console.log("No se seleccionó ninguna categoría, cargando todos los libros.");
-      this.listarLibros(); // Si no hay categoría seleccionada, cargar todos los libros
-    }
-  }
-  
-  
-  listarLibrosPorCategoria(idSubcategoria: number) {
-    this._subcategoriaService.getLibrosBySubcategoria(idSubcategoria).subscribe({
-      next: (data: LibroResponse[]) => {
-        // Actualiza la lista de libros filtrados para mostrar solo los que corresponden a la subcategoría
-        this.librosFiltrados = data;
-      },
-      error: (err) => {
-        console.error("Error al obtener libros por subcategoría", err);
-      }
-    });
-  }
-  buscarLibro(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const consulta = inputElement.value.trim();
-  
-    if (!consulta) {
-      // Si la consulta está vacía, mostrar todos los libros
-      this.listarLibros();
-      return;
-    }
-    
-    // Filtrar los libros según la consulta
-    this.librosFiltrados = this.libros.filter(libro =>
-      libro.titulo.toLowerCase().includes(consulta.toLowerCase())
-      //AGREGAR isbn 
-    );
-  }
-  filtrarPorCategoriaYSubcategoria() {
-    const idCategoria = this.filtroForm.value.idCategoria;
-    const idSubcategoria = this.filtroForm.value.idSubcategoria;
-  
-    console.log("Filtrando por categoría con ID:", idCategoria, "y subcategoría con ID:", idSubcategoria);
-  
-    if (idCategoria && idSubcategoria) {
-      // Filtrar por categoría y subcategoría simultáneamente si ambos están presentes
-      this._categoriaService.getCategoriasConLibros(idCategoria).subscribe({
-        next: libros => {
-          this.librosFiltrados = libros;
-          console.log("Libros filtrados por categoría y subcategoría:", libros);
-        },
-        error: error => console.error('Error al filtrar libros por categoría y subcategoría:', error)
-      });
-    } else if (idCategoria) {
-      // Filtrar solo por categoría si solo idCategoria está presente
-      this._categoriaService.getCategoriasConLibros(idCategoria).subscribe({
-        next: libros => {
-          this.librosFiltrados = libros;
-          console.log("Libros filtrados por categoría:", libros);
-        },
-        error: error => console.error('Error al filtrar libros por categoría:', error)
-      });
-    } else if (idSubcategoria) {
-      // Filtrar solo por subcategoría si solo idSubcategoria está presente
-      this._subcategoriaService.getLibrosBySubcategoria(idSubcategoria).subscribe({
-        next: libros => {
-          this.librosFiltrados = libros;
-          console.log("Libros filtrados por subcategoría:", libros);
-        },
-        error: error => console.error('Error al filtrar libros por subcategoría:', error)
-      });
-    } else {
-      // Si no se seleccionó ninguna categoría ni subcategoría, mostrando todos los libros
-      console.log("No se seleccionó ninguna categoría ni subcategoría, mostrando todos los libros.");
-      this.listarLibros();
-    }
-  }
-  loadInventoryData(pageIndex: number, pageSize: number): void {
-    this._libroService.getAllPaginated(pageIndex, pageSize).pipe(
-      switchMap(response => {
-        if (response.libros && response.libros.length > 0) {
-          this.totalPages = response.totalPages;
-          this.currentPage = response.currentPage;
-          this.totalItems = response.totalItems;
-  
-          const detailsObservables = response.libros.map(libro => 
-            forkJoin({
-              libro: of(libro),
-              precio: this._libroService.getUltimoPrecioByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
-              stock: this._libroService.getKardexByLibroId(libro.idLibro).pipe(
-                catchError((error) => {
-                  console.error('Error al obtener el stock:', error);
-                  return of(0); // Proporciona un valor predeterminado en caso de error
-                })
-              )
-            }).pipe(
-              map(({ libro, precio }) => ({
-                ...libro,
-                precioVenta: precio?.precioVenta ?? 0,
-                porcUtilidad: precio?.porcUtilidad ?? 0,
-                idPrecios: precio?.idPrecios ?? 0,
-              }))
-            )
-          );
-  
-          return forkJoin(detailsObservables);
+  openEditModal(libro: Libro): void {
+    this.isEditMode = true; // Modo edición
+    this.libroSeleccionado = libro;
+    forkJoin({
+      precio: this.libroService.getPrecioById(libro.idLibro),
+      kardex: this.libroService.getStockById(libro.idLibro),
+    }).subscribe({
+      next: (response) => {
+        if (Array.isArray(response.precio) && response.precio.length > 0) {
+          this.precioVenta = response.precio[0].precioVenta;
         } else {
-          return of([]);
+          console.warn('El precio no se recibió como un objeto esperado');
         }
-      })
-    ).subscribe({
-      next: librosConDetalles => {
-        this.libros = librosConDetalles;
+        this.Stock = response.kardex.stock;
       },
-      error: e => console.error(e)
+      error: (err) => {
+        console.error('Error al obtener datos:', err);
+      },
+    });
+    this.isModalOpen = true;
+    document.body.classList.add('overflow-hidden');
+  }
+
+  // getLibros() {
+  //   this.libroService.get().subscribe(
+  //     (data: Libro[]) => {
+  //       this.libros = data;
+  //       console.log(data);
+  //     },
+  //     (error) => {
+  //       console.error('Error al obtener libros:', error);
+  //     }
+  //   );
+  // }
+
+  getLibrosPaginados(page: number) {
+    this.libroService.getPaginatedLibros(page, this.pageSize).subscribe(
+      (data: Libro[]) => {
+        this.libros = data;
+        this.hasMoreData = this.libros.length === this.pageSize;
+      },
+      (error) => {
+        console.error('Error al obtener libros:', error);
+      }
+    );
+  }
+  filtrarLibros(): void {
+    this.libroService.filtrarLibros(this.estadoSeleccionado, this.tituloBuscado, this.currentPage, this.pageSize)
+      .subscribe(
+        (response) => {
+          this.libros = response.libros;
+          this.totalItems = response.totalItems;
+          this.totalPages = Math.ceil(this.totalItems / this.pageSize); // Calcula el total de páginas
+          this.hasMoreData = this.libros.length === this.pageSize; // Si la cantidad recibida es menor, no hay más datos
+        },
+        (error) => {
+          console.error('Error al obtener libros filtrados:', error);
+        }
+      );
+  }
+   deleteLibro(id: number) {
+    this.libroService.updateestado(id).subscribe({
+      next: () => {
+        Swal.fire(
+          '¡Inactivo!',
+          'El libro cambió a inactivo',
+          'success'
+        );
+        this.getLibrosPaginados(this.currentPage); // Recarga los datos de la tabla
+      },
+      error: (error) => {
+        console.error("Error al cambiar estado:", error);
+        Swal.fire(
+          'Error',
+          'No se pudo cambiar el estado del libro',
+          'error'
+        );
+      }
     });
   }
-  
-   verDescripcionCompleta(libro: any) {
-  this.snackBar.open(libro.descripcion, 'Cerrar', {
-    duration: 5000,
-  });
-}
+    // Método para abrir el modal
+  openCreateModal(): void {
+    this.isEditMode = false;
+    this.isModalOpen = true;
+    this.libroSeleccionado = null;
+    document.body.classList.add('overflow-hidden');
+  }
 
-  onPageChange(newPageIndex: number): void {
-    this.currentPage = newPageIndex;
-    this.loadInventoryData(newPageIndex, 10);
+  mostrarTodos(): void {
+    this.tituloBuscado = '';
+    this.estadoSeleccionado = undefined;
+    this.currentPage = 1; // Reiniciar paginación
+    this.getLibrosPaginados(this.currentPage); // Cargar todos los libros sin filtro
+  }
+    buscar(): void {
+    this.currentPage = 1; // Reiniciar a la primera página al buscar
+    this.filtrarLibros(); // Llamar al filtro con título y estado
+  }
+
+    // Método para cerrar el modal
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.Stock = 0;
+    this.precioVenta = 0
+    document.body.classList.remove('overflow-hidden');
+  }
+    handleLibroGuardado(): void {
+    this.getLibrosPaginados(this.currentPage); // Refrescar lista de libros
+    this.closeModal(); // Cerrar el modal
+    console.log('Libro guardado, actualizando lista...');
+  }
+
+   prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      if (this.tituloBuscado || this.estadoSeleccionado !== undefined) {
+        this.filtrarLibros(); // Si hay filtro, usa la búsqueda filtrada
+      } else {
+        this.getLibrosPaginados(this.currentPage); // Si no hay filtro, usa la lista paginada normal
+      }
+    }
+  }
+
+  nextPage() {
+    if (this.hasMoreData) { // Verifica si hay más datos antes de avanzar
+      this.currentPage++;
+      if (this.tituloBuscado || this.estadoSeleccionado !== undefined) {
+        this.filtrarLibros(); // Si hay filtro, usa la búsqueda filtrada
+      } else {
+        this.getLibrosPaginados(this.currentPage); // Si no hay filtro, usa la lista paginada normal
+      }
+    }
   }
 }

@@ -1,0 +1,84 @@
+<!-- Modal Bootstrap para Crear Autor -->
+<div class="modal d-block fade show" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.6); z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg rounded-4 p-4">
+
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold text-dark">Crear Autor</h5>
+      </div>
+
+      <div class="modal-body pt-0">
+        <form (ngSubmit)="crearAutor()" #form="ngForm" class="needs-validation" novalidate>
+
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input
+              id="nombre"
+              type="text"
+              [(ngModel)]="nuevoAutor.nombre"
+              name="nombre"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Apellido -->
+          <div class="mb-3">
+            <label for="apellido" class="form-label">Apellido</label>
+            <input
+              id="apellido"
+              type="text"
+              [(ngModel)]="nuevoAutor.apellido"
+              name="apellido"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Código -->
+          <div class="mb-3">
+            <label for="codigo" class="form-label">Código</label>
+            <input
+              id="codigo"
+              type="text"
+              [(ngModel)]="nuevoAutor.codigo"
+              name="codigo"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <input
+              id="descripcion"
+              type="text"
+              [(ngModel)]="nuevoAutor.descripcion"
+              name="descripcion"
+              required
+              class="form-control"
+            />
+          </div>
+
+          <!-- Botones -->
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cerrarModalHandler()">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-success">
+              Crear
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

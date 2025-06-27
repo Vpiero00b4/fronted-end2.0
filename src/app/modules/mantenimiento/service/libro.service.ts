@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CrudService } from '../../shared/services/crud.service';
-import { LibroRequest } from '../../../models/libro-request.models';
+import { Kardex, Libro, LibroRequest, Precio } from '../../../models/libro-request.models';
 import { LibroResponse } from '../../../models/libro-response.models';
 import { UrlConstants } from '../../../constans/url.constans';
 import { KardexResponse } from '../../../models/kardex-response.models';
@@ -18,8 +18,8 @@ import { kardex } from '../../../models/kardex.models';
   providedIn: 'root'
 })
 export class LibroService extends CrudService<LibroRequest, LibroResponse> {
-  constructor(protected http: HttpClient) { 
-    super(http, UrlConstants.libro);      
+  constructor(protected http: HttpClient) {
+    super(http, UrlConstants.libro);
   }
 
   getAllLibros(): Observable<LibroResponse[]> {
@@ -34,8 +34,53 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     return this.http.get<KardexResponse>(`${UrlConstants.kardex}/${libroId}`);
   }
 
-  
+  // buscarAutorPorNombre(nombre: string): Observable<AutorRequest> {
+  //   return this.http.get<AutorRequest>(`https://localhost:7143/Autor/GetByName?nombre=${nombre}`);
+  // }
 
+  createLibro(formData: FormData, precioVenta: number, stock: number): Observable<any> {
+    const url = `${this.url_service}/createDetalleLibro?precioVenta=${precioVenta}&stock=${stock}`;
+    return this.http.post(url, formData);
+  }
+
+
+
+  updateLibro(formData: FormData, precioVenta: number, stock: number): Observable<any> {
+    // Realizar la petición PUT al backend, pasando los parámetros precioVenta y stock en la URL
+    return this.http.put(`${this.url_service}/detalles?precioVenta=${precioVenta}&stock=${stock}`, formData);
+  }
+
+  getPaginatedLibros(page: number, pageSize: number): Observable<Libro[]> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<any>(this.url_service + "/Paginator", { params }).pipe(
+      map(response => response.libros)
+    );
+  }
+  filtrarLibros(estado?: boolean, titulo?: string, page: number = 1, pageSize: number = 10): Observable<any> {
+    let params: any = { page, pageSize };
+
+    if (estado !== undefined) {
+      params.estado = estado;
+    }
+    if (titulo) {
+      params.titulo = titulo;
+    }
+
+    return this.http.get<any>(`${this.url_service}/filtrar`, { params });
+  }
+  updateestado(id: number) {
+    return this.http.put(`${this.url_service}/cambiar-estado/${id}`, id)
+  }
+
+  getPrecioById(id: number): Observable<Precio> {
+    return this.http.get<Precio>(`${this.url_service}/precios/${id}`);
+  }
+  getStockById(id: number): Observable<Kardex> {
+    return this.http.get<Kardex>(`${this.url_service}/kardex/${id}`);
+  }
   getUltimoPrecioByLibroId(libroId: number): Observable<PrecioResponse> {
     return this.http.get<PrecioResponse>(`${UrlConstants.precio}/${libroId}`);
   }
@@ -66,8 +111,8 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     return this.http.post<LibroResponse>(this.url_service, libroData);
   }
   crearLibro(formData: FormData): Observable<LibroResponse> {
-  return this.http.post<LibroResponse>(this.url_service, formData);
-}
+    return this.http.post<LibroResponse>(this.url_service, formData);
+  }
 
 
 }

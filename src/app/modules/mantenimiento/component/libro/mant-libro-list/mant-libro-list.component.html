@@ -1,160 +1,98 @@
-<div class="card bg-white mb-5 shadow-sm rounded-4 border-0">
-  <div class="card-header bg-white border-bottom text-center py-4 position-relative">
-    <h3 class="fw-bold text-uppercase mb-0">Listado de Productos</h3>
-    <!-- Botón flotante de agregar -->
-    <button class="btn btn-success fab-add" (click)="crearLibro(modalEdit)" aria-label="Agregar nuevo libro">
-      <i class="fas fa-plus"></i>
-    </button>
-  </div>
+<div class="container py-4">
+  <!-- Tabla de Libros -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <h2 class="h4 fw-bold mb-4 text-dark">Libros</h2>
 
-  <div class="card-body">
+      <div class="row g-2 align-items-end mb-3">
+        <div class="col-md-4">
+          <input [(ngModel)]="tituloBuscado" (keyup.enter)="buscar()" type="text" placeholder="Buscar por título"
+            class="form-control" />
+        </div>
 
-    <!-- 🎯 Filtros -->
-    <form [formGroup]="filtroForm"
-          (ngSubmit)="filtrarPorCategoriaYSubcategoria()"
-          class="mb-4 p-3 bg-light rounded-3 shadow-sm">
-      <div class="row g-3">
-        <div class="col-md-6">
-          <label for="idCategoria" class="form-label fw-semibold">Categoría:</label>
-          <select formControlName="idCategoria" id="idCategoria" class="form-select">
-            <option value="">Seleccione una Categoría</option>
-            <option *ngFor="let categoria of categorias" [value]="categoria.idCategoria">
-              {{ categoria.categoria1 }}
-            </option>
+        <div class="col-md-3">
+          <select [(ngModel)]="estadoSeleccionado" (change)="buscar()" class="form-select">
+            <option [ngValue]="undefined">Todos</option>
+            <option [ngValue]="true">Activos</option>
+            <option [ngValue]="false">Inactivos</option>
           </select>
         </div>
-        <div class="col-md-6">
-          <label for="idSubcategoria" class="form-label fw-semibold">Subcategoría:</label>
-          <select formControlName="idSubcategoria" id="idSubcategoria" class="form-select">
-            <option value="">Seleccione una Subcategoría</option>
-            <option *ngFor="let subcategoria of subcategorias" [value]="subcategoria.id">
-              {{ subcategoria.descripcion }}
-            </option>
-          </select>
+
+        <div class="col-auto">
+          <button (click)="buscar()" class="btn btn-primary">🔍 Buscar</button>
+        </div>
+
+        <div class="col-auto">
+          <button (click)="mostrarTodos()" class="btn btn-secondary">🔄 Mostrar Todos</button>
         </div>
       </div>
-      <div class="d-flex justify-content-end mt-3">
-        <button type="submit" class="btn btn-primary px-4">
-          <i class="fas fa-filter me-1"></i> Filtrar
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+          <thead class="table-light">
+            <tr>
+              <th>Título</th>
+              <th>ISBN</th>
+              <th>Impresión</th>
+              <th>Estado</th>
+              <th>Condición</th>
+              <th>
+                <button (click)="openCreateModal()" class="btn btn-sm btn-outline-success">➕</button>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let libro of libros">
+              <td class="text-start">{{ libro.titulo }}</td>
+              <td class="text-start">{{ libro.isbn }}</td>
+              <td class="text-start">{{ libro.impresion }}</td>
+              <td>
+                <span class="badge rounded-pill"
+                  [ngClass]="libro.estado ? 'bg-success text-light' : 'bg-danger text-light'">
+                  {{ libro.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>{{ libro.condicion }}</td>
+              <td>
+                <div class="d-flex justify-content-center gap-2">
+                  <button (click)="openEditModal(libro)" class="btn btn-sm btn-outline-primary">✏️</button>
+                  <button (click)="deleteLibro(libro.idLibro)" class="btn btn-sm btn-outline-danger">🗑️</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Bootstrap estilo personalizado -->
+      <div *ngIf="isModalOpen" class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+          <div class="modal-content p-4">
+            <h2 class="h4 fw-bold mb-3 text-dark">
+              {{ isEditMode ? 'Actualizar Libro' : 'Crear Libro' }}
+            </h2>
+            <app-mant-libro-register [isEditMode]="isEditMode"
+              [libro]="libroSeleccionado || { idLibro: 0, titulo: '', isbn: undefined, tamanno: '', descripcion: '', condicion: '', impresion: '', tipoTapa: '', estado: true, idSubcategoria: 0, idTipoPapel: 0, idProveedor: 0, imagen: '' }"
+              [precioVenta]="precioVenta" [Stock]="Stock"
+              (close)="closeModal()"
+              (libroGuardado)="handleLibroGuardado()">
+            </app-mant-libro-register>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginación -->
+      <div class="d-flex justify-content-between align-items-center mt-4">
+        <button (click)="prevPage()" [disabled]="currentPage === 1"
+          class="btn btn-outline-secondary"
+          [ngClass]="{ 'disabled': currentPage === 1 }">
+          ⬅️ Anterior
+        </button>
+        <span>Página {{ currentPage }}</span>
+        <button (click)="nextPage()" class="btn btn-primary">
+          Siguiente ➡️
         </button>
       </div>
-    </form>
-
-    <!-- 🔍 Búsqueda -->
-    <div class="mb-4">
-      <label for="busqueda" class="form-label fw-semibold">Buscar por título:</label>
-      <input type="text"
-             class="form-control"
-             id="busqueda"
-             placeholder="Ingrese el título..."
-             (input)="buscarLibro($event)">
     </div>
-
-    <!-- 📋 Tabla modular, menos columnas -->
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered align-middle">
-        <thead class="table-light text-nowrap">
-          <tr>
-            <th>ID</th>
-            <th>Título &amp; ISBN</th>
-            <th class="d-none d-lg-table-cell">Tamaño</th>
-            <th>Descripción</th>
-            <th class="d-none d-md-table-cell">Características</th>
-            <th class="d-none d-lg-table-cell">Info Extra</th>
-            <th>Categoría</th>
-            <th class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let libro of (librosFiltrados || libros)">
-            <td>
-              <span class="fw-bold">{{ libro.idLibro }}</span>
-            </td>
-            <td>
-              <div class="fw-bold mb-1">{{ libro.titulo }}</div>
-              <small class="text-muted">ISBN: {{ libro.isbn }}</small>
-            </td>
-            <td class="d-none d-lg-table-cell">
-              {{ libro.tamanno }}
-            </td>
-            <td>
-              <ng-container *ngIf="libro.descripcion && libro.descripcion.length > 80; else breveDesc">
-                <span>
-                  {{ libro.descripcion | slice:0:80 }}...
-                  <a (click)="verDescripcionCompleta(libro)">ver más</a>
-                </span>
-              </ng-container>
-              <ng-template #breveDesc>
-                <span>{{ libro.descripcion }}</span>
-              </ng-template>
-            </td>
-            <!-- Características agrupadas -->
-            <td class="d-none d-md-table-cell">
-              <dl class="mb-0 small">
-                <dt>Condición:</dt>
-                <dd>{{ libro.condicion }}</dd>
-                <dt>Tapa:</dt>
-                <dd>{{ libro.tipoTapa }}</dd>
-                <dt>Papel:</dt>
-                <dd>{{ libro.idTipoPapel }}</dd>
-              </dl>
-            </td>
-            <!-- Info extra agrupada, solo en desktop -->
-            <td class="d-none d-lg-table-cell">
-              <dl class="mb-0 small">
-                <dt>Estado:</dt>
-                <dd>{{ libro.estado }}</dd>
-                <dt>Impresión:</dt>
-                <dd>{{ libro.impresion }}</dd>
-                <dt>Proveedor:</dt>
-                <dd>{{ libro.idProveedor }}</dd>
-              </dl>
-            </td>
-            <!-- Categoría y subcategoría -->
-            <td>
-              <div><b>Subcat:</b> {{ libro.idSubcategoria }}</div>
-              <div><b>Cat:</b> {{ getDescripcionCategoria(libro.idSubcategoria) }}</div>
-            </td>
-            <!-- Acciones -->
-            <td>
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-sm btn-outline-primary" (click)="editarLibro(modalEdit, libro)" aria-label="Editar libro">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" (click)="eliminarRegistro(libro.idLibro)" aria-label="Eliminar libro">
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 📄 Paginación -->
-    <div *ngIf="totalPages > 0" class="d-flex justify-content-center align-items-center gap-3 mt-4">
-      <button class="btn btn-outline-secondary"
-              (click)="onPageChange(currentPage - 1)"
-              [disabled]="currentPage === 1">
-        <i class="fas fa-angle-left"></i> Anterior
-      </button>
-      <span class="fw-bold">Página {{ currentPage }} de {{ totalPages }}</span>
-      <button class="btn btn-outline-secondary"
-              (click)="onPageChange(currentPage + 1)"
-              [disabled]="currentPage === totalPages">
-        Siguiente <i class="fas fa-angle-right"></i>
-      </button>
-    </div>
-
-    <!-- 📦 Modal -->
-    <ng-template #modalEdit>
-      <app-mant-libro-register
-        [title]="titleModal"
-        [libro]="libroSelected"
-        [accion]="accionModal"
-        (closeModalEmmit)="getCloseModalEmmit($event)">
-      </app-mant-libro-register>
-    </ng-template>
-
   </div>
 </div>

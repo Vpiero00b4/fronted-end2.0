@@ -13,14 +13,14 @@
   --clr-danger:         #ef4444;
   --clr-info:           #3b82f6;
 
-  --clr-bg:             #181c1f;     /* FONDO GLOBAL MODO DARK */
-  --clr-card-bg:        #23272b;     /* CARDS/TABLES MODO DARK */
-  --clr-input-bg:       #181c1f;
-  --clr-border:         #242c35;
-  --clr-hover-bg:       #20232b;
+  // --clr-bg:             #181c1f;     /* FONDO GLOBAL MODO DARK */
+  // --clr-card-bg:        #23272b;     /* CARDS/TABLES MODO DARK */
+  // --clr-input-bg:       #181c1f;
+  // --clr-border:         #242c35;
+  // --clr-hover-bg:       #20232b;
 
-  --clr-text:           #f3f5f7;
-  --clr-text-invert:    #1e293b;
+  // --clr-text:           #f3f5f7;
+  // --clr-text-invert:    #1e293b;
 }
 
 /* RESET */
@@ -37,7 +37,7 @@ html, body {
   background: var(--clr-card-bg);
   border-radius: var(--main-radius);
   border: 1px solid var(--clr-border);
-  box-shadow: 0 2px 12px rgba(30, 64, 175, 0.05);
+  // box-shadow: 0 2px 12px rgba(30, 64, 175, 0.05);
   animation: fadeIn 0.6s cubic-bezier(.44,.01,.48,1.01);
   transition: box-shadow 0.2s;
 }
@@ -100,7 +100,7 @@ html, body {
 }
 .table tbody tr:hover {
   background: var(--clr-hover-bg);
-  box-shadow: 0 2px 10px 0 rgba(37, 99, 235, 0.07);
+  // box-shadow: 0 2px 10px 0 rgba(37, 99, 235, 0.07);
 }
 .table td, .table th {
   padding: 0.95rem 0.8rem;
@@ -129,7 +129,7 @@ input.form-control:focus,
 select.form-select:focus {
   border-color: var(--clr-primary);
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
-  background: #20232b;
+  // background: #20232b;
   color: #fff;
 }
 
@@ -174,7 +174,7 @@ a:hover::after {
   max-width: 1400px;
   margin: 2.2rem auto 0 auto;
   padding: 2.5rem 2.5rem 2.5rem 2.5rem;
-  background: rgba(35,39,43,0.96); /* aire + contraste modo dark */
+  // background: rgba(35,39,43,0.96); /* aire + contraste modo dark */
   min-height: 75vh;
   border-radius: 1.5rem;
   box-shadow: 0 2px 24px rgba(0,0,0,0.11);

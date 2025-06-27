@@ -19,6 +19,8 @@ export const dominio = "https://localhost:7143/";
         caja: dominio + "Caja",
         subcategoria: dominio + "Subcategoria",
         vacio: dominio + "", 
-
+        subCategoria:dominio+"Subcategoria",
+        tipoPapel:dominio+"TipoPapel",
+        autor:dominio+"Autor"
     };
     

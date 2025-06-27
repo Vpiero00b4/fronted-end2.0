@@ -11,6 +11,7 @@ import { MantUsuarioListComponent } from './component/usuario/mant-usuario-list/
 import { MantUsuarioRegisterComponent } from './component/usuario/mant-usuario-register/mant-usuario-register.component';
 import { MantReporteInventarioComponent } from './component/inventarioc/mant-inventa-list/mant-reporte-inventario.component';
 import { MantVentaRegisterComponent } from './component/venta/mant-venta-register/mant-venta-register.component';
+import { AutorComponent } from './component/autor/autor.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { MantVentaRegisterComponent } from './component/venta/mant-venta-registe
     MantUsuarioRegisterComponent,
     MantReporteInventarioComponent,
     MantVentaRegisterComponent,
+    AutorComponent
     
     
 
