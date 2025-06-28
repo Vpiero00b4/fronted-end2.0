@@ -1,60 +1,104 @@
-<!-- ==============================
-     template-sidebar.component.html
-     ============================== -->
-<div class="sb-sidenav-menu">
-  <div class="nav">
-    <div class="sb-sidenav-menu-heading">Core</div>
-    <a class="nav-link" href="/dashboard">
-      <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div> HOME PAGE
-    </a>
-    <div class="sb-sidenav-menu-heading">Interfaz</div>
-    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMantenimiento"
-      aria-expanded="false" aria-controls="collapseMantenimiento">
-      <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-      MANTENIMIENTO
-      <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-    </a>
-    <div class="collapse" id="collapseMantenimiento" data-bs-parent="#sidenavAccordion">
-      <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" [routerLink]="['mantenimiento/persona']"><i class="fas fa-edit"></i> Persona</a>
-        <a class="nav-link" [routerLink]="['mantenimiento/usuario']"><i class="fas fa-edit"></i> Usuarios</a>
-      </nav>
-    </div>
-    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProductos"
-      aria-expanded="false" aria-controls="collapseProductos">
-      <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-      Productos
-      <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-    </a>
-    <div class="collapse" id="collapseProductos" data-bs-parent="#sidenavAccordion">
-      <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" [routerLink]="['mantenimiento/libro']"><i class="bi bi-basket2-fill"></i> Libros</a>
-      </nav>
-    </div>
-    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventario"
-      aria-expanded="false" aria-controls="collapseInventario">
-      <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-      Inventario
-      <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-    </a>
-    <div class="collapse" id="collapseInventario" data-bs-parent="#sidenavAccordion">
-      <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" [routerLink]="['mantenimiento/reporte-inventario']"><i class="bi bi-basket2-fill"></i> Reporte Inventario</a>
-      </nav>
-    </div>
-    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVentas"
-      aria-expanded="false" aria-controls="collapseVentas">
-      <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-      Ventas
-      <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-    </a>
-    <div class="collapse" id="collapseVentas" data-bs-parent="#sidenavAccordion">
-      <nav class="sb-sidenav-menu-nested nav">
-        <a class="nav-link" [routerLink]="['ventas/venta']"><i class="bi bi-basket2-fill"></i> Listado de Comprobantes</a>
-        <a class="nav-link" [routerLink]="['ventas/mant-venta-registred']"><i class="bi bi-basket2-fill"></i> Formulario para ventas</a>
-        <a class="nav-link" [routerLink]="['ventas/caja-register']"><i class="bi bi-basket2-fill"></i> Crear Caja</a>
-        <a class="nav-link" [routerLink]="['ventas/caja-list']"><i class="bi bi-basket2-fill"></i> Caja</a>
-      </nav>
+<!-- ============================== -->
+<!--        Sidebar wrapper        -->
+<!-- ============================== -->
+<div class="sidebar-wrapper"
+     [class.expanded]="isSidebarExpanded"
+     >
+
+  <div class="sb-sidenav-menu">
+    <div class="nav">
+
+      <!-- CORE -->
+      <div class="sb-sidenav-menu-heading">Core</div>
+      <a class="nav-link" routerLink="/dashboard">
+        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+        <span class="link-text">Dashboard</span>
+      </a>
+
+      <!-- INTERFAZ -->
+      <div class="sb-sidenav-menu-heading">Interfaz</div>
+
+      <!-- MANTENIMIENTO -->
+      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMantenimiento"
+         aria-expanded="false" aria-controls="collapseMantenimiento">
+        <div class="sb-nav-link-icon"><i class="fas fa-tools"></i></div>
+        <span class="link-text">Mantenimiento</span>
+        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+      </a>
+      <div class="collapse" id="collapseMantenimiento">
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" routerLink="mantenimiento/persona">
+            <i class="fas fa-user-edit sb-nav-link-icon"></i>
+            <span class="link-text">Clientes</span>
+          </a>
+          <a class="nav-link" routerLink="mantenimiento/usuario">
+            <i class="fas fa-users-cog sb-nav-link-icon"></i>
+            <span class="link-text">Usuarios</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- PRODUCTOS -->
+      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProductos"
+         aria-expanded="false" aria-controls="collapseProductos">
+        <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
+        <span class="link-text">Productos</span>
+        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+      </a>
+      <div class="collapse" id="collapseProductos">
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" routerLink="mantenimiento/libro">
+            <i class="bi bi-basket2-fill sb-nav-link-icon"></i>
+            <span class="link-text">Libros</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- INVENTARIO -->
+      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventario"
+         aria-expanded="false" aria-controls="collapseInventario">
+        <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div>
+        <span class="link-text">Inventario</span>
+        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+      </a>
+      <div class="collapse" id="collapseInventario">
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" routerLink="mantenimiento/reporte-inventario">
+            <i class="bi bi-clipboard-data sb-nav-link-icon"></i>
+            <span class="link-text">Reporte Inventario</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- VENTAS -->
+      <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVentas"
+         aria-expanded="false" aria-controls="collapseVentas">
+        <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
+        <span class="link-text">Ventas</span>
+        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+      </a>
+      <div class="collapse" id="collapseVentas">
+        <nav class="sb-sidenav-menu-nested nav">
+          <a class="nav-link" routerLink="ventas/venta">
+            <i class="bi bi-receipt-cutoff sb-nav-link-icon"></i>
+            <span class="link-text">Listado de Comprobantes</span>
+          </a>
+          <a class="nav-link" routerLink="ventas/mant-venta-registred">
+            <i class="bi bi-plus-square sb-nav-link-icon"></i>
+            <span class="link-text">Formulario de Venta</span>
+          </a>
+          <a class="nav-link" routerLink="ventas/caja-register">
+            <i class="bi bi-cash-coin sb-nav-link-icon"></i>
+            <span class="link-text">Crear Caja</span>
+          </a>
+          <a class="nav-link" routerLink="ventas/caja-list">
+            <i class="bi bi-box sb-nav-link-icon"></i>
+            <span class="link-text">Caja</span>
+          </a>
+        </nav>
+      </div>
+
     </div>
   </div>
+
 </div>

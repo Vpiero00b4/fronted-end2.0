@@ -1,0 +1,12 @@
+.table-hover tbody tr:hover {
+  background-color: #f1f7fd;
+}
+
+.btn-outline-primary,
+.btn-outline-danger {
+  border-radius: 0.4rem;
+}
+
+th.position-relative button {
+  z-index: 2;
+}

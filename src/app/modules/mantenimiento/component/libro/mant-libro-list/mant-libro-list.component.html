@@ -36,6 +36,8 @@
               <th>Impresión</th>
               <th>Estado</th>
               <th>Condición</th>
+              <!-- <th>descripcion</th> -->
+
               <th>
                 <button (click)="openCreateModal()" class="btn btn-sm btn-outline-success">➕</button>
               </th>
@@ -46,6 +48,9 @@
               <td class="text-start">{{ libro.titulo }}</td>
               <td class="text-start">{{ libro.isbn }}</td>
               <td class="text-start">{{ libro.impresion }}</td>
+              <!-- <td class="text-start">{{ libro.descripcion }}</td> -->
+
+
               <td>
                 <span class="badge rounded-pill"
                   [ngClass]="libro.estado ? 'bg-success text-light' : 'bg-danger text-light'">

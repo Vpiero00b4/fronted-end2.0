@@ -1,70 +1,87 @@
-<div class="container-fluid px-4 mt-5">
-  <div class="card bg-light mb-3">
-    <div class="card-header text-center">
-      <h1 class="mt-4">MANTENIMIENTO DE PERSONAS</h1>
+<div class="container-fluid px-4 mt-3">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-header bg-white border-bottom-0 text-center py-3">
+      <h2 class="fw-bold text-primary mb-0">Listado de Clientes</h2>
     </div>
+
     <div class="card-body">
-      <table class="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Apellido P</th>
-            <th>Apellido M</th>
-            <th>Correo M</th>
-            <th>Tipo Documento</th>
-            <th>Num Documento</th>
-            <th>Teléfono</th>
-            <th>
-              <button (click)="crearPersona(modalEdit)" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i>
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let persona of personas">
-            <td>{{ persona.idPersona }}</td>
-            <td>{{ persona.nombre }}</td>
-            <td>{{ persona.apellidoPaterno }}</td>
-            <td>{{ persona.apellidoMaterno }}</td>
-            <td>{{ persona.correo }}</td>
-            <td>{{ persona.tipoDocumento }}</td>
-            <td>{{ persona.numeroDocumento }}</td>
-            <td>{{ persona.telefono }}</td>
-            <td>
-              <button (click)="editarPersona(modalEdit, persona)" class="btn btn-primary btn-sm">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button (click)="eliminarRegistro(persona.idPersona)" class="btn btn-danger btn-sm">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Botón de acción -->
+      
+
+     <!-- Tabla -->
+<div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-light text-center">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Apellido P</th>
+        <th>Apellido M</th>
+        <th>Correo</th>
+        <th>Tipo Doc.</th>
+        <th>N° Doc.</th>
+        <th>Teléfono</th>
+        <th class="position-relative">
+          
+          <button
+            (click)="crearPersona(modalEdit)"
+            class="btn btn-sm btn-success "
+            title="Nuevo Cliente"
+          >
+            <i class="fas fa-user-plus"></i>
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      <tr *ngFor="let persona of personas">
+        <td>{{ persona.idPersona }}</td>
+        <td>{{ persona.nombre }}</td>
+        <td>{{ persona.apellidoPaterno }}</td>
+        <td>{{ persona.apellidoMaterno }}</td>
+        <td>{{ persona.correo }}</td>
+        <td>{{ persona.tipoDocumento }}</td>
+        <td>{{ persona.numeroDocumento }}</td>
+        <td>{{ persona.telefono }}</td>
+        <td>
+          <button
+            (click)="editarPersona(modalEdit, persona)"
+            class="btn btn-sm btn-outline-primary me-2"
+          >
+            <i class="fas fa-edit"></i>
+          </button>
+          <button
+            (click)="eliminarRegistro(persona.idPersona)"
+            class="btn btn-sm btn-outline-danger"
+          >
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+      <!-- Paginación -->
       <nav *ngIf="paginas.length > 1">
-  <ul class="pagination justify-content-center">
-    <li class="page-item" [class.disabled]="paginaActual === 1">
-      <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
-    </li>
-
-    <li class="page-item" *ngFor="let pagina of paginas"
-        [class.active]="pagina === paginaActual">
-      <a class="page-link" (click)="cambiarPagina(pagina)">{{ pagina }}</a>
-    </li>
-
-    <li class="page-item" [class.disabled]="paginaActual === paginas.length">
-      <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
-    </li>
-  </ul>
-</nav>
-
+        <ul class="pagination justify-content-center mt-4 mb-0">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+          </li>
+          <li class="page-item" *ngFor="let pagina of paginas" [class.active]="pagina === paginaActual">
+            <a class="page-link" (click)="cambiarPagina(pagina)">{{ pagina }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="paginaActual === paginas.length">
+            <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
 
-<!-- Modal Template -->
+<!-- Modal -->
 <ng-template #modalEdit>
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

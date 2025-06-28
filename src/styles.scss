@@ -1,26 +1,26 @@
 :root {
   --main-radius: 1.5rem;
 
-  --clr-primary:        #2563eb;
+  --clr-primary:        #2563eb;    /* Azul vivo */
   --clr-primary-dark:   #1e40af;
   --clr-primary-light:  #e0e7ff;
 
-  --clr-secondary:      #22d3ee;
-  --clr-secondary-dark: #0891b2;
+  --clr-secondary:      #0ea5e9;    /* Celeste claro */
+  --clr-secondary-dark: #0369a1;
 
   --clr-success:        #22c55e;
-  --clr-warning:        #f59e42;
+  --clr-warning:        #f59e0b;
   --clr-danger:         #ef4444;
   --clr-info:           #3b82f6;
 
-  // --clr-bg:             #181c1f;     /* FONDO GLOBAL MODO DARK */
-  // --clr-card-bg:        #23272b;     /* CARDS/TABLES MODO DARK */
-  // --clr-input-bg:       #181c1f;
-  // --clr-border:         #242c35;
-  // --clr-hover-bg:       #20232b;
+  --clr-bg:             #f9fafb;    /* FONDO CLARO */
+  --clr-card-bg:        #ffffff;    /* Tarjetas blancas */
+  --clr-input-bg:       #ffffff;
+  --clr-border:         #d1d5db;    /* Gris claro para bordes */
+  --clr-hover-bg:       #f3f4f6;
 
-  // --clr-text:           #f3f5f7;
-  // --clr-text-invert:    #1e293b;
+  --clr-text:           #1f2937;    /* Texto oscuro */
+  --clr-text-invert:    #ffffff;
 }
 
 /* RESET */
@@ -34,50 +34,75 @@ html, body {
 
 /* ===== CARDS & TABLES ===== */
 .card, .table {
-  background: var(--clr-card-bg);
+  background: var(--clr-card-bg); /* blanco */
   border-radius: var(--main-radius);
   border: 1px solid var(--clr-border);
-  // box-shadow: 0 2px 12px rgba(30, 64, 175, 0.05);
   animation: fadeIn 0.6s cubic-bezier(.44,.01,.48,1.01);
   transition: box-shadow 0.2s;
+  color: var(--clr-text);
 }
 .card:hover, .table:hover {
-  box-shadow: 0 4px 18px rgba(30, 64, 175, 0.13);
-  /* Elimina cualquier transform: scale o translate */
+  box-shadow: 0 4px 18px rgba(30, 64, 175, 0.08);
 }
 
-/* ===== BUTTONS ===== */
 .btn {
   border-radius: 0.75rem;
   font-weight: 600;
   transition: background 0.18s, box-shadow 0.2s;
   cursor: pointer;
   outline: none;
+  font-size: 0.875rem; /* tamaño btn-sm */
+  padding: 0.375rem 0.75rem;
 }
+
+/* Botón primario */
 .btn-primary {
   background: var(--clr-primary);
-  color: #fff;
+  color: var(--clr-text-invert);
   border: none;
 }
-.btn-primary:hover, .btn-primary:focus-visible {
+
+.btn-primary:hover,
+.btn-primary:focus-visible {
   background: var(--clr-primary-dark);
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.17);
 }
+
+/* Botón con borde celeste */
+.btn-outline-primary {
+  border: 1.5px solid var(--clr-primary);
+  background: transparent;
+  color: var(--clr-primary);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus-visible {
+  background: var(--clr-primary-light);
+  color: var(--clr-primary-dark);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
+}
+
+/* Otros estilos que ya tienes */
 .btn-secondary {
   background: var(--clr-secondary);
   color: var(--clr-primary-dark);
   border: none;
 }
-.btn-secondary:hover, .btn-secondary:focus-visible {
+
+.btn-secondary:hover,
+.btn-secondary:focus-visible {
   background: var(--clr-secondary-dark);
   color: #fff;
 }
+
 .btn-outline-secondary {
   border: 1.5px solid var(--clr-secondary);
   color: var(--clr-secondary-dark);
   background: transparent;
 }
-.btn-outline-secondary:hover, .btn-outline-secondary:focus-visible {
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus-visible {
   background: var(--clr-secondary-dark);
   color: #fff;
 }
@@ -89,8 +114,8 @@ html, body {
   font-size: 1rem;
 }
 .table thead th {
-  background: var(--clr-primary-dark);
-  color: #fff;
+  background: var(--clr-primary-light); /* encabezado claro */
+  color: var(--clr-primary-dark);
   border: none;
   padding: 0.95rem 0.8rem;
 }
@@ -99,11 +124,11 @@ html, body {
   transition: background 0.2s, box-shadow 0.18s;
 }
 .table tbody tr:hover {
-  background: var(--clr-hover-bg);
-  // box-shadow: 0 2px 10px 0 rgba(37, 99, 235, 0.07);
+  background: var(--clr-hover-bg); /* fondo hover claro */
 }
 .table td, .table th {
   padding: 0.95rem 0.8rem;
+  color: var(--clr-text);
 }
 
 /* Limita ancho de la columna Descripción */
@@ -121,16 +146,16 @@ input.form-control,
 select.form-select {
   border-radius: 0.5rem;
   border: 1px solid var(--clr-border);
-  background: var(--clr-input-bg);
+  background: var(--clr-input-bg); /* blanco */
   color: var(--clr-text);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 input.form-control:focus,
 select.form-select:focus {
+  background: #ffffff;
+  color: var(--clr-text);
   border-color: var(--clr-primary);
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.14);
-  // background: #20232b;
-  color: #fff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 /* ===== LINKS ===== */
@@ -173,11 +198,12 @@ a:hover::after {
 .main-content-container {
   max-width: 1400px;
   margin: 2.2rem auto 0 auto;
-  padding: 2.5rem 2.5rem 2.5rem 2.5rem;
-  // background: rgba(35,39,43,0.96); /* aire + contraste modo dark */
+  padding: 2.5rem;
+  background: #ffffff; /* fondo blanco claro */
+  color: var(--clr-text);
   min-height: 75vh;
   border-radius: 1.5rem;
-  box-shadow: 0 2px 24px rgba(0,0,0,0.11);
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.05);
 }
 
 /* En pantallas medianas y chicas, reduce padding */
@@ -188,4 +214,36 @@ a:hover::after {
   .table td, .table th {
     padding: 0.6rem 0.3rem;
   }
+}
+input[type="radio"].form-check-input {
+  appearance: none;
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid var(--clr-border);
+  border-radius: 50%;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="radio"].form-check-input:checked {
+  border-color: var(--clr-primary);
+  background-color: #fff;
+}
+
+input[type="radio"].form-check-input:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--clr-primary);
+}
+
+input[type="radio"].form-check-input:focus-visible {
+  outline: 2px solid var(--clr-secondary);
+  outline-offset: 2px;
 }

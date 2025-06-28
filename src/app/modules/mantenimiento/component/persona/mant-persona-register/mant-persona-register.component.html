@@ -1,96 +1,127 @@
-<div class="modal-header">
-  <h4 class="modal-title pull-left">{{ title }}</h4>
+<div class="modal-header bg-white border-0 pb-0">
+  <h5 class="modal-title fw-semibold text-primary">{{ title }}</h5>
 </div>
 
-<div class="modal-body">
+<div class="modal-body pt-0">
   <form [formGroup]="myForm">
-    <div class="row">
-      <!-- Tipo y Número de Documento con botón de búsqueda -->
-      <div class="col-6 mt-3">
-      <div class="form-group">
-        <label for="tipoDocumento">Tipo de Documento</label>
-        <select formControlName="tipoDocumento" class="form-control" id="tipoDocumento">
+    <div class="row g-3">
+
+      <!-- Tipo Documento -->
+      <div class="col-md-6">
+        <label for="tipoDocumento" class="form-label">Tipo de Documento</label>
+        <select formControlName="tipoDocumento" id="tipoDocumento" class="form-select">
           <option value="" disabled selected>Seleccione</option>
           <option value="dni">DNI</option>
           <option value="ruc">RUC</option>
         </select>
       </div>
-    </div>
 
-      <div class="col-6 mt-3 d-flex align-items-end">
+      <!-- Número Documento con botón Buscar -->
+      <div class="col-md-6">
+        <label for="numeroDocumento" class="form-label">N° de Documento</label>
         <div class="input-group">
-          <input formControlName="numeroDocumento" type="text" class="form-control" placeholder="Ej: 77014012">
-          <div class="input-group-append">
-            <button type="button" class="btn btn-secondary btn-sm" (click)="buscarPorDocumento()">Buscar</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Datos autocompletables -->
-      <div class="col-12 mt-3">
-        <div class="form-group">
-          <label for="nombre">Nombre</label>
-          <input formControlName="nombre" type="text" class="form-control" id="nombre" placeholder="Ingrese el Nombre">
-          <small class="text-danger" *ngIf="myForm.get('nombre')?.hasError('required') && myForm.get('nombre')?.touched">
-            Campo requerido
-          </small>
-        </div>
-      </div>
-
-      <div class="col-6 mt-3">
-        <div class="form-group">
-          <label for="apellidoPaterno">Apellido Paterno</label>
-          <input formControlName="apellidoPaterno" type="text" class="form-control" id="apellidoPaterno" placeholder="Ingrese el apellido paterno">
-        </div>
-      </div>
-
-      <div class="col-6 mt-3">
-        <div class="form-group">
-          <label for="apellidoMaterno">Apellido Materno</label>
-          <input formControlName="apellidoMaterno" type="text" class="form-control" id="apellidoMaterno" placeholder="Ingrese el apellido materno">
-        </div>
-      </div>
-
-      <div class="col-12 mt-3">
-        <div class="form-group">
-          <label for="correo">Correo</label>
-          <input formControlName="correo" type="text" class="form-control" id="correo" placeholder="Ingrese el correo">
-          <small class="text-danger" *ngIf="myForm.get('correo')?.hasError('email') && myForm.get('correo')?.touched">
-            No cumple con el formato de correo
-          </small>
-        </div>
-      </div>
-
-      <div class="col-12 mt-3">
-        <div class="form-group">
-          <label for="telefono">Teléfono</label>
           <input
-            formControlName="telefono"
+            formControlName="numeroDocumento"
             type="text"
             class="form-control"
-            id="telefono"
-            maxlength="9"
-            placeholder="Ingrese el número de teléfono"
-            (keypress)="soloNumeros($event)"
-          >
-          <small class="text-danger" *ngIf="myForm.get('telefono')?.hasError('pattern') && myForm.get('telefono')?.touched">
-            Solo se permiten números
-          </small>
-          <small class="text-danger" *ngIf="myForm.get('telefono')?.hasError('maxlength') && myForm.get('telefono')?.touched">
-            Máximo 9 dígitos permitidos
-          </small>
+            placeholder="Ej: 77014012"
+            id="numeroDocumento"
+          />
+          <button type="button" class="btn btn-outline-secondary" (click)="buscarPorDocumento()">Buscar</button>
+        </div>
+      </div>
 
+      <!-- Nombre -->
+      <div class="col-12">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input
+          formControlName="nombre"
+          type="text"
+          id="nombre"
+          class="form-control"
+          placeholder="Ingrese el nombre"
+        />
+        <div class="text-danger small" *ngIf="myForm.get('nombre')?.hasError('required') && myForm.get('nombre')?.touched">
+          Campo requerido
+        </div>
+      </div>
+
+      <!-- Apellidos -->
+      <div class="col-md-6">
+        <label for="apellidoPaterno" class="form-label">Apellido Paterno</label>
+        <input
+          formControlName="apellidoPaterno"
+          type="text"
+          id="apellidoPaterno"
+          class="form-control"
+          placeholder="Apellido paterno"
+        />
+      </div>
+
+      <div class="col-md-6">
+        <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
+        <input
+          formControlName="apellidoMaterno"
+          type="text"
+          id="apellidoMaterno"
+          class="form-control"
+          placeholder="Apellido materno"
+        />
+      </div>
+
+      <!-- Correo -->
+      <div class="col-12">
+        <label for="correo" class="form-label">Correo electrónico</label>
+        <input
+          formControlName="correo"
+          type="email"
+          id="correo"
+          class="form-control"
+          placeholder="correo@ejemplo.com"
+        />
+        <div class="text-danger small" *ngIf="myForm.get('correo')?.hasError('email') && myForm.get('correo')?.touched">
+          Formato inválido
+        </div>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="col-12">
+        <label for="telefono" class="form-label">Teléfono</label>
+        <input
+          formControlName="telefono"
+          type="text"
+          id="telefono"
+          class="form-control"
+          maxlength="9"
+          placeholder="Ej: 987654321"
+          (keypress)="soloNumeros($event)"
+        />
+        <div class="text-danger small" *ngIf="myForm.get('telefono')?.hasError('pattern') && myForm.get('telefono')?.touched">
+          Solo se permiten números
+        </div>
+        <div class="text-danger small" *ngIf="myForm.get('telefono')?.hasError('maxlength') && myForm.get('telefono')?.touched">
+          Máximo 9 dígitos permitidos
         </div>
       </div>
 
       <!-- Botones -->
-      <div class="col-6 mt-4">
-        <button [disabled]="!myForm.valid" (click)="guardar()" class="btn-block btn btn-primary btn-sm">GUARDAR</button>
+      <div class="col-md-6 d-grid">
+        <button
+          [disabled]="!myForm.valid"
+          type="button"
+          class="btn btn-primary"
+          (click)="guardar()"
+        >
+          <i class="fas fa-save me-2"></i> Guardar
+        </button>
       </div>
 
-      <div class="col-6 mt-4">
-        <button class="btn-block btn btn-danger btn-sm" (click)="cerrarModal(false)">CANCELAR</button>
+      <div class="col-md-6 d-grid">
+        <button type="button" class="btn btn-outline-danger" (click)="cerrarModal(false)">
+          <i class="fas fa-times me-2"></i> Cancelar
+        </button>
       </div>
+
     </div>
   </form>
 </div>

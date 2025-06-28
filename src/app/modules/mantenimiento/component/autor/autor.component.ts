@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { AutorService } from '../../service/autor.service';
 import { Autor } from '../../../../models/libro-request.models';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-autor',
@@ -8,7 +9,7 @@ import { Autor } from '../../../../models/libro-request.models';
   styleUrl: './autor.component.css'
 })
 export class AutorComponent {
- @Output() autorCreado = new EventEmitter<Autor>(); // Emitir el autor creado
+  @Output() autorCreado = new EventEmitter<Autor>(); // Emitir el autor creado
   @Output() cerrarModal = new EventEmitter<void>(); // Emitir evento para cerrar el modal
 
   nuevoAutor: Autor = {
@@ -18,7 +19,7 @@ export class AutorComponent {
     codigo: 0,
     descripcion: ''
   };
-  constructor(private autorService: AutorService) {}
+  constructor(private autorService: AutorService) { }
   crearAutor(): void {
     const autor: Autor = {
       idAutor: 0,
@@ -32,6 +33,11 @@ export class AutorComponent {
     this.autorService.createAutor(autor).subscribe(
       (autorGuardado) => {
         console.log('Autor guardado en el backend:', autorGuardado);
+        Swal.fire(
+          'Autor Creado',
+          'Autor creado correctamemte!',
+          'success'
+        );
         this.autorCreado.emit(autorGuardado); // Emitimos el autor guardado al componente padre
         this.cerrarModal.emit(); // Cerramos el modal
       },

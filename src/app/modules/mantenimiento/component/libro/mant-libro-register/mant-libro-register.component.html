@@ -1,6 +1,7 @@
 <!-- Modal Bootstrap 5 -->
-<div class="modal d-block fade show" tabindex="-1" style="background-color: rgba(0,0,0,0.75); z-index: 1050;">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+<div class="modal d-block fade show" tabindex="-1" role="dialog" aria-modal="true"
+  style="background-color: rgba(0,0,0,0.75); z-index: 1050;">
+<div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content p-4">
 
       <h2 class="h3 text-center mb-4">
@@ -39,27 +40,42 @@
           <input type="text" class="form-control" id="tamanno" name="tamanno" [(ngModel)]="libro.tamanno" />
         </div>
 
-        <!-- Autor -->
+        <!-- Autor con búsqueda -->
         <div class="col-md-6 position-relative">
           <label for="buscarAutor" class="form-label">Autor</label>
           <div class="input-group">
-            <input type="text" id="buscarAutor" placeholder="Buscar autor..." [(ngModel)]="buscarAutor" [ngModelOptions]="{standalone: true}" class="form-control" />
-            <button class="btn btn-primary" type="button" (click)="buscarAutores()">Buscar</button>
+            <input type="text" id="buscarAutor" class="form-control" placeholder="Buscar autor..."
+              [(ngModel)]="buscarAutor" [ngModelOptions]="{standalone: true}" />
+            <button type="button" class="btn btn-primary" (click)="buscarAutores()">Buscar</button>
           </div>
-          <ul *ngIf="autoresFiltrados.length > 0" class="list-group position-absolute w-100 mt-1 zindex-dropdown overflow-auto" style="max-height: 160px;">
-            <li *ngFor="let autor of autoresFiltrados" (click)="seleccionarAutor(autor)" class="list-group-item list-group-item-action">
+
+          <ul *ngIf="autoresFiltrados.length > 0"
+            class="list-group position-absolute w-100 mt-1 zindex-dropdown overflow-auto"
+            style="max-height: 160px;">
+            <li *ngFor="let autor of autoresFiltrados" (click)="seleccionarAutor(autor)"
+              class="list-group-item list-group-item-action">
               {{ autor.nombre }} {{ autor.apellido }}
             </li>
           </ul>
-          <div *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje" class="form-text">No se encontraron resultados.</div>
-          <button *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje" type="button" (click)="abrirCrearAutorModal()" class="btn btn-success btn-sm mt-2">Crear Autor</button>
+
+          <div *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje"
+            class="form-text">No se encontraron resultados.</div>
+
+          <button *ngIf="autoresFiltrados.length === 0 && buscarAutor.trim().length > 0 && mostrarMensaje"
+            type="button" (click)="abrirCrearAutorModal()" class="btn btn-success btn-sm mt-2">
+            Crear Autor
+          </button>
         </div>
-        <app-autor *ngIf="mostrarModalCrearAutor" (autorCreado)="recibirAutorCreado($event)" (cerrarModal)="cerrarCrearAutorModal()"></app-autor>
+
+        <!-- Modal Crear Autor -->
+        <app-autor *ngIf="mostrarModalCrearAutor" (autorCreado)="recibirAutorCreado($event)"
+          (cerrarModal)="cerrarCrearAutorModal()"></app-autor>
 
         <!-- Descripción -->
         <div class="col-12">
           <label for="descripcion" class="form-label">Descripción</label>
-          <textarea class="form-control" id="descripcion" name="descripcion" rows="3" [(ngModel)]="libro.descripcion"></textarea>
+          <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+            [(ngModel)]="libro.descripcion"></textarea>
         </div>
 
         <!-- Condición -->
@@ -80,10 +96,11 @@
           <input type="text" class="form-control" id="tipoTapa" name="tipoTapa" [(ngModel)]="libro.tipoTapa" />
         </div>
 
-        <!-- Estado -->
+        <!-- Estado (Checkbox) -->
         <div class="col-md-6 d-flex align-items-center pt-4">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="estado" name="estado" [(ngModel)]="libro.estado" />
+            <input class="form-check-input" type="checkbox" id="estado" name="estado"
+              [(ngModel)]="libro.estado" />
             <label class="form-check-label" for="estado">Estado</label>
           </div>
         </div>
@@ -91,7 +108,8 @@
         <!-- Subcategoría -->
         <div class="col-md-6">
           <label for="idSubcategoria" class="form-label">Subcategoría</label>
-          <select class="form-select" id="idSubcategoria" name="idSubcategoria" [(ngModel)]="libro.idSubcategoria" required>
+          <select class="form-select" id="idSubcategoria" name="idSubcategoria"
+            [(ngModel)]="libro.idSubcategoria" required>
             <option *ngFor="let sub of subCategoria" [value]="sub.id">{{ sub.descripcion }}</option>
           </select>
         </div>
@@ -99,7 +117,8 @@
         <!-- Tipo de Papel -->
         <div class="col-md-6">
           <label for="idTipoPapel" class="form-label">Tipo de Papel</label>
-          <select class="form-select" id="idTipoPapel" name="idTipoPapel" [(ngModel)]="libro.idTipoPapel" required>
+          <select class="form-select" id="idTipoPapel" name="idTipoPapel"
+            [(ngModel)]="libro.idTipoPapel" required>
             <option *ngFor="let tipo of tiposPapel" [value]="tipo.idTipoPapel">{{ tipo.descripcion }}</option>
           </select>
         </div>
@@ -107,15 +126,17 @@
         <!-- Proveedor -->
         <div class="col-md-6">
           <label for="idProveedor" class="form-label">Proveedor</label>
-          <select class="form-select" id="idProveedor" name="idProveedor" [(ngModel)]="libro.idProveedor" required>
+          <select class="form-select" id="idProveedor" name="idProveedor"
+            [(ngModel)]="libro.idProveedor" required>
             <option *ngFor="let prov of provedor" [value]="prov.idProveedor">{{ prov.razonSocial }}</option>
           </select>
         </div>
 
-        <!-- Precio de Venta -->
+        <!-- Precio -->
         <div class="col-md-6">
           <label for="precioVenta" class="form-label">Precio de Venta</label>
-          <input type="number" class="form-control" id="precioVenta" name="precioVenta" [(ngModel)]="precioVenta" required />
+          <input type="number" class="form-control" id="precioVenta" name="precioVenta"
+            [(ngModel)]="precioVenta" required />
         </div>
 
         <!-- Stock -->
@@ -124,28 +145,32 @@
           <input type="number" class="form-control" id="Stock" name="Stock" [(ngModel)]="Stock" required />
         </div>
 
-        <!-- Imagen previsualizada -->
+        <!-- Imagen Previsualizada -->
         <div *ngIf="imageUrl" class="col-12 text-center">
           <label class="form-label">Imagen Previsualizada</label>
-          <div class="border rounded p-2 position-relative mx-auto" style="width: 300px; height: 300px;">
-            <img [src]="imageUrl" alt="Previsualización" class="img-fluid h-100 object-fit-contain" />
-            <button (click)="removeImage()" type="button" class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
+          <div class="border rounded p-2 position-relative mx-auto" style="max-width: 300px; max-height: 300px;">
+            <img [src]="imageUrl" alt="Previsualización" class="img-fluid object-fit-contain w-100 h-100" style="object-fit: contain;" />
+            <button (click)="removeImage()" type="button"
+              class="btn-close position-absolute top-0 end-0 m-2" aria-label="Close"></button>
           </div>
         </div>
 
         <!-- Subir imagen -->
-        <div class="col-12">
+        <div class="col-12 mt-3">
           <label for="imagen" class="form-label">Imagen</label>
           <input class="form-control" type="file" id="imagen" name="imagen" (change)="onImageSelected($event)" />
         </div>
 
         <!-- Botones -->
-        <div class="col-12 d-flex justify-content-end gap-3 mt-3">
+        <div class="col-12 d-flex justify-content-end gap-3 mt-4">
           <button type="button" (click)="onClose()" class="btn btn-danger">Cancelar</button>
-          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+          <button type="submit" class="btn btn-primary">
+            {{ isEditMode ? 'Actualizar' : 'Crear' }}
+          </button>
         </div>
 
       </form>
+
     </div>
   </div>
 </div>

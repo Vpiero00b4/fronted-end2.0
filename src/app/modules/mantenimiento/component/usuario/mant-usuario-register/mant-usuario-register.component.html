@@ -1,73 +1,98 @@
-<div class="modal-header">
-    <h4 class="modal-title pull-left">{{ title }}</h4>
-    <!-- Agrega el atributo (click) para cerrar el modal -->
-  </div>
+<div class="modal-header bg-white border-bottom-0">
+  <h5 class="modal-title fw-bold text-primary">{{ title }}</h5>
+  <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal(false)"></button>
+</div>
+
+<div class="modal-body pt-0">
+  <form [formGroup]="myForm">
+    <div class="row g-3 mt-1">
+
   
-  <div class="modal-body">
-    <form [formGroup]="myForm">
-      <div class="row">
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="idUsuario">Id_Usuario</label>
-            <input formControlName="idUsuario" type="text" class="form-control" id="idUsuario" placeholder="Ingrese el Identificador">
-          </div>
-        </div>
-  
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input formControlName="username" type="text" class="form-control" id="username" placeholder="Ingrese el Username">
-          </div>
-          <div *ngIf="myForm.get('Username')?.errors && myForm.touched">
-            //no olvidar agregar el small igneroe
-            <span class="text-danger" *ngIf="myForm.get('Username')?.hasError('required')">Campo requerido</span>
-          </div>
-          
-  
-        
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input formControlName="password" type="text" class="form-control" id="password" placeholder="Ingrese el Password">
-          </div>
-          <div class="col-12 mt-3">
-            <!-- Corrige la condición para verificar errores y si el formulario ha sido tocado -->
-            <div *ngIf="myForm.get('Password')?.errors && myForm.get('Password')?.touched">
-              <span class="text-danger" *ngIf="myForm.get('Password')?.hasError('email')">No cumple con el formato de Password</span>
-            </div>
-          </div>
-        </div>
-  
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="cargo">Cargo</label>
-            <input formControlName="cargo" type="text" class="form-control" id="cargo" placeholder="Ingrese el tipo de Cargo">
-          </div>
-        </div>
-  
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="estado">Estado de Documento</label>
-            <input formControlName="estado" type="text" class="form-control" id="estado" placeholder="Ingrese el número de Estado">
-          </div>
-        </div>
-  
-        <div class="col-12 mt-3">
-          <div class="form-group">
-            <label for="idPersona">Id_Persona</label>
-            <input formControlName="idPersona" type="text" class="form-control" id="idPersona" placeholder="Ingrese el número de teléfono">
-          </div>
-        </div>
-  
-        <!-- Botones para GUARDAR y CANCELAR -->
-        <div class="col-6 mt-3">
-          <!-- Asegúrate de que la función se llame correctamente en el evento (click) -->
-          <button [disabled]="!myForm.valid" (click)="guardar()" class="btn-block btn btn-primary btn-sm">GUARDAR</button>
-        </div>
-  
-        <div class="col-6 mt-3">
-          <button class="btn-block btn btn-danger btn-sm">CANCELAR</button>
-        </div>
+
+      <!-- Username -->
+      <div class="col-12">
+        <label for="username" class="form-label">Username</label>
+        <input
+          formControlName="username"
+          type="text"
+          class="form-control"
+          id="username"
+          placeholder="Ingrese el username"
+        />
+        <small class="text-danger" *ngIf="myForm.get('username')?.hasError('required') && myForm.get('username')?.touched">
+          Campo requerido
+        </small>
       </div>
-  </div>
-  
+
+      <!-- Password -->
+      <div class="col-12">
+        <label for="password" class="form-label">Contraseña</label>
+        <input
+          formControlName="password"
+          type="password"
+          class="form-control"
+          id="password"
+          placeholder="Ingrese la contraseña"
+        />
+        <small class="text-danger" *ngIf="myForm.get('password')?.hasError('required') && myForm.get('password')?.touched">
+          Campo requerido
+        </small>
+      </div>
+
+      <!-- Cargo -->
+      <div class="col-12">
+        <label for="cargo" class="form-label">Cargo</label>
+        <input
+          formControlName="cargo"
+          type="text"
+          class="form-control"
+          id="cargo"
+          placeholder="Ingrese el cargo"
+        />
+      </div>
+
+      <!-- Estado -->
+      <div class="col-12">
+        <label for="estado" class="form-label">Estado</label>
+        <input
+          formControlName="estado"
+          type="text"
+          class="form-control"
+          id="estado"
+          placeholder="Activo / Inactivo"
+        />
+      </div>
+
+      <!-- ID Persona -->
+      <div class="col-12">
+        <label for="idPersona" class="form-label">ID Persona</label>
+        <input
+          formControlName="idPersona"
+          type="text"
+          class="form-control"
+          id="idPersona"
+          placeholder="ID relacionado a persona"
+        />
+      </div>
+
+      <!-- Botones -->
+      <div class="col-md-6 d-grid mt-3">
+        <button
+          [disabled]="!myForm.valid"
+          type="button"
+          (click)="guardar()"
+          class="btn btn-primary"
+        >
+          <i class="fas fa-save me-2"></i> Guardar
+        </button>
+      </div>
+
+      <div class="col-md-6 d-grid mt-3">
+        <button type="button" class="btn btn-outline-danger" (click)="cerrarModal(false)">
+          <i class="fas fa-times me-2"></i> Cancelar
+        </button>
+      </div>
+
+    </div>
+  </form>
+</div>

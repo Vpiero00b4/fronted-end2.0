@@ -1,0 +1,4 @@
+.modal-content {
+  max-height: 90vh; /* Aumenta el espacio útil visible */
+  overflow-y: auto;
+}

@@ -1,0 +1,11 @@
+.modal-header {
+  padding-bottom: 0;
+}
+
+input.form-control {
+  border-radius: 0.5rem;
+}
+
+.btn {
+  border-radius: 0.5rem;
+}
