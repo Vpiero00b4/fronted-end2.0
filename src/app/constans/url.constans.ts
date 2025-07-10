@@ -8,7 +8,7 @@ export const dominio = "https://localhost:7143/";
         genero:dominio+"Genero",
         sucursal:dominio+"Sucursal",
         kardex:dominio+"Kardex",
-        precio:dominio+"Precio",
+        precio:dominio+"precio",
         proveedor:dominio+"Proveedor",
         venta:dominio+"Venta",
         categoria:dominio+"Categoria",

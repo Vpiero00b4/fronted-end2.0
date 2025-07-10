@@ -71,6 +71,7 @@ export interface Provedor {
 export interface Precio {
     idPrecios: number;
     precioVenta: number;
+    porcUtilidad: number | null;
 }
 
 export interface Kardex {

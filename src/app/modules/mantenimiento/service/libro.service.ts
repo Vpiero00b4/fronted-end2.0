@@ -76,13 +76,16 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
   }
 
   getPrecioById(id: number): Observable<Precio> {
-    return this.http.get<Precio>(`${this.url_service}/precios/${id}`);
+    return this.http.get<Precio>(`${this.url_service}/${id}`);
   }
   getStockById(id: number): Observable<Kardex> {
     return this.http.get<Kardex>(`${this.url_service}/kardex/${id}`);
   }
-  getUltimoPrecioByLibroId(libroId: number): Observable<PrecioResponse> {
-    return this.http.get<PrecioResponse>(`${UrlConstants.precio}/${libroId}`);
+
+  getUltimoPrecioByLibroId(idLibro: number): Observable<Precio | null> {
+    return this.http.get<Precio[]>(`https://localhost:7143/Libro/precios/${idLibro}`).pipe(
+      map(precios => precios.length > 0 ? precios[0] : null)
+    );
   }
 
   getSucursalByLibroId(libroId: number): Observable<SucursalResponse[]> {

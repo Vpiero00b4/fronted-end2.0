@@ -94,7 +94,6 @@ export class LibroModalComponentComponent implements OnInit {
           this.libroForm.patchValue({
             idLibro: idLibroSeleccionado,
             precioVenta: precio.precioVenta,
-            porcUtilidad: precio.porcUtilidad,
           });
           this.actualizarTotalImporte();
           const libroSeleccionado = this.libros.find(libro => libro.idLibro === idLibroSeleccionado);

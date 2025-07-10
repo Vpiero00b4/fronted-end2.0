@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { VentaResponse } from '../../../../../../models/ventas-response.models';
 import { VentasService } from '../../../../service/venta.service';
 import { CajaService } from '../../../../service/caja.service';
-import { AuthService } from '../../../../../auth/servicef/auth.service';
 
 @Component({
   selector: 'app-mant-caja-list',
@@ -12,9 +11,6 @@ import { AuthService } from '../../../../../auth/servicef/auth.service';
 export class MantCajaListComponent implements OnInit {
   ventasDelDia: VentaResponse[] = [];
   fechaFiltro: string;
-  rolUsuario: string | null = null;
-
-
   // Saldos y montos
   saldoInicial = 0;
   saldoDigital = 0;
@@ -35,21 +31,19 @@ export class MantCajaListComponent implements OnInit {
   pageSize: number = 10;
   totalVentasDia: number = 0;
   totalPaginas: number = 0;
-
+  cajaAbierta: any = null;
   constructor(
     private ventaService: VentasService,
-    private cajaService: CajaService,
-    private authService:AuthService
+    private cajaService: CajaService
   ) {
     const hoy = new Date().toISOString().split('T')[0];
     this.fechaFiltro = hoy;
-    this.rolUsuario = this.authService.getCargo();
-    console.log(this.rolUsuario);
-    
+
   }
 
   ngOnInit(): void {
     this.filtrarPorFecha();
+    this.obtenerventas();
   }
 
   filtrarPorFecha(): void {
@@ -73,7 +67,27 @@ export class MantCajaListComponent implements OnInit {
     });
   }
 
-  // Para paginar ventas del día usando tu endpoint paginado}
+  obtenerventas() {
+    if (!this.fechaFiltro) return;
+
+    this.ventaService.obtenerVentasPorFechas(this.fechaFiltro, this.fechaFiltro).subscribe({
+      next: (ventas) => {
+        this.ventasDelDia = ventas;
+
+        if (ventas.length === 0) {
+          this.mensajeCaja = 'No hay ventas para esta fecha.';
+        } else {
+          this.mensajeCaja = '';
+        }
+
+        console.log('Ventas:', ventas);
+      },
+      error: (err) => {
+        this.mensajeCaja = 'Ocurrió un error al obtener las ventas.';
+        console.error(err);
+      }
+    });
+  }
 
   cambiarPagina(nuevaPagina: number): void {
     if (nuevaPagina < 1 || nuevaPagina > this.totalPaginas) return;
@@ -169,5 +183,5 @@ export class MantCajaListComponent implements OnInit {
       }
     });
   }
-  
+
 }
