@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VentaResponse } from '../../../../../../models/ventas-response.models';
 import { VentasService } from '../../../../service/venta.service';
 import { CajaService } from '../../../../service/caja.service';
+import { AuthService } from '../../../../../auth/servicef/auth.service';
 
 @Component({
   selector: 'app-mant-caja-list',
@@ -11,6 +12,8 @@ import { CajaService } from '../../../../service/caja.service';
 export class MantCajaListComponent implements OnInit {
   ventasDelDia: VentaResponse[] = [];
   fechaFiltro: string;
+  rolUsuario: string | null = null;
+
 
   // Saldos y montos
   saldoInicial = 0;
@@ -35,10 +38,14 @@ export class MantCajaListComponent implements OnInit {
 
   constructor(
     private ventaService: VentasService,
-    private cajaService: CajaService
+    private cajaService: CajaService,
+    private authService:AuthService
   ) {
     const hoy = new Date().toISOString().split('T')[0];
     this.fechaFiltro = hoy;
+    this.rolUsuario = this.authService.getCargo();
+    console.log(this.rolUsuario);
+    
   }
 
   ngOnInit(): void {

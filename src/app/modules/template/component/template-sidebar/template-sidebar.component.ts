@@ -1,4 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
+import { AuthService } from '../../../auth/servicef/auth.service';
 
 @Component({
   selector: 'app-template-sidebar',
@@ -7,8 +8,24 @@ import { Component, HostListener, OnInit } from '@angular/core';
 })
 export class TemplateSidebarComponent implements OnInit {
   isSidebarExpanded = false;
+  cargo: string | null = null;;
+  constructor(private authService: AuthService) { }
+  ngOnInit(): void {
+    this.cargo = this.authService.getCargo();
+  }
 
-  ngOnInit(): void {}
+  esAdmin(): boolean {
+    return this.cargo === 'admin';
+  }
 
- 
+  esVendedor(): boolean {
+    return this.cargo === 'vendedor';
+  }
+
+  esInventario(): boolean {
+    return this.cargo === 'INVENTARIO';
+  }
+    logout(){
+    this.authService.logout();
+  }
 }
