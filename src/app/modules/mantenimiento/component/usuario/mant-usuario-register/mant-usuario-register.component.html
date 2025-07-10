@@ -7,19 +7,15 @@
   <form [formGroup]="myForm">
     <div class="row g-3 mt-1">
 
-  
+
 
       <!-- Username -->
       <div class="col-12">
         <label for="username" class="form-label">Username</label>
-        <input
-          formControlName="username"
-          type="text"
-          class="form-control"
-          id="username"
-          placeholder="Ingrese el username"
-        />
-        <small class="text-danger" *ngIf="myForm.get('username')?.hasError('required') && myForm.get('username')?.touched">
+        <input formControlName="username" type="text" class="form-control" id="username"
+          placeholder="Ingrese el username" />
+        <small class="text-danger"
+          *ngIf="myForm.get('username')?.hasError('required') && myForm.get('username')?.touched">
           Campo requerido
         </small>
       </div>
@@ -27,14 +23,10 @@
       <!-- Password -->
       <div class="col-12">
         <label for="password" class="form-label">Contraseña</label>
-        <input
-          formControlName="password"
-          type="password"
-          class="form-control"
-          id="password"
-          placeholder="Ingrese la contraseña"
-        />
-        <small class="text-danger" *ngIf="myForm.get('password')?.hasError('required') && myForm.get('password')?.touched">
+        <input formControlName="password" type="password" class="form-control" id="password"
+          placeholder="Ingrese la contraseña" />
+        <small class="text-danger"
+          *ngIf="myForm.get('password')?.hasError('required') && myForm.get('password')?.touched">
           Campo requerido
         </small>
       </div>
@@ -42,47 +34,27 @@
       <!-- Cargo -->
       <div class="col-12">
         <label for="cargo" class="form-label">Cargo</label>
-        <input
-          formControlName="cargo"
-          type="text"
-          class="form-control"
-          id="cargo"
-          placeholder="Ingrese el cargo"
-        />
+        <input formControlName="cargo" type="text" class="form-control" id="cargo" placeholder="Ingrese el cargo" />
       </div>
 
-      <!-- Estado -->
       <div class="col-12">
         <label for="estado" class="form-label">Estado</label>
-        <input
-          formControlName="estado"
-          type="text"
-          class="form-control"
-          id="estado"
-          placeholder="Activo / Inactivo"
-        />
+        <select formControlName="estado" class="form-control" id="estado">
+          <option [ngValue]="true">Activo</option>
+          <option [ngValue]="false">Inactivo</option>
+        </select>
       </div>
 
       <!-- ID Persona -->
       <div class="col-12">
         <label for="idPersona" class="form-label">ID Persona</label>
-        <input
-          formControlName="idPersona"
-          type="text"
-          class="form-control"
-          id="idPersona"
-          placeholder="ID relacionado a persona"
-        />
+        <input formControlName="idPersona" type="text" class="form-control" id="idPersona"
+          placeholder="ID relacionado a persona" />
       </div>
 
       <!-- Botones -->
       <div class="col-md-6 d-grid mt-3">
-        <button
-          [disabled]="!myForm.valid"
-          type="button"
-          (click)="guardar()"
-          class="btn btn-primary"
-        >
+        <button [disabled]="!myForm.valid" type="button" (click)="guardar()" class="btn btn-primary">
           <i class="fas fa-save me-2"></i> Guardar
         </button>
       </div>

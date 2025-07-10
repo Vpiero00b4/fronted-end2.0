@@ -32,13 +32,12 @@ export class MantUsuarioRegisterComponent implements OnInit{
         //nuestro formulario usuario request
         this.myForm=this.fb.group({
           idUsuario:[{value:0, disabled:true},[Validators.required]],
-          username: [null,[Validators.required]],
-          password: [null,[Validators.required]],
-          cargo: [null,[Validators.required]],
-          estado: [null,[Validators.required]],
+          username: ['',[Validators.required]],
+          password: ['',[Validators.required]],
+          cargo: ['',[Validators.required]],
+          estado: [true],
           idPersona: [null,[Validators.required]],
         })
-        
       }
   ngOnInit(): void {
     
@@ -69,8 +68,9 @@ export class MantUsuarioRegisterComponent implements OnInit{
       alert("creado de forma  coorerctae");
       },
       
-      error:()=>{
+      error:(err)=>{
       debugger;
+      console.error('Error en create:', err);
       alert("Ocurrio un error en crear");
       },
       complete:()=>{
@@ -78,8 +78,8 @@ export class MantUsuarioRegisterComponent implements OnInit{
       }
       
     })
-
    }
+
    editarRegistro(){
     this._usuarioService.update(this.usuarioEnvio).subscribe({
       next:(data:UsuarioResponse)=>{
@@ -101,5 +101,6 @@ export class MantUsuarioRegisterComponent implements OnInit{
     this.closeModalEmmit.emit(res);
 
    }
+
 }
  
