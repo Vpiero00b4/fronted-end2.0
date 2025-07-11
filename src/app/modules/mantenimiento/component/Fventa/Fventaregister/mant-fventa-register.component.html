@@ -245,18 +245,14 @@
                 </div>
                 <div class="input-group input-group-sm">
                   <span class="input-group-text">S/</span>
-                  <input type="number" class="form-control" placeholder="0.00" min="0" />
+                  <input type="number" class="form-control" placeholder="0.00" min="0" [(ngModel)]="descuentoVenta"
+                    name="descuentoVenta" />
                   <button class="btn btn-outline-primary" type="button">
                     <i class="fas fa-check"></i>
                   </button>
                 </div>
               </div>
             </div>
-            <div class="mb-3">
-  <label class="form-label">Descuento general por venta (S/)</label>
-  <input type="number" class="form-control" [(ngModel)]="descuentoVenta" min="0" />
-</div>
-
             <!-- Botón de Pago -->
             <div class="col-12">
               <div class="d-grid">
@@ -281,6 +277,6 @@
 
 <!-- Pantalla de Pago -->
 <app-fpago *ngIf="mostrarPago" [productos]="productosAgregados" [cliente]="persona!"
-  [tipoComprobante]="ventaForm.get('tipoComprobante')?.value" (cerrar)="cerrarPantallaPago()"
-  (confirmarPago)="finalizarVentaDesdePago($event)">
+  [tipoComprobante]="ventaForm.get('tipoComprobante')?.value" [descuentoVenta]="descuentoVenta"
+  (cerrar)="cerrarPantallaPago()" (confirmarPago)="finalizarVentaDesdePago($event)">
 </app-fpago>

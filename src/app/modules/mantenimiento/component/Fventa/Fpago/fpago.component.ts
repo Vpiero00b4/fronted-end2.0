@@ -29,7 +29,8 @@ export class FpagoComponent implements OnInit {
     this.pagoForm = this.fb.group({
       efectivoRecibido: [0, [Validators.required, Validators.min(0)]],
       montoDigital: [0, [Validators.required, Validators.min(0)]],
-      tipoPago: ['Efectivo', Validators.required]
+      tipoPago: ['Efectivo', Validators.required],
+      descuentoVenta: [0, Validators.required]
     });
   }
 
@@ -42,12 +43,7 @@ export class FpagoComponent implements OnInit {
   }
 
   get totalPagar(): number {
-    return this.subtotal - this.totalDescuento;
-  }
-
-  get igv(): number {
-    const sinIGV = this.totalPagar / 1.18;
-    return this.totalPagar - sinIGV;
+    return this.subtotal - this.totalDescuento -this.descuentoVenta;
   }
 
   get vuelto(): number {
@@ -68,11 +64,28 @@ export class FpagoComponent implements OnInit {
     const efectivo = this.pagoForm.value.efectivoRecibido ?? 0;
     const digital = this.pagoForm.value.montoDigital ?? 0;
     const vuelto = this.vuelto ?? 0;
+
     const descuentoGeneral = this.descuentoVenta ?? 0;
 
-    const totalAmount = this.subtotal - this.totalDescuento;
-    const totalVenta = totalAmount - descuentoGeneral;
+    // Subtotal de todos los productos antes de descuentos
+    const subtotal = this.productos.reduce((sum, p) => sum + (p.precioUnit ?? 0) * (p.cantidad ?? 1), 0);
+
+    // Descuento acumulado por producto
+    const descuentoPorProducto = this.productos.reduce((sum, p) => sum + (p.descuento ?? 0), 0);
+
+    // 🔸 Este es el valor correcto que se debe enviar como `totalAmount` al backend
+    const totalAmount = subtotal - descuentoPorProducto;
+
+    // Total combinado de descuentos: producto + venta general
+    const totalDescuentos = descuentoPorProducto + descuentoGeneral;
+
+    // Total recibido del cliente
     const totalRecibido = efectivo + digital;
+
+    // Total final de la venta, después de aplicar todos los descuentos
+    const totalVenta = totalAmount - descuentoGeneral;
+
+    // Validación: esto es lo que realmente se debería sumar a caja
     const totalEsperado = totalRecibido - vuelto;
 
     if (Math.abs(totalVenta - totalEsperado) > 0.01) {

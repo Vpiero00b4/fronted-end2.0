@@ -42,7 +42,7 @@ export class FventaRegisterComponent {
     this.ventaForm = this.fb.group({
       fechaEmision: [new Date().toISOString().split('T')[0], Validators.required],
       tipoComprobante: ['Boleta', Validators.required],
-      tipoPago: ['Efectivo', Validators.required]
+      tipoPago: ['Efectivo', Validators.required],
     });
   }
 
@@ -207,6 +207,7 @@ export class FventaRegisterComponent {
       telefono: '',
       sub: ''
     };
+    this.descuentoVenta=0,
     this.mostrarPago = false;
   }
 

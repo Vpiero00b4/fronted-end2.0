@@ -102,6 +102,7 @@ export class MantCajaListComponent implements OnInit {
     this.saldoDigital = caja.saldoDigital ?? 0;
     this.montoIngreso = caja.ingresosACaja ?? 0;
     this.ingresosACaja = caja.ingresosACaja??0;
+
     // Si tu backend trae retiros u otros campos, asígnalos aquí.
   }
 

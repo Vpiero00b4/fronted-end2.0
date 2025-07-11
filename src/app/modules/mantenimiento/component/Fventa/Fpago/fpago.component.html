@@ -75,7 +75,8 @@
                 </label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input type="number" class="form-control" formControlName="efectivoRecibido" min="0" step="0.01" placeholder="0.00">
+                  <input type="number" class="form-control" formControlName="efectivoRecibido" min="0" step="0.01"
+                    placeholder="0.00">
                 </div>
                 <small class="text-muted">Monto recibido en efectivo</small>
               </div>
@@ -87,7 +88,8 @@
                 </label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input type="number" class="form-control" formControlName="montoDigital" min="0" step="0.01" placeholder="0.00">
+                  <input type="number" class="form-control" formControlName="montoDigital" min="0" step="0.01"
+                    placeholder="0.00">
                 </div>
                 <small class="text-muted">Monto recibido vía transferencia</small>
               </div>
@@ -106,7 +108,6 @@
               </h6>
             </div>
             <div class="card-body p-3">
-
               <!-- Resumen de totales -->
               <div class="bg-light rounded-2 p-3 mb-3">
                 <div class="d-flex justify-content-between">
@@ -122,20 +123,25 @@
                   <span class="fw-bold">Total a Pagar:</span>
                   <span class="fw-bold text-primary fs-5">S/ {{ totalPagar | number:'1.2-2' }}</span>
                 </div>
+                <div class="d-flex justify-content-between">
+                  <span class="fw-bold">Decuento Venta:</span>
+                  <span class="fw-bold text-primary fs-5">S/ {{ descuentoVenta | number:'1.2-2' }}</span>
+                </div>
               </div>
-
               <!-- Validación -->
               <div class="rounded-2 p-3 mb-3"
                 [ngClass]="{ 'bg-success bg-opacity-10 border border-success': vuelto >= 0, 'bg-danger bg-opacity-10 border border-danger': vuelto < 0 }">
                 <h6 class="fw-semibold mb-2">
-                  <i class="fas fa-check-circle me-1" [ngClass]="{'text-success': vuelto >= 0, 'text-danger': vuelto < 0}"></i>
+                  <i class="fas fa-check-circle me-1"
+                    [ngClass]="{'text-success': vuelto >= 0, 'text-danger': vuelto < 0}"></i>
                   Validación de Pago
                 </h6>
 
                 <div class="small">
                   <div class="d-flex justify-content-between">
                     <span>Efectivo:</span>
-                    <span class="fw-semibold">S/ {{ pagoForm.get('efectivoRecibido')?.value || 0 | number:'1.2-2' }}</span>
+                    <span class="fw-semibold">S/ {{ pagoForm.get('efectivoRecibido')?.value || 0 | number:'1.2-2'
+                      }}</span>
                   </div>
                   <div class="d-flex justify-content-between">
                     <span>Digital:</span>
@@ -144,7 +150,8 @@
                   <hr class="my-2">
                   <div class="d-flex justify-content-between fw-semibold">
                     <span>Total Recibido:</span>
-                    <span>S/ {{ (pagoForm.get('efectivoRecibido')?.value || 0) + (pagoForm.get('montoDigital')?.value || 0) | number:'1.2-2' }}</span>
+                    <span>S/ {{ (pagoForm.get('efectivoRecibido')?.value || 0) + (pagoForm.get('montoDigital')?.value ||
+                      0) | number:'1.2-2' }}</span>
                   </div>
                 </div>
               </div>

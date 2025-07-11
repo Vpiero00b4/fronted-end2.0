@@ -57,8 +57,10 @@ export class MantLibroListComponent {
   openEditModal(libro: Libro): void {
     this.isEditMode = true; // Modo edición
     this.libroSeleccionado = libro;
+    debugger
     forkJoin({
-      precio: this.libroService.getPrecioById(libro.idLibro),
+
+      precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro),
       kardex: this.libroService.getStockById(libro.idLibro),
     }).subscribe({
       next: (response) => {
