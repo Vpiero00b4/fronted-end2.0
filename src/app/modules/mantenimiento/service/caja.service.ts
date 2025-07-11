@@ -38,5 +38,10 @@ obtenerCajasPaginadas(page: number, pageSize: number): Observable<{ data: any[],
     })
   );
 }
+// caja.service.ts
+getRetirosPorCajaId(cajaId: number) {
+  return this.http.get<any[]>(`https://localhost:7143/api/RetiroDeCaja?cajaId=${cajaId}`);
+}
+
 
 }

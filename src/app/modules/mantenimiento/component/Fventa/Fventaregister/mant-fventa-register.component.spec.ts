@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FventaRegisterComponent } from './mant-fventa-register.component';
+
 
 describe('MantFventaRegisterComponent', () => {
   let component: FventaRegisterComponent;

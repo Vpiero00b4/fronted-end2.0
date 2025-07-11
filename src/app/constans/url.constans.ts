@@ -1,7 +1,7 @@
 export const dominio = "https://localhost:7143/";
 
     export const UrlConstants = {
-        usuario: dominio + "Usuario",
+        DetalleVenta: dominio + "DetalleVenta/registrar-venta-detalle",        usuario: dominio + "Usuario",
         persona: dominio+"Persona",
         libro: dominio+"Libro",
         auth: dominio+"api/Auth/",
@@ -15,12 +15,12 @@ export const dominio = "https://localhost:7143/";
         cliente:dominio+"Cliente",
         stock:dominio+"Libro/stock",
         api:dominio+"api",
-        DetalleVenta:dominio+"DetalleVenta/registrar-venta",
         caja: dominio + "Caja",
         subcategoria: dominio + "Subcategoria",
         vacio: dominio + "", 
         subCategoria:dominio+"Subcategoria",
         tipoPapel:dominio+"TipoPapel",
-        autor:dominio+"Autor"
+        autor:dominio+"Autor",
+        
     };
     

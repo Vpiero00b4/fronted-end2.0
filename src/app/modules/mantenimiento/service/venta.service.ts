@@ -61,7 +61,9 @@ getVentasPaginadas(page: number, pageSize: number) {
 
   return this.http.get<any>(`${UrlConstants.venta}/Paginator`, { params });
 }
-
+registrarVentaConDetalle(venta: Cart): Observable<any> {
+  return this.http.post(`${UrlConstants.DetalleVenta}`, venta);
+}
 
 
 

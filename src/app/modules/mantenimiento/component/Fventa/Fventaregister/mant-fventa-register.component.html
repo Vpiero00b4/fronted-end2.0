@@ -1,0 +1,276 @@
+<div class="container-fluid py-3">
+  <div class="row g-3">
+
+    <!-- 🧍‍♂️ COLUMNA IZQUIERDA: Cliente y Datos de Venta (col-lg-4) -->
+    <div class="col-lg-4">
+
+      <!-- Búsqueda de Cliente -->
+      <div class="card shadow-sm border-0 rounded-3 mb-3">
+        <div class="card-header bg-primary text-white py-2">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-user me-2"></i>Buscar Cliente
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <form [formGroup]="personaForm" (ngSubmit)="buscarPersona()">
+            <div class="row g-2">
+              <div class="col-5">
+                <label for="tipoDocumento" class="form-label small">Tipo</label>
+                <select id="tipoDocumento" formControlName="tipoDocumento" class="form-select form-select-sm">
+                  <option value="" disabled selected>Seleccione</option>
+                  <option value="DNI">DNI</option>
+                  <option value="RUC">RUC</option>
+                </select>
+                <div *ngIf="personaForm.get('tipoDocumento')?.touched && personaForm.get('tipoDocumento')?.invalid"
+                  class="text-danger small">
+                  <div *ngIf="personaForm.get('tipoDocumento')?.errors?.['required']">Requerido</div>
+                </div>
+              </div>
+              <div class="col-7">
+                <label for="numeroDocumento" class="form-label small">N° Documento</label>
+                <div class="input-group input-group-sm">
+                  <input type="text" id="numeroDocumento" formControlName="numeroDocumento" class="form-control"
+                    placeholder="Ingrese número" autocomplete="off" />
+                  <button type="submit" class="btn btn-primary" [disabled]="personaForm.invalid">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+                <div *ngIf="personaForm.get('numeroDocumento')?.touched && personaForm.get('numeroDocumento')?.invalid"
+                  class="text-danger small">
+                  <div *ngIf="personaForm.get('numeroDocumento')?.errors?.['required']">Requerido</div>
+                  <div *ngIf="personaForm.get('numeroDocumento')?.errors?.['minlength']">Mín. 8 dígitos</div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Spinner de carga -->
+      <div *ngIf="cargando" class="text-center my-2">
+        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        <span class="ms-2 small">Procesando...</span>
+      </div>
+
+      <!-- Datos del Cliente -->
+      <div *ngIf="persona" class="card shadow-sm border-0 rounded-3 mb-3 border-success">
+        <div class="card-header bg-success text-white py-2">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-user-check me-2"></i>Cliente Encontrado
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <div class="row g-1 small">
+            <div class="col-12">
+              <strong>{{ persona.nombre }} {{ persona.apellidoPaterno }} {{ persona.apellidoMaterno }}</strong>
+            </div>
+            <div class="col-6">
+              <span class="text-muted">Doc:</span> {{ persona.tipoDocumento }} {{ persona.numeroDocumento }}
+            </div>
+            <div class="col-6">
+              <span class="text-muted">Tel:</span> {{ persona.telefono }}
+            </div>
+            <div class="col-12">
+              <span class="text-muted">Email:</span> {{ persona.correo }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Datos de Venta -->
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-info text-white py-2">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-file-invoice me-2"></i>Datos de Venta
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <form [formGroup]="ventaForm">
+            <div class="mb-3">
+              <label for="fechaEmision" class="form-label small">Fecha Emisión</label>
+              <input type="date" id="fechaEmision" formControlName="fechaEmision"
+                class="form-control form-control-sm" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small">Comprobante</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" formControlName="tipoComprobante" id="boleta" value="Boleta" />
+                <label class="btn btn-outline-primary btn-sm" for="boleta">
+                  <i class="fas fa-receipt me-1"></i>Boleta
+                </label>
+                <input type="radio" class="btn-check" formControlName="tipoComprobante" id="factura" value="Factura" />
+                <label class="btn btn-outline-primary btn-sm" for="factura">
+                  <i class="fas fa-file-invoice-dollar me-1"></i>Factura
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small">Tipo de Pago</label>
+              <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" formControlName="tipoPago" id="efectivo" value="Efectivo" />
+                <label class="btn btn-outline-success btn-sm" for="efectivo">
+                  <i class="fas fa-money-bill me-1"></i>Efectivo
+                </label>
+                <input type="radio" class="btn-check" formControlName="tipoPago" id="digital" value="Digital" />
+                <label class="btn btn-outline-success btn-sm" for="digital">
+                  <i class="fas fa-mobile-alt me-1"></i>Digital
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📦 COLUMNA DERECHA: Productos y Resumen (col-lg-8) -->
+    <div class="col-lg-8">
+
+      <!-- Productos Agregados -->
+      <div class="card shadow-sm border-0 rounded-3 mb-3">
+        <div class="card-header bg-dark text-white py-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 fw-semibold">
+              <i class="fas fa-shopping-cart me-2"></i>Productos Agregados
+            </h6>
+            <button type="button" class="btn btn-warning btn-sm" (click)="abrirModalProducto()">
+              <i class="fas fa-plus me-1"></i>Agregar
+            </button>
+          </div>
+        </div>
+        <div class="card-body p-0">
+          <div *ngIf="productosAgregados && productosAgregados.length > 0; else sinProductos">
+            <div class="table-responsive">
+              <table class="table table-sm table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="text-center" style="width: 8%;">ID</th>
+                    <th style="width: 15%;">ISBN</th>
+                    <th style="width: 35%;">Título</th>
+                    <th class="text-center" style="width: 8%;">Cant.</th>
+                    <th class="text-end" style="width: 12%;">P. Unit</th>
+                    <th class="text-end" style="width: 12%;">Importe</th>
+                    <th class="text-center" style="width: 10%;">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of productosAgregados; let i = index" class="align-middle">
+                    <td class="text-center small">{{ p.idLibro }}</td>
+                    <td class="small">{{ p.isbn }}</td>
+                    <td class="small">
+                      <div class="text-truncate" style="max-width: 200px;" [title]="p.nombreProducto">
+                        {{ p.nombreProducto }}
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge bg-secondary">{{ p.cantidad }}</span>
+                    </td>
+                    <td class="text-end small">{{ p.precioUnit | currency:'PEN':'symbol':'1.2-2' }}</td>
+                    <td class="text-end fw-semibold">{{ (p.cantidad * p.precioUnit) | currency:'PEN':'symbol':'1.2-2' }}
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-warning btn-sm" title="Aplicar descuento">
+                          <i class="fas fa-percentage"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm"
+                          (click)="confirmarEliminarProducto(i)" title="Eliminar">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <ng-template #sinProductos>
+            <div class="text-center py-5">
+              <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+              <p class="text-muted mb-0">No se han agregado productos aún</p>
+              <small class="text-muted">Haz clic en "Agregar" para comenzar</small>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Resumen de Venta -->
+      <div class="card shadow-sm border-0 rounded-3">
+        <div class="card-header bg-success text-white py-2">
+          <h6 class="mb-0 fw-semibold">
+            <i class="fas fa-calculator me-2"></i>Resumen de Venta
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <div class="row g-3">
+
+            <!-- Resumen Financiero -->
+            <div class="col-md-6">
+              <div class="border rounded-2 p-3 bg-light">
+                <h6 class="fw-semibold mb-2 text-muted">Totales</h6>
+                <!-- <div class="d-flex justify-content-between mb-1">
+                  <span class="small">Subtotal:</span>
+                  <span class="fw-semibold">S/ {{ subtotal | number:'1.2-2' }}
+                  </span>
+                </div> -->
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="small text-danger">Descuento:</span>
+                  <span class="fw-semibold text-danger">- S/ {{ calcularDescuentoTotal() | number:'1.2-2' }}</span>
+                </div>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold">Total a Pagar:</span>
+                  <span class="fw-bold text-success fs-5">S/ {{ calcularTotal() | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Descuento General -->
+            <div class="col-md-6">
+              <div class="border rounded-2 p-3">
+                <h6 class="fw-semibold mb-2 text-muted">Descuento General</h6>
+                <div class="input-group input-group-sm mb-2">
+                  <span class="input-group-text">%</span>
+                  <input type="number" class="form-control" placeholder="0" min="0" max="100" />
+                  <button class="btn btn-outline-primary" type="button">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </div>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">S/</span>
+                  <input type="number" class="form-control" placeholder="0.00" min="0" />
+                  <button class="btn btn-outline-primary" type="button">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Botón de Pago -->
+            <div class="col-12">
+              <div class="d-grid">
+                <button type="button" class="btn btn-primary btn-lg"
+                  [disabled]="ventaForm.invalid || productosAgregados.length === 0" (click)="abrirPantallaPago()">
+                  <i class="fas fa-credit-card me-2"></i>Procesar Pago
+                  <span class="ms-2 badge bg-light text-dark">S/ {{ calcularTotal() | number:'1.2-2' }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Libros -->
+<app-libro-modal-component *ngIf="showModal" (libroAgregado)="onProductoAgregado($event)"
+  (cerrarModal)="cerrarModalProducto()">
+</app-libro-modal-component>
+
+<!-- Pantalla de Pago -->
+<app-fpago *ngIf="mostrarPago" [productos]="productosAgregados" [cliente]="persona!"
+  [tipoComprobante]="ventaForm.get('tipoComprobante')?.value" (cerrar)="cerrarPantallaPago()"
+  (confirmarPago)="finalizarVentaDesdePago($event)">
+</app-fpago>

@@ -7,4 +7,5 @@ export class PersonaResponse {
     tipoDocumento: string = "";
     numeroDocumento: string = "";
     telefono: string = "";
+     sub?: string; 
 }

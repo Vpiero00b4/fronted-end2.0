@@ -1,81 +1,76 @@
-<div class="modal fade show d-block custom-modal-zoom" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-modal="true">
+<div class="modal fade show d-block" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content shadow-lg rounded-4 border-0">
-      <!-- Header -->
-      <div class="modal-header bg-primary text-white rounded-top">
-        <h5 class="modal-title" id="modalLabel">Agregar Libro</h5>
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      
+      <!-- Encabezado -->
+      <div class="modal-header bg-primary text-white rounded-top py-2 px-3">
+        <h5 class="modal-title fw-semibold">
+          <i class="fas fa-book me-2"></i>Agregar Libro a la Venta
+        </h5>
         <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" (click)="cerrar()"></button>
       </div>
 
-      <!-- Body -->
-      <div class="modal-body">
+      <!-- Cuerpo -->
+      <div class="modal-body p-4">
         <form [formGroup]="libroForm" (ngSubmit)="agregarLibro()">
-          
-          <!-- Buscador -->
+
+          <!-- Buscador de libros -->
           <div class="mb-3">
-            <label for="busquedaLibro" class="form-label">Buscar por ISBN o Título</label>
-            <input
-              type="text"
-              id="busquedaLibro"
-              class="form-control"
-              formControlName="busqueda"
-              placeholder="Ej. Clean Code, 9780132350884"
-              autocomplete="off"
-              (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
-            <div *ngIf="libroForm.get('busqueda')?.touched && libroForm.get('busqueda')?.invalid" class="text-danger small">
-              <div *ngIf="libroForm.get('busqueda')?.errors?.['required']">
-                Debes ingresar un criterio de búsqueda.
-              </div>
+            <label class="form-label fw-semibold small text-muted">Buscar ISBN o Título</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+              <input type="text" class="form-control" formControlName="busqueda"
+                     placeholder="Ej: 9780132350884, Clean Code"
+                     (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
             </div>
           </div>
 
-          <!-- Autocompletado -->
-          <div *ngIf="mostrarOpciones && librosFiltrados.length > 0" class="border rounded p-2 mb-3 bg-light shadow-sm" style="max-height: 200px; overflow-y: auto;" role="listbox">
-            <div class="list-group">
-              <button
-                *ngFor="let libro of librosFiltrados"
-                type="button"
-                (click)="seleccionarLibro(libro.idLibro); mostrarOpciones=false"
-                class="list-group-item list-group-item-action">
-                {{ libro.displayText }}
-              </button>
-            </div>
+          <!-- Lista de sugerencias -->
+          <div *ngIf="mostrarOpciones && librosFiltrados.length" class="list-group mb-3 border rounded-3 shadow-sm"
+               style="max-height: 200px; overflow-y: auto;">
+            <button *ngFor="let libro of librosFiltrados"
+                    type="button"
+                    class="list-group-item list-group-item-action"
+                    (click)="seleccionarLibro(libro.idLibro)">
+              <i class="fas fa-book-open me-2 text-primary"></i>{{ libro.displayText }}
+            </button>
           </div>
 
-          <!-- Datos del Libro -->
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label for="cantidad" class="form-label">Cantidad</label>
-              <input type="number" id="cantidad" class="form-control" formControlName="cantidad" min="1" #cantidadInput/>
-              <div *ngIf="libroForm.get('cantidad')?.touched && libroForm.get('cantidad')?.invalid" class="text-danger small">
-                <div *ngIf="libroForm.get('cantidad')?.errors?.['required']">
-                  Debe ingresar una cantidad.
-                </div>
-                <div *ngIf="libroForm.get('cantidad')?.errors?.['min']">
-                  Debe ser mínimo 1.
-                </div>
+          <!-- Detalles del libro -->
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Cantidad</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-sort-numeric-up"></i></span>
+                <input type="number" class="form-control" formControlName="cantidad" min="1">
               </div>
             </div>
-
-            <div class="col-md-4 mb-3">
-              <label for="precioVenta" class="form-label">Precio Unitario (S/)</label>
-              <input type="number" id="precioVenta" class="form-control" formControlName="precioVenta" readonly />
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Precio Unitario</label>
+              <div class="input-group">
+                <span class="input-group-text">S/</span>
+                <input type="number" class="form-control" formControlName="precioVenta" readonly>
+              </div>
             </div>
-
-            <div class="col-md-4 mb-3">
-              <label for="importe" class="form-label">Importe Total (S/)</label>
-              <input type="number" id="importe" class="form-control" formControlName="importe" readonly />
+            <div class="col-md-4">
+              <label class="form-label small fw-semibold">Importe Total</label>
+              <div class="input-group">
+                <span class="input-group-text">S/</span>
+                <input type="number" class="form-control" formControlName="importe" readonly>
+              </div>
             </div>
           </div>
 
           <!-- Botones -->
-          <div class="d-flex justify-content-end gap-2 mt-4">
-            <button type="button" class="btn btn-outline-secondary" (click)="cerrar()">Cancelar</button>
+          <div class="d-flex justify-content-end mt-4">
+            <button type="button" class="btn btn-outline-secondary me-2" (click)="cerrar()">
+              <i class="fas fa-times me-1"></i>Cancelar
+            </button>
             <button type="submit" class="btn btn-success" [disabled]="!libroForm.valid">
-              <i class="fas fa-plus-circle"></i> Agregar Libro
+              <i class="fas fa-plus-circle me-1"></i>Agregar
             </button>
           </div>
-          
+
         </form>
       </div>
     </div>
