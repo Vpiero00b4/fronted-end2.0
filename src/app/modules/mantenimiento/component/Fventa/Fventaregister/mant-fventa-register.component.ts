@@ -25,7 +25,7 @@ export class FventaRegisterComponent {
   showModal: boolean = false;
   cargando: boolean = false;
   mostrarPago: boolean = false;
-  
+  descuentoVenta: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -41,7 +41,7 @@ export class FventaRegisterComponent {
 
     this.ventaForm = this.fb.group({
       fechaEmision: [new Date().toISOString().split('T')[0], Validators.required],
-      tipoComprobante: ['Boleta', Validators.required],  // valor por defecto
+      tipoComprobante: ['Boleta', Validators.required],
       tipoPago: ['Efectivo', Validators.required]
     });
   }
@@ -64,6 +64,7 @@ export class FventaRegisterComponent {
   buscarPersona(): void {
     if (this.personaForm.invalid) return;
     this.cargando = true;
+
     const tipoDocumento = this.personaForm.get('tipoDocumento')!.value;
     const numeroDocumento = this.personaForm.get('numeroDocumento')!.value;
 
@@ -80,60 +81,60 @@ export class FventaRegisterComponent {
     });
   }
 
-prepararObjetoVenta(): Cart {
-  const items = this.productosAgregados.map(producto => {
-    const libro: LibroRequest = {
-      idLibro: producto.idLibro,
-      titulo: producto.nombreProducto || '',
-      isbn: producto.isbn || '',
-      descripcion: producto.descripcion || '',
-      condicion: producto.condicion || '',
-      impresion: producto.impresion || '',
-      tipoTapa: producto.tipoTapa || '',
-      estado: producto.estado || false,
-      idSubcategoria: producto.idSubcategoria || 0,
-      idTipoPapel: producto.idTipoPapel || 0,
-      idProveedor: producto.idProveedor || 0,
+  prepararObjetoVenta(): Cart {
+    const items = this.productosAgregados.map(producto => {
+      const libro: LibroRequest = {
+        idLibro: producto.idLibro,
+        titulo: producto.nombreProducto || '',
+        isbn: producto.isbn || '',
+        descripcion: producto.descripcion || '',
+        condicion: producto.condicion || '',
+        impresion: producto.impresion || '',
+        tipoTapa: producto.tipoTapa || '',
+        estado: producto.estado || false,
+        idSubcategoria: producto.idSubcategoria || 0,
+        idTipoPapel: producto.idTipoPapel || 0,
+        idProveedor: producto.idProveedor || 0,
+      };
+
+      return {
+        libro,
+        precioVenta: producto.precioUnit,
+        cantidad: producto.cantidad,
+        descuento: producto.descuento || 0
+      };
+    });
+
+    const totalAmount = items.reduce((sum, item) => sum + (item.precioVenta * item.cantidad) - (item.descuento || 0), 0);
+    const totalDescuento = items.reduce((sum, item) => sum + (item.descuento || 0), 0);
+
+    const personaParaVenta = this.persona ? {
+      ...this.persona,
+      sub: this.persona.sub ?? ''
+    } : {
+      idPersona: 0,
+      nombre: 'Cliente',
+      apellidoPaterno: '',
+      apellidoMaterno: '',
+      correo: '',
+      tipoDocumento: '',
+      numeroDocumento: '',
+      telefono: '',
+      sub: ''
     };
 
     return {
-      libro,
-      precioVenta: producto.precioUnit,
-      cantidad: producto.cantidad,
-      descuento: producto.descuento || 0
+      items,
+      totalAmount,
+      persona: personaParaVenta,
+      tipoComprobante: this.ventaForm.get('tipoComprobante')!.value,
+      tipoPago: this.ventaForm.get('tipoPago')!.value,
+      descuento: totalDescuento,
+      vuelto: 0,
+      efectivoRecibido: 0,
+      montoDigital: 0
     };
-  });
-
-  const totalAmount = items.reduce((sum, item) => sum + (item.precioVenta * item.cantidad) - (item.descuento || 0), 0);
-  const totalDescuento = items.reduce((sum, item) => sum + (item.descuento || 0), 0);
-
-  const personaParaVenta = this.persona ? {
-    ...this.persona,
-    sub: '' // Campo necesario solo si lo requiere el backend
-  } : {
-    idPersona: 0,
-    nombre: 'Cliente',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
-    correo: '',
-    tipoDocumento: '',
-    numeroDocumento: '',
-    telefono: '',
-    sub: ''
-  };
-
-  return {
-    items,
-    totalAmount,
-    persona: personaParaVenta,
-    tipoComprobante: this.ventaForm.get('tipoComprobante')!.value,
-    tipoPago: this.ventaForm.get('tipoPago')!.value,
-    descuento: totalDescuento,
-    vuelto: 0,
-    efectivoRecibido: 0,
-    montoDigital: 0
-  };
-}
+  }
 
   registrarVenta(): void {
     if (this.productosAgregados.length === 0) {
@@ -150,11 +151,11 @@ prepararObjetoVenta(): Cart {
 
     this.cartService.addToCart(cartData).subscribe({
       next: (response: VentaResponse) => {
-        alert_success(`Venta registrada`, 1800, `N° comprobante: ${response.nroComprobante || 'N/D'}`);
+        alert_success('Venta registrada', 1800, `N° comprobante: ${response.nroComprobante || 'N/D'}`);
         this.limpiarFormulario();
         this.sharedService.ventaRegistrada();
       },
-      error: (error) => {
+      error: () => {
         alert_error('Error', 'No se pudo registrar la venta');
       }
     });
@@ -165,6 +166,48 @@ prepararObjetoVenta(): Cart {
     this.persona = null;
     this.personaForm.reset();
     this.ventaForm.patchValue({ fechaEmision: new Date().toISOString().split('T')[0] });
+  }
+
+  abrirPantallaPago(): void {
+    this.mostrarPago = true;
+  }
+
+  cerrarPantallaPago(): void {
+    this.mostrarPago = false;
+  }
+
+  finalizarVentaDesdePago(cart: Cart): void {
+    this.ventasService.registrarVentaConDetalle(cart).subscribe({
+      next: () => {
+        Swal.fire('Éxito', 'Venta registrada correctamente', 'success');
+        this.resetearFormulario();
+      },
+      error: err => {
+        console.error('Error al registrar venta:', err);
+        Swal.fire('Error', 'Ocurrió un error al registrar la venta', 'error');
+      }
+    });
+  }
+
+  resetearFormulario(): void {
+    this.ventaForm.reset({
+      fechaEmision: new Date().toISOString().split('T')[0],
+      tipoComprobante: 'Boleta',
+      tipoPago: 'Efectivo'
+    });
+    this.productosAgregados = [];
+    this.persona = {
+      idPersona: 0,
+      nombre: '',
+      apellidoPaterno: '',
+      apellidoMaterno: '',
+      correo: '',
+      tipoDocumento: '',
+      numeroDocumento: '',
+      telefono: '',
+      sub: ''
+    };
+    this.mostrarPago = false;
   }
 
   confirmarEliminarProducto(index: number): void {
@@ -183,82 +226,53 @@ prepararObjetoVenta(): Cart {
     });
   }
 
+  editarDescuentoProducto(index: number): void {
+    const producto = this.productosAgregados[index];
+    Swal.fire({
+      title: `Descuento para "${producto.nombreProducto}"`,
+      input: 'number',
+      inputLabel: 'Ingresa el descuento en soles',
+      inputValue: producto.descuento || 0,
+      inputAttributes: {
+        min: '0',
+        step: '0.1'
+      },
+      showCancelButton: true,
+      confirmButtonText: 'Aplicar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (value === null || value === '') return 'El descuento es requerido';
+        if (parseFloat(value) < 0) return 'Debe ser un valor positivo';
+        return null;
+      }
+    }).then(result => {
+      if (result.isConfirmed) {
+        const nuevoDescuento = parseFloat(result.value);
+        if (!isNaN(nuevoDescuento)) {
+          this.productosAgregados[index].descuento = nuevoDescuento;
+        }
+      }
+    });
+  }
 
-abrirPantallaPago(): void {
-  this.mostrarPago = true;
+  calcularDescuentoTotal(): number {
+    return this.productosAgregados.reduce((total, item) => total + (item.descuento ?? 0), 0);
+  }
+
+  calcularTotal(): number {
+    const subtotal = this.productosAgregados.reduce((total, item) => total + (item.precioUnit * item.cantidad), 0);
+    return subtotal - this.calcularDescuentoTotal();
+  }
+
+  get subtotal(): number {
+    return this.productosAgregados.reduce((sum, p) => sum + (p.precioUnit * p.cantidad), 0);
+  }
+
+  get totalVenta(): number {
+  const subtotal = this.productosAgregados.reduce((acc, p) => acc + (p.precioUnit * p.cantidad), 0);
+  const descuentoProductos = this.productosAgregados.reduce((acc, p) => acc + (p.descuento || 0), 0);
+  return subtotal - descuentoProductos - (this.descuentoVenta || 0);
 }
 
-cerrarPantallaPago(): void {
-  this.mostrarPago = false;
-}
-finalizarVentaDesdePago(cart: Cart): void {
-  const ventaFinal: Cart = {
-    items: cart.items,
-    totalAmount: cart.totalAmount,
-    persona: cart.persona,
-    tipoComprobante: cart.tipoComprobante,
-    tipoPago: cart.tipoPago,
-    descuento: cart.descuento,
-    vuelto: cart.vuelto,
-    efectivoRecibido: cart.efectivoRecibido,
-    montoDigital: cart.montoDigital
-  };
-
-  this.ventasService.registrarVentaConDetalle(ventaFinal).subscribe({
-    next: res => {
-      Swal.fire('Éxito', 'Venta registrada correctamente', 'success');
-      this.resetearFormulario(); // ✅ llamada correcta al método
-    },
-    error: err => {
-      console.error('Error al registrar venta:', err);
-      Swal.fire('Error', 'Ocurrió un error al registrar la venta', 'error');
-    }
-  });
 }
 
-// ✅ Método definido correctamente como parte de la clase:
-resetearFormulario(): void {
-  this.ventaForm.reset();
-  this.productosAgregados = [];
-  this.persona = {
-    idPersona: 0,
-    nombre: '',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
-    correo: '',
-    tipoDocumento: '',
-    numeroDocumento: '',
-    telefono: ''
-  };
-  this.mostrarPago = false;
-}
-
-editarDescuentoProducto(index: number): void {
-  // Por ahora solo muestra un mensaje. Luego puedes abrir un modal para aplicar descuento por producto.
-  console.log('Editar descuento para el producto en índice:', index);
-}
-  
-calcularDescuentoTotal(): number {
-  if (!this.productosAgregados || this.productosAgregados.length === 0) return 0;
-
-  return this.productosAgregados.reduce((total, item) => {
-    return total + (item.descuento ?? 0);
-  }, 0);
-}
-
-calcularTotal(): number {
-  if (!this.productosAgregados || this.productosAgregados.length === 0) return 0;
-
-  const subtotal = this.productosAgregados.reduce((total, item) => {
-    return total + (item.precioUnit * item.cantidad);
-  }, 0);
-
-  const totalDescuento = this.calcularDescuentoTotal();
-  return subtotal - totalDescuento;
-}
-get subtotal(): number {
-  return this.productosAgregados.reduce((sum, p) => sum + (p.precioUnit * p.cantidad), 0);
-}
-
-
-}

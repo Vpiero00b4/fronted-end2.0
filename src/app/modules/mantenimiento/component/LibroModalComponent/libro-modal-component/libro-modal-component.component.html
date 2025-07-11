@@ -60,7 +60,10 @@
               </div>
             </div>
           </div>
-
+<div class="mb-3">
+  <label class="form-label">Descuento por producto (S/)</label>
+  <input type="number" class="form-control" formControlName="descuento" min="0" (input)="actualizarTotalImporte()" />
+</div>
           <!-- Botones -->
           <div class="d-flex justify-content-end mt-4">
             <button type="button" class="btn btn-outline-secondary me-2" (click)="cerrar()">

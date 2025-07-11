@@ -10,5 +10,11 @@ export class VentaRequest {
   idUsuario: number = 0;
   idCaja: number = 0;
   tipoPago: string = "";
+
+  descuento: number = 0;           // ✅ Agregado
+  vuelto: number = 0;              // ✅ Agregado
+  efectivoRecibido: number = 0;    // ✅ Opcional
+  montoDigital: number = 0;        // ✅ Opcional
+
   detallesVenta: DetalleVentaRequest[] = [];
 }

@@ -26,28 +26,35 @@ export class LibroModalComponentComponent implements OnInit {
   librosFiltrados: LibroResponse[] = [];
   autocompleteControl = new FormControl();
 
-  ocultarOpcionesTemporalmente() {
-    setTimeout(() => this.mostrarOpciones = false, 200);
-  }
 
-  constructor(private fb: FormBuilder, private libroService: LibroService, private sharedService: SharedService) {
+
+  constructor(
+    private fb: FormBuilder,
+    private libroService: LibroService,
+    private sharedService: SharedService
+  ) {
     this.libroForm = this.fb.group({
       idLibro: [null, Validators.required],
       busqueda: ['', Validators.required],
       cantidad: [1, [Validators.required, Validators.min(1)]],
       precioVenta: [{ value: '', disabled: true }, Validators.required],
+      descuento: [0, [Validators.min(0)]],
       importe: [{ value: '', disabled: true }]
     });
+
   }
 
   ngOnInit(): void {
     this.listarLibros();
+
     this.libroForm.get('cantidad')?.valueChanges.subscribe(() => {
       this.actualizarTotalImporte();
     });
+
     this.libroForm.get('precioVenta')?.valueChanges.subscribe(() => {
       this.actualizarTotalImporte();
     });
+
     this.libroForm.get('busqueda')?.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -69,7 +76,7 @@ export class LibroModalComponentComponent implements OnInit {
     this.libroService.getAllLibros().subscribe(libros => {
       this.libros = libros.map(libro => ({
         ...libro,
-        displayText: `${libro.isbn} - ${libro.titulo} Cat: ${libro.idSubcategoria} - Marca: ${libro.idProveedor}`
+        displayText: `${libro.isbn} - ${libro.titulo} - Cat: ${libro.idSubcategoria} - Marca: ${libro.idProveedor}`
       }));
       this.librosFiltrados = this.libros;
     });
@@ -95,7 +102,9 @@ export class LibroModalComponentComponent implements OnInit {
             idLibro: idLibroSeleccionado,
             precioVenta: precio.precioVenta,
           });
+
           this.actualizarTotalImporte();
+
           const libroSeleccionado = this.libros.find(libro => libro.idLibro === idLibroSeleccionado);
           if (libroSeleccionado) {
             const valorBusqueda = `${libroSeleccionado.isbn} - ${libroSeleccionado.titulo}`;
@@ -103,6 +112,7 @@ export class LibroModalComponentComponent implements OnInit {
               busqueda: valorBusqueda,
             });
           }
+
           setTimeout(() => {
             if (this.cantidadInput) {
               this.cantidadInput.nativeElement.focus();
@@ -119,14 +129,16 @@ export class LibroModalComponentComponent implements OnInit {
     }
   }
 
+
   actualizarTotalImporte(): void {
     const cantidad = this.libroForm.get('cantidad')?.value || 0;
     const precioVenta = this.libroForm.get('precioVenta')?.value || 0;
-    const totalImporte = cantidad * precioVenta;
-    this.libroForm.patchValue({
-      importe: totalImporte
-    });
+    const descuento = this.libroForm.get('descuento')?.value || 0;
+    const totalImporte = (precioVenta * cantidad) - descuento;
+    this.libroForm.patchValue({ importe: totalImporte });
   }
+
+
 
   agregarLibro(): void {
     if (this.libroForm.valid) {
@@ -143,11 +155,13 @@ export class LibroModalComponentComponent implements OnInit {
           idProveedor: libroSeleccionado.idProveedor,
           cantidad: formValue.cantidad,
           importe: formValue.importe,
-          imagen: formValue.imagen,
+          imagen: libroSeleccionado.imagen ?? null,
+          descuento: formValue.descuento || 0   // ← aquí agregas el descuento por producto
         };
+
+
         this.libroAgregado.emit(detalleVenta);
 
-        // Toast de éxito con SweetAlert2
         Swal.fire({
           toast: true,
           icon: 'success',
@@ -169,5 +183,9 @@ export class LibroModalComponentComponent implements OnInit {
   mostrarOpcionesDeLibros(): void {
     this.mostrarOpciones = true;
     this.librosFiltrados = this.libros;
+  }
+
+  ocultarOpcionesTemporalmente(): void {
+    setTimeout(() => this.mostrarOpciones = false, 200);
   }
 }
