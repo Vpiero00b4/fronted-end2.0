@@ -33,22 +33,22 @@ export class MantCajaRegisterComponent implements OnInit {
   }
 
   cargarCajas(): void {
-  this.cajaService.obtenerCajasPaginadas(this.paginaActual, this.tamanioPagina).subscribe({
-    next: (res) => {
-      this.listaCajas = res.data;
-      this.totalRegistros = res.total;
-      const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
-      this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
-    },
-    error: (err) => alert('Error al cargar las cajas: ' + err.message)
-  });
-}
-cambiarPagina(pagina: number): void {
-  if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
-    this.paginaActual = pagina;
-    this.cargarCajas();
+    this.cajaService.obtenerCajasPaginadas(this.paginaActual, this.tamanioPagina).subscribe({
+      next: (res) => {
+        this.listaCajas = res.data;
+        this.totalRegistros = res.total;
+        const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
+        this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+      },
+      error: (err) => alert('Error al cargar las cajas: ' + err.message)
+    });
   }
-}
+  cambiarPagina(pagina: number): void {
+    if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
+      this.paginaActual = pagina;
+      this.cargarCajas();
+    }
+  }
 
 
   crearCaja() {

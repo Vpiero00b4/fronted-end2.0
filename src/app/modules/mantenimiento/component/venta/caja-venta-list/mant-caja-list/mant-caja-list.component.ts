@@ -19,6 +19,7 @@ export class MantCajaListComponent implements OnInit {
   totalEfectivo = 0;
   montoIngreso = 0;
   montoRetiro = 0;
+  ingresosACaja=0;
 
   nuevoIngreso = 0;
   nuevoRetiro = 0;
@@ -36,8 +37,9 @@ export class MantCajaListComponent implements OnInit {
     private ventaService: VentasService,
     private cajaService: CajaService
   ) {
-    const hoy = new Date().toISOString().split('T')[0];
-    this.fechaFiltro = hoy;
+    const hoy = new Date();
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajusta a tu zona horaria local
+    this.fechaFiltro = hoy.toISOString().split('T')[0];
 
   }
 
@@ -99,6 +101,7 @@ export class MantCajaListComponent implements OnInit {
     this.saldoFinal = caja.saldoFinal ?? 0;
     this.saldoDigital = caja.saldoDigital ?? 0;
     this.montoIngreso = caja.ingresosACaja ?? 0;
+    this.ingresosACaja = caja.ingresosACaja??0;
     // Si tu backend trae retiros u otros campos, asígnalos aquí.
   }
 
