@@ -6,6 +6,8 @@ import { VentaResponse } from '../../../../../models/ventas-response.models';
 import { VentasService } from '../../../service/venta.service';
 import { Subscription } from 'rxjs';
 import { SharedService } from '../../../service/sharedservice';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { PersonaService } from '../../../service/persona.service';
 
 @Component({
   selector: 'app-mant-venta-list',
@@ -22,36 +24,53 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
   fechaInicio: string = '';
   fechaFin: string = '';
   mensaje: string = '';
-
+  nombreCliente?: string;
   // PAGINACIÓN
   paginaActual: number = 1;
   pageSize: number = 10;
   totalRegistros: number = 0;
   paginas: number[] = [];
-
+  pdfUrl: string | undefined = undefined;
   constructor(
     private sharedService: SharedService,
     private _route: Router,
     private _ventaService: VentasService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sanitizer: DomSanitizer,
+    private _personaService: PersonaService
   ) { }
 
   ngOnInit(): void {
     this.listarVentasPaginadas();
     this.escucharRegistroDeVentas();
   }
-
-    listarVentasPaginadas(): void {
+  getPersona(id: number) {
+    this._personaService.obtenerPersonaPorId(id).subscribe({
+      next: (response) => {
+        this.nombreCliente = response.nombre
+      }
+    })
+  }
+  listarVentasPaginadas(): void {
     this._ventaService.getVentasPaginadas(this.paginaActual, this.pageSize).subscribe({
       next: (res: any) => {
-        console.log('Respuesta paginada:', res);
-
         this.ventasFiltradas = Array.isArray(res.venta) ? res.venta : [];
-
         this.totalRegistros = res.totalItems || this.ventasFiltradas.length;
 
         const totalPaginas = Math.ceil(this.totalRegistros / this.pageSize);
         this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+
+        // Aquí llamamos getPersona para cada venta
+        this.ventasFiltradas.forEach((venta) => {
+          this._personaService.obtenerPersonaPorId(venta.idPersona).subscribe({
+            next: (persona) => {
+              venta.nombreCliente = persona.nombre; // Combina nombre y apellido si deseas
+            },
+            error: () => {
+              venta.nombreCliente = 'Desconocido';
+            }
+          });
+        });
       },
       error: () => {
         this.mensaje = 'Ocurrió un error al listar ventas paginadas.';
@@ -111,26 +130,52 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
         next: (_: number) => {
           alert("Registro eliminado de forma correcta");
         },
-        error: () => {},
+        error: () => { },
         complete: () => {
           this.listarVentasPaginadas();
         }
       });
     }
   }
+  mostrarPDF: boolean = false;
+  pdfurl: SafeResourceUrl | null = null;
+  descargandoPDF: number | null = null; // guarda el idVenta que se está procesando
 
   descargarPDF(idVenta: number): void {
-    this._ventaService.getVentaPDF(idVenta).subscribe(blob => {
-      const url = window.URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.download = `venta_${idVenta}.pdf`;
-      anchor.href = url;
-      anchor.click();
-      window.URL.revokeObjectURL(url);
-    }, (error: any) => {
-      console.error("Error al descargar el PDF:", error);
+    // Deshabilitamos el botón
+    this.descargandoPDF = idVenta;
+
+    this._ventaService.getVentaPDF(idVenta).subscribe({
+      next: (blob: Blob) => {
+        const url = URL.createObjectURL(blob);
+        this.imprimirDesdeBlob(url, () => {
+          // Una vez terminado, habilitamos el botón de nuevo
+          this.descargandoPDF = null;
+        });
+      },
+      error: (err) => {
+        console.error('❌ Error al obtener PDF:', err);
+        this.descargandoPDF = null; // reactivar si hay error
+      }
     });
   }
+
+  imprimirDesdeBlob(blobUrl: string, callback?: () => void) {
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = blobUrl;
+
+    document.body.appendChild(iframe);
+
+    iframe.onload = () => {
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        if (callback) callback();
+      }, 500);
+    };
+  }
+
 
   filtrarPorFechas(fechaInicio: string, fechaFin: string): void {
     this.mensaje = '';
@@ -156,7 +201,7 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
+
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();

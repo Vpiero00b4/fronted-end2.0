@@ -42,6 +42,7 @@ import { NgChartsModule } from 'ng2-charts';
 
 
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -74,9 +75,9 @@ import { NgChartsModule } from 'ng2-charts';
     ReactiveFormsModule,
     NgChartsModule,
     FormsModule,
+
     
-    
-    
+
   ],
   providers: [{provide: HTTP_INTERCEPTORS,useClass:AuthInterceptor,multi:true,}],
   bootstrap: [AppComponent],

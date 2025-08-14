@@ -10,6 +10,11 @@ export class VentaResponse {
   idUsuario: number = 0;
   idCaja: number = 0;
   tipoPago: string = "";
+  nombreCliente: string="";
   detallesVenta: DetalleVentaRequest[] = [];
   
+}
+
+export interface VentaRespon{
+  idVenta: number;
 }

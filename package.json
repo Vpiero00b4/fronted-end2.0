@@ -31,6 +31,8 @@
     "moment": "^2.29.4",
     "ng2-charts": "^4.0.1",
     "ngx-bootstrap": "^12.0.0",
+    "ngx-extended-pdf-viewer": "^24.2.4",
+    "pdfjs-dist": "^5.3.93",
     "rxjs": "~7.8.0",
     "startbootstrap-sb-admin": "^7.0.7",
     "sweetalert2": "^11.6.13",

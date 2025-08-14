@@ -27,13 +27,30 @@ export class DashboardComponent {
 
   constructor(private _graficoService: GraficoService) {}
 
-  barChartType: ChartType = 'bar';
-  barChartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { display: false },
+  barChartType: 'bar' = 'bar';
+  barChartOptions: ChartOptions<'bar'> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false }
+  },
+  scales: {
+    x: {
+      ticks: {
+        maxRotation: 30, // ligera inclinación
+        minRotation: 0,
+        callback: function(value) {
+          const label = this.getLabelForValue(value as number);
+          return label.length > 12 ? label.substring(0, 12) + '…' : label;
+        }
+      }
+    },
+    y: {
+      beginAtZero: true
     }
-  };
+  }
+};
+
 
   barChartData: ChartData<'bar'> = {
     labels: [],

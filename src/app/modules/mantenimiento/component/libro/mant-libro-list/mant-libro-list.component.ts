@@ -57,15 +57,14 @@ export class MantLibroListComponent {
   openEditModal(libro: Libro): void {
     this.isEditMode = true; // Modo edición
     this.libroSeleccionado = libro;
-    debugger
     forkJoin({
 
       precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro),
       kardex: this.libroService.getStockById(libro.idLibro),
     }).subscribe({
       next: (response) => {
-        if (Array.isArray(response.precio) && response.precio.length > 0) {
-          this.precioVenta = response.precio[0].precioVenta;
+        if (response.precio && typeof response.precio === 'object') {
+          this.precioVenta = response.precio.precioVenta;
         } else {
           console.warn('El precio no se recibió como un objeto esperado');
         }
@@ -116,7 +115,7 @@ export class MantLibroListComponent {
         }
       );
   }
-   deleteLibro(id: number) {
+  deleteLibro(id: number) {
     this.libroService.updateestado(id).subscribe({
       next: () => {
         Swal.fire(
@@ -136,7 +135,7 @@ export class MantLibroListComponent {
       }
     });
   }
-    // Método para abrir el modal
+  // Método para abrir el modal
   openCreateModal(): void {
     this.isEditMode = false;
     this.isModalOpen = true;
@@ -150,25 +149,25 @@ export class MantLibroListComponent {
     this.currentPage = 1; // Reiniciar paginación
     this.getLibrosPaginados(this.currentPage); // Cargar todos los libros sin filtro
   }
-    buscar(): void {
+  buscar(): void {
     this.currentPage = 1; // Reiniciar a la primera página al buscar
     this.filtrarLibros(); // Llamar al filtro con título y estado
   }
 
-    // Método para cerrar el modal
+  // Método para cerrar el modal
   closeModal(): void {
     this.isModalOpen = false;
     this.Stock = 0;
     this.precioVenta = 0
     document.body.classList.remove('overflow-hidden');
   }
-    handleLibroGuardado(): void {
+  handleLibroGuardado(): void {
     this.getLibrosPaginados(this.currentPage); // Refrescar lista de libros
     this.closeModal(); // Cerrar el modal
     console.log('Libro guardado, actualizando lista...');
   }
 
-   prevPage() {
+  prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
       if (this.tituloBuscado || this.estadoSeleccionado !== undefined) {

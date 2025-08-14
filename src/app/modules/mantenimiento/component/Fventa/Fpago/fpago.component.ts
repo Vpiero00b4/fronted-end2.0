@@ -4,6 +4,8 @@ import { DetalleVentaResponse } from '../../../../../models/detallle-venta-respo
 import { PersonaResponse } from '../../../../../models/persona-response-models';
 import { Cart } from '../../../../../models/cart-request.models';
 import Swal from 'sweetalert2';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { VentasService } from '../../../service/venta.service';
 
 @Component({
   selector: 'app-fpago',
@@ -23,7 +25,9 @@ export class FpagoComponent implements OnInit {
   pagoForm!: FormGroup;
   Math = Math;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder,
+    private _ventaService: VentasService
+  ) { }
 
   ngOnInit(): void {
     this.pagoForm = this.fb.group({
@@ -43,7 +47,7 @@ export class FpagoComponent implements OnInit {
   }
 
   get totalPagar(): number {
-    return this.subtotal - this.totalDescuento -this.descuentoVenta;
+    return this.subtotal - this.totalDescuento - this.descuentoVenta;
   }
 
   get vuelto(): number {
@@ -142,4 +146,6 @@ export class FpagoComponent implements OnInit {
     this.confirmarPago.emit(cartFinal);
 
   }
+
+  
 }

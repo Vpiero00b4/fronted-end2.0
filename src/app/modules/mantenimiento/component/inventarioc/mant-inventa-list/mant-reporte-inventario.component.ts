@@ -29,7 +29,7 @@ export class MantReporteInventarioComponent implements OnInit {
   { key: 'descripcion', label: 'Descripción' },
   { key: 'condicion', label: 'Condición' },
   { key: 'impresion', label: 'Impresión' },
-  { key: 'estado', label: 'Estado' },
+  { key: 'estado', label: 'Estado' } ,
   { key: 'idTipoPapel', label: 'ID Tipo de Papel' },
   { key: 'idProveedor', label: 'ID Proveedor' },
   { key: 'stock', label: 'Stock' }

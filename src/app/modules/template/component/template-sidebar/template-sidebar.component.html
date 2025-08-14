@@ -17,7 +17,7 @@
         <div class="sb-sidenav-menu-heading">Interfaz</div>
 
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseMantenimiento"
-           aria-expanded="false" aria-controls="collapseMantenimiento">
+          aria-expanded="false" aria-controls="collapseMantenimiento">
           <div class="sb-nav-link-icon"><i class="fas fa-tools"></i></div>
           <span class="link-text">Mantenimiento</span>
           <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -39,7 +39,7 @@
       <!-- PRODUCTOS (solo ADMIN) -->
       <div *ngIf="cargo === 'admin'">
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProductos"
-           aria-expanded="false" aria-controls="collapseProductos">
+          aria-expanded="false" aria-controls="collapseProductos">
           <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
           <span class="link-text">Productos</span>
           <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -57,7 +57,7 @@
       <!-- INVENTARIO (ADMIN o INVENTARIO) -->
       <div *ngIf="cargo === 'admin' || cargo === 'inventario'">
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseInventario"
-           aria-expanded="false" aria-controls="collapseInventario">
+          aria-expanded="false" aria-controls="collapseInventario">
           <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div>
           <span class="link-text">Inventario</span>
           <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -75,20 +75,20 @@
       <!-- VENTAS (ADMIN o VENDEDOR) -->
       <div *ngIf="cargo === 'admin' || cargo === 'vendedor'">
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVentas"
-           aria-expanded="false" aria-controls="collapseVentas">
+          aria-expanded="false" aria-controls="collapseVentas">
           <div class="sb-nav-link-icon"><i class="fas fa-shopping-cart"></i></div>
           <span class="link-text">Ventas</span>
           <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
         </a>
         <div class="collapse" id="collapseVentas">
           <nav class="sb-sidenav-menu-nested nav">
-            <a class="nav-link" routerLink="ventas/venta">
-              <i class="bi bi-receipt-cutoff sb-nav-link-icon"></i>
-              <span class="link-text">Listado de Comprobantes</span>
-            </a>
             <a class="nav-link" routerLink="ventas/mant-venta-registred">
               <i class="bi bi-plus-square sb-nav-link-icon"></i>
               <span class="link-text">Formulario de Venta</span>
+            </a>
+            <a class="nav-link" routerLink="ventas/venta">
+              <i class="bi bi-receipt-cutoff sb-nav-link-icon"></i>
+              <span class="link-text">Listado de Comprobantes</span>
             </a>
             <a class="nav-link" routerLink="ventas/caja-register">
               <i class="bi bi-cash-coin sb-nav-link-icon"></i>
@@ -102,8 +102,8 @@
         </div>
       </div>
       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" (click)="logout()">
-          <span class="link-text">Cerrar Sesion</span>
-        </a>
+        <span class="link-text">Cerrar Sesion</span>
+      </a>
     </div>
   </div>
 </div>

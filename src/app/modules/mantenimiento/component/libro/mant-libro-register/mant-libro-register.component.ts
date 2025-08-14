@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./mant-libro-register.component.css']
 })
 export class MantLibroRegisterComponent {
- showSuccessAlert: boolean = false;
+  showSuccessAlert: boolean = false;
   showErrorAlert: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
@@ -258,6 +258,10 @@ export class MantLibroRegisterComponent {
     // Validar si es creación o actualización
     if (this.libro.idLibro === 0) {
       // Crear libro
+      console.log('Contenido del FormData:');
+      formData.forEach((valor, clave) => {
+        console.log(`${clave}:`, valor);
+      });
       this.libroService.createLibro(formData, this.precioVenta, this.Stock).subscribe(
         (response) => {
           alert('Libro creado correctamente');
@@ -265,7 +269,7 @@ export class MantLibroRegisterComponent {
           Swal.fire({
             title: "Creado Correctamente",
             icon: "success",
-            
+
           });
           this.onClose();
           this.libroGuardado.emit();
@@ -275,18 +279,22 @@ export class MantLibroRegisterComponent {
           Swal.fire({
             title: "No se pudo crear ",
             icon: "error",
-            
+
           });
         }
       );
     } else {
       // Actualizar libro
+      console.log('Contenido del FormData:');
+      formData.forEach((valor, clave) => {
+        console.log(`${clave}:`, valor);
+      });
       this.libroService.updateLibro(formData, this.precioVenta, this.Stock).subscribe(
         (response) => {
           Swal.fire({
             title: "Actualizado Correctamente",
             icon: "success",
-           
+
           });
           this.onClose();
           this.libroGuardado.emit();
@@ -296,7 +304,7 @@ export class MantLibroRegisterComponent {
           Swal.fire({
             title: "Error! al Actualizar",
             icon: "error",
-            
+
           });
         }
       );

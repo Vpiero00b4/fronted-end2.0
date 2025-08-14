@@ -10,6 +10,9 @@ import { MantCajaRegisterComponent } from './component/venta/mant-caja-register/
 import { MantCajaListComponent } from './component/venta/caja-venta-list/mant-caja-list/mant-caja-list.component';
 import { FventaRegisterComponent } from './component/Fventa/Fventaregister/mant-fventa-register.component';
 import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+
+
 
 @NgModule({
   declarations: [
@@ -18,17 +21,19 @@ import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
     LibroModalComponentComponent,
     MantCajaRegisterComponent,
     MantCajaListComponent,
-    FpagoComponent
+    FpagoComponent,
+
     
     
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule, 
+    ReactiveFormsModule,
     SharedModule,
     VentaRoutingModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    NgxExtendedPdfViewerModule
 ]
 })
 export class VentaModule { }

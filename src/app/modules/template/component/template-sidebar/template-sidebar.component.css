@@ -1,0 +1,16 @@
+.sidebar-wrapper {
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-sidenav-menu {
+  flex: 1; /* Esto hace que crezca para ocupar el espacio sobrante */
+  overflow-y: auto; /* Si hay muchos elementos, permite scroll */
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
