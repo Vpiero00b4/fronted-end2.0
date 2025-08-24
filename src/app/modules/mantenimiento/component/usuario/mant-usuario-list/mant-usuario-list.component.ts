@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { AccionMantConst } from './../../../../../constans/general.constans'; // Reemplaza 'ruta/del/archivo' con la ruta correcta
 import { UsuarioResponse } from '../../../../../models/usuario-login.response';
 import { UsuarioService } from '../../../service/usuario.service';
+import { PersonaService } from '../../../service/persona.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-mant-usuario-list',
@@ -12,7 +14,7 @@ import { UsuarioService } from '../../../service/usuario.service';
 })
 export class MantUsuarioListComponent implements OnInit {
   usuarios: UsuarioResponse[] = [];
-  modalRef?: BsModalRef;  
+  modalRef?: BsModalRef;
   usuarioSelected: UsuarioResponse = new UsuarioResponse();
   titleModal: string = "";
   accionModal: number = 0;
@@ -25,7 +27,8 @@ export class MantUsuarioListComponent implements OnInit {
   constructor(
     private _route: Router,
     private _usuarioService: UsuarioService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private personaService: PersonaService
   ) { }
 
   ngOnInit(): void {
@@ -33,25 +36,35 @@ export class MantUsuarioListComponent implements OnInit {
 
   }
   listarUsuarios() {
-  this._usuarioService.obtenerUsuariosPaginados(this.paginaActual, this.tamanioPagina).subscribe({
-    next: (res) => {
-      this.usuarios = res.data;
-      this.totalRegistros = res.total;
-      const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
-      this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
-    },
-    error: (err) => {
-      console.log("Error al listar usuarios paginados", err);
-    }
-  });
-  
-}
-cambiarPagina(pagina: number): void {
-  if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
-    this.paginaActual = pagina;
-    this.listarUsuarios();
+    this._usuarioService.obtenerUsuariosPaginados(this.paginaActual, this.tamanioPagina).subscribe({
+      next: (res) => {
+        this.usuarios = res.data;
+        this.totalRegistros = res.total;
+        this.usuarios.forEach(usuario => {
+          if (usuario.idPersona) {
+            this.personaService.obtenerPersonaPorId(usuario.idPersona).subscribe(persona => {
+              usuario.nombre = persona.nombre; // Suponiendo que el campo en la API es "nombre"
+              usuario.apellidoPaterno = persona.apellidoPaterno;
+              usuario.apellidoMaterno = persona.apellidoMaterno;
+            });
+          }
+        });
+        const totalPaginas = Math.ceil(this.totalRegistros / this.tamanioPagina);
+        this.paginas = Array.from({ length: totalPaginas }, (_, i) => i + 1);
+      },
+      error: (err) => {
+        console.log("Error al listar usuarios paginados", err);
+      }
+    });
+
   }
-}
+
+  cambiarPagina(pagina: number): void {
+    if (pagina !== this.paginaActual && pagina > 0 && pagina <= this.paginas.length) {
+      this.paginaActual = pagina;
+      this.listarUsuarios();
+    }
+  }
 
 
 
@@ -86,18 +99,38 @@ cambiarPagina(pagina: number): void {
   }
 
   eliminarRegistro(id: number) {
-    
-    let result = confirm("¿Está seguro de eliminar el registro?");
-    if (result) {
-      this._usuarioService.delete(id).subscribe({
-        next: (data: number) => {
-          alert("Registro eliminado de forma correcta");
-        },
-        error: () => { },
-        complete: () => {
-          this.listarUsuarios();
-        }
-      });
-    }
+
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this._usuarioService.delete(id).subscribe({
+          next: () => {
+            Swal.fire(
+              '¡Eliminado!',
+              'El Usuario a sido Eliminado',
+              'success'
+            );
+            this.listarUsuarios();
+          },
+          error: (error) => {
+            console.error("Error al eliminar:", error);
+            Swal.fire(
+              'Error',
+              'No se pudo eliminar al usuario.',
+              'error'
+            );
+          }
+        });
+      }
+    });
   }
 }
+

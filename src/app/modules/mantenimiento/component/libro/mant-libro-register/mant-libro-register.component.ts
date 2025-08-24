@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { alert_success, alert_error } from '../../../../../../functions/general.functions';
 import { AccionMantConst } from '../../../../../constans/general.constans';
@@ -357,4 +357,19 @@ export class MantLibroRegisterComponent {
     this.autorSeleccionado = autor; // Guarda el autor seleccionado
     this.autoresFiltrados = []; // Limpia los resultados después de la selección
   }
+
+  // Cerrar con tecla Escape
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent) {
+    this.onClose();
+  }
+
+  // Cerrar al hacer click fuera
+  onOverlayClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.onClose();
+    }
+  }
+
+
 }

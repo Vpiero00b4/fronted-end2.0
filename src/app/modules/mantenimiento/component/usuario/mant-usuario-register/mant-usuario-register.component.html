@@ -1,70 +1,96 @@
-<div class="modal-header bg-white border-bottom-0">
-  <h5 class="modal-title fw-bold text-primary">{{ title }}</h5>
-  <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal(false)"></button>
-</div>
-
-<div class="modal-body pt-0">
-  <form [formGroup]="myForm">
-    <div class="row g-3 mt-1">
-
-
-
-      <!-- Username -->
-      <div class="col-12">
-        <label for="username" class="form-label">Username</label>
-        <input formControlName="username" type="text" class="form-control" id="username"
-          placeholder="Ingrese el username" />
-        <small class="text-danger"
-          *ngIf="myForm.get('username')?.hasError('required') && myForm.get('username')?.touched">
-          Campo requerido
-        </small>
+<!-- Modal de Usuario con clase específica -->
+<div class="modal d-block modal-usuario" tabindex="-1" style="z-index: 1050;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white rounded-lg shadow-lg">
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title text-gray-800 fw-bold">
+          {{ esEdicion ? 'Editar Usuario' : 'Crear Usuario' }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal(false)"></button>
       </div>
 
-      <!-- Password -->
-      <div class="col-12">
-        <label for="password" class="form-label">Contraseña</label>
-        <input formControlName="password" type="password" class="form-control" id="password"
-          placeholder="Ingrese la contraseña" />
-        <small class="text-danger"
-          *ngIf="myForm.get('password')?.hasError('required') && myForm.get('password')?.touched">
-          Campo requerido
-        </small>
-      </div>
+      <div class="modal-body pt-0">
+        <form [formGroup]="myForm">
+          <!-- Username -->
+          <div class="mb-2">
+            <input formControlName="username" type="text" placeholder="Username"
+              class="form-control border p-2 rounded-lg focus-ring mb-2"
+              [class.border-red-500]="myForm.get('username')?.invalid && myForm.get('username')?.touched"
+              [class.border-green-500]="myForm.get('username')?.valid">
+            <small class="text-danger" *ngIf="myForm.get('username')?.invalid && myForm.get('username')?.touched">
+              Campo requerido
+            </small>
+          </div>
 
-      <!-- Cargo -->
-      <div class="col-12">
-        <label for="cargo" class="form-label">Cargo</label>
-        <input formControlName="cargo" type="text" class="form-control" id="cargo" placeholder="Ingrese el cargo" />
-      </div>
+          <!-- Password con toggle -->
+          <div class="mb-2 position-relative">
+            <input formControlName="password" [type]="mostrarPassword ? 'text' : 'password'"
+              [value]="mostrarPassword && esEdicion ? passwordDesencriptada || myForm.get('password')?.value : myForm.get('password')?.value"
+              placeholder="Password" class="form-control border p-2 rounded-lg pr-5"
+              [class.border-red-500]="myForm.get('password')?.invalid && myForm.get('password')?.touched"
+              [class.border-green-500]="myForm.get('password')?.valid">
+            <button type="button" (click)="togglePasswordVisibility()"
+              class="position-absolute top-0 end-0 mt-2 me-2 btn btn-sm btn-light">
+              <span *ngIf="!mostrarPassword">🔒</span>
+              <span *ngIf="mostrarPassword">🔓</span>
+            </button>
+            <small class="text-danger" *ngIf="myForm.get('password')?.invalid && myForm.get('password')?.touched">
+              Campo requerido
+            </small>
+          </div>
 
-      <div class="col-12">
-        <label for="estado" class="form-label">Estado</label>
-        <select formControlName="estado" class="form-control" id="estado">
-          <option [ngValue]="true">Activo</option>
-          <option [ngValue]="false">Inactivo</option>
-        </select>
-      </div>
+          <!-- Buscar Persona -->
+          <div class="mb-2">
+            <div class="d-flex gap-2 mb-2">
+              <input type="text" formControlName="nombrePersona" class="form-control border p-2 flex-grow rounded-lg"
+                [class.border-danger]="myForm.get('nombrePersona')?.invalid && myForm.get('nombrePersona')?.touched"
+                [class.border-success]="myForm.get('nombrePersona')?.valid" placeholder="Nombre de la persona">
 
-      <!-- ID Persona -->
-      <div class="col-12">
-        <label for="idPersona" class="form-label">ID Persona</label>
-        <input formControlName="idPersona" type="text" class="form-control" id="idPersona"
-          placeholder="ID relacionado a persona" />
-      </div>
+              <button type="button" (click)="buscarPersona()" class="btn btn-primary">
+                Buscar
+              </button>
+              <button *ngIf="myForm.get('nombrePersona')?.value || personasEncontradas.length > 0"
+                (click)="limpiarBusqueda()" class="btn btn-secondary">
+                ✕
+              </button>
+            </div>
+            <div *ngIf="personasEncontradas.length > 0"
+              class="border bg-white rounded shadow-sm position-absolute w-100" style="z-index: 1051;">
+              <ul class="list-unstyled mb-0">
+                <li *ngFor="let persona of personasEncontradas" (click)="seleccionarPersona(persona)"
+                  class="p-2 hover-bg-primary cursor-pointer rounded">
+                  {{ persona.nombre }} {{ persona.apellidoPaterno }} {{ persona.apellidoMaterno }}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- Cargo -->
+          <div class="mb-2">
+            <select formControlName="cargo" class="form-control border p-2 rounded-lg">
+              <option value="Admin">Admin</option>
+              <option value="Inventario">Inventario</option>
+              <option value="Vendedor">Vendedor</option>
+            </select>
+          </div>
 
-      <!-- Botones -->
-      <div class="col-md-6 d-grid mt-3">
-        <button [disabled]="!myForm.valid" type="button" (click)="guardar()" class="btn btn-primary">
-          <i class="fas fa-save me-2"></i> Guardar
-        </button>
-      </div>
+          <!-- Estado -->
+          <div class="form-check mb-3">
+            <input type="checkbox" formControlName="estado" class="form-check-input accent-green-600" id="estado">
+            <label class="form-check-label text-gray-700" for="estado">Activo</label>
+          </div>
 
-      <div class="col-md-6 d-grid mt-3">
-        <button type="button" class="btn btn-outline-danger" (click)="cerrarModal(false)">
-          <i class="fas fa-times me-2"></i> Cancelar
-        </button>
+          <!-- Botones -->
+          <div class="d-grid gap-2 mb-2">
+            <button type="button" (click)="guardar()" [disabled]="!myForm.valid" class="btn btn-success">
+              Guardar
+            </button>
+            <button type="button" (click)="cerrarModal(false)" class="btn btn-outline-danger">
+              Cancelar
+            </button>
+          </div>
+        </form>
       </div>
-
     </div>
-  </form>
+  </div>
 </div>
+

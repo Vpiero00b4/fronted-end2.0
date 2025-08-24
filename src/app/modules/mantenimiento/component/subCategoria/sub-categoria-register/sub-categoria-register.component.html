@@ -1,0 +1,88 @@
+<!-- Modal Backdrop -->
+<div class="modal-overlay" (click)="cancelar()">
+  <!-- Modal Container -->
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header-custom">
+      <div class="header-content">
+        <div class="header-icon">
+          <i class="fas fa-folder-plus" *ngIf="accion === 1"></i>
+          <i class="fas fa-folder-edit" *ngIf="accion === 2"></i>
+        </div>
+        <h2 class="modal-title-custom">
+          {{ subcategoria.id || undefined ? 'Editar Subcategoría' : 'Nueva Subcategoría' }}
+        </h2>
+      </div>
+      <button type="button" class="btn-close-custom" (click)="cancelar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body-custom">
+      <form [formGroup]="form" class="subcategoria-form">
+        
+        <!-- Descripción Field -->
+        <div class="form-group">
+          <label class="form-label-custom">
+            <i class="fas fa-tag input-icon"></i>
+            Nombre de la Subcategoría
+          </label>
+          <input 
+            formControlName="descripcion"
+            type="text"
+            placeholder="Ingrese el nombre de la subcategoría"
+            class="form-input-custom"
+            [class.error]="form.get('descripcion')?.invalid && form.get('descripcion')?.touched"
+            [class.success]="form.get('descripcion')?.valid && form.get('descripcion')?.touched">
+          <div class="error-message" *ngIf="form.get('descripcion')?.invalid && form.get('descripcion')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            El nombre de la subcategoría es requerido
+          </div>
+        </div>
+
+        <!-- Categoría Field -->
+        <div class="form-group">
+          <label class="form-label-custom">
+            <i class="fas fa-list input-icon"></i>
+            Categoría Padre
+          </label>
+          <select 
+            formControlName="idCategoria"
+            class="form-select-custom"
+            [class.error]="form.get('idCategoria')?.invalid && form.get('idCategoria')?.touched"
+            [class.success]="form.get('idCategoria')?.valid && form.get('idCategoria')?.touched">
+            <option value="" disabled>Seleccione una categoría</option>
+            <option *ngFor="let cat of categorias" [value]="cat.idCategoria">
+              {{ cat.categoria1 }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="form.get('idCategoria')?.invalid && form.get('idCategoria')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            Debe seleccionar una categoría padre
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer-custom">
+      <button 
+        type="button" 
+        class="btn-secondary-custom" 
+        (click)="cancelar()">
+        <i class="fas fa-times me-2"></i>
+        Cancelar
+      </button>
+      <button 
+        type="button" 
+        class="btn-primary-custom" 
+        [disabled]="form.invalid"
+        (click)="guardar()">
+        <i class="fas fa-save me-2"></i>
+        {{ subcategoria.id || undefined ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>

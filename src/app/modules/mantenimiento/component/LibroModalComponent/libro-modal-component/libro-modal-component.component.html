@@ -1,7 +1,7 @@
 <div class="modal fade show d-block" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content border-0 rounded-4 shadow-lg">
-      
+
       <!-- Encabezado -->
       <div class="modal-header bg-primary text-white rounded-top py-2 px-3">
         <h5 class="modal-title fw-semibold">
@@ -20,18 +20,15 @@
             <div class="input-group">
               <span class="input-group-text"><i class="fas fa-search"></i></span>
               <input type="text" class="form-control" formControlName="busqueda"
-                     placeholder="Ej: 9780132350884, Clean Code"
-                     (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
+                placeholder="Ej: 9780132350884, Clean Code" (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
             </div>
           </div>
 
           <!-- Lista de sugerencias -->
           <div *ngIf="mostrarOpciones && librosFiltrados.length" class="list-group mb-3 border rounded-3 shadow-sm"
-               style="max-height: 200px; overflow-y: auto;">
-            <button *ngFor="let libro of librosFiltrados"
-                    type="button"
-                    class="list-group-item list-group-item-action"
-                    (click)="seleccionarLibro(libro.idLibro)">
+            style="max-height: 200px; overflow-y: auto;">
+            <button *ngFor="let libro of librosFiltrados" type="button" class="list-group-item list-group-item-action"
+              (click)="seleccionarLibro(libro.idLibro)">
               <i class="fas fa-book-open me-2 text-primary"></i>{{ libro.displayText }}
             </button>
           </div>
@@ -60,10 +57,11 @@
               </div>
             </div>
           </div>
-<div class="mb-3">
-  <label class="form-label">Descuento por producto (S/)</label>
-  <input type="number" class="form-control" formControlName="descuento" min="0" (input)="actualizarTotalImporte()" />
-</div>
+          <div class="mb-3">
+            <label class="form-label">Descuento por producto (S/)</label>
+            <input type="number" class="form-control" formControlName="descuento" min="0"
+              (input)="actualizarTotalImporte()" />
+          </div>
           <!-- Botones -->
           <div class="d-flex justify-content-end mt-4">
             <button type="button" class="btn btn-outline-secondary me-2" (click)="cerrar()">

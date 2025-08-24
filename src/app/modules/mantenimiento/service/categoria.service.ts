@@ -32,4 +32,7 @@ export class CategoriaService {
     return this.http.get<LibroResponse[]>(`${UrlConstants.categoria}/${id}/libros`);
   }
   
+  getCategoriaSub(id:number):Observable<any>{
+    return this.http.get<any>(`${UrlConstants.categoria}/${id}/subcategorias`)
+  }
 }

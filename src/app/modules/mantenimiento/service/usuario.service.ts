@@ -9,27 +9,27 @@ import { UsuarioRequest } from '../../../models/usuario-login.request';
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService extends CrudService<UsuarioRequest,UsuarioResponse> {
+export class UsuarioService extends CrudService<UsuarioRequest, UsuarioResponse> {
 
   constructor(
     protected http: HttpClient,
-    ) { 
-      super(http,UrlConstants.usuario);
-      
-    }
-   
+  ) {
+    super(http, UrlConstants.usuario);
+  }
+
   obtenerUsuariosPaginados(page: number, pageSize: number): Observable<{ data: UsuarioResponse[], total: number }> {
-  const url = `${UrlConstants.usuario}/paginado?page=${page}&pageSize=${pageSize}`;
-  return this.http.get<any>(url).pipe(
-    map(res => ({
-      data: res.items,       // ✅ usuarios están aquí
-      total: res.total       // ✅ total global
-    })),
-    catchError(error => {
-      console.error('Error al obtener usuarios paginados', error);
-      return throwError(() => error);
-    })
-  );
-}
+    const url = `${UrlConstants.usuario}/paginado?page=${page}&pageSize=${pageSize}`;
+    return this.http.get<any>(url).pipe(
+      map(res => ({
+        data: res.items,       // ✅ usuarios están aquí
+        total: res.total       // ✅ total global
+      })),
+      catchError(error => {
+        console.error('Error al obtener usuarios paginados', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
 
 }

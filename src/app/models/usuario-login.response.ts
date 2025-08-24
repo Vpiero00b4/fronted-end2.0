@@ -5,7 +5,7 @@ export class UsuarioResponse {
     cargo:  string="";
     estado: boolean=false;
     idPersona: number=0;
-    username: number=0;
+    username: string="";
     nombre: string="";
     apellidoPaterno: string="";
     apellidoMaterno: string="";
@@ -14,5 +14,5 @@ export class UsuarioResponse {
     numeroDocumento: string ="";
     telefono: string ="";
     sub: string ="";
-
 }
+

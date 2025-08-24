@@ -16,176 +16,205 @@ import { Autor, Categoria, Libro, Precio, SubCategoria } from '../../../../../mo
 import Swal from 'sweetalert2';
 
 
+
 @Component({
   selector: 'app-mant-libro-list',
   templateUrl: './mant-libro-list.component.html',
   styleUrls: ['./mant-libro-list.component.css']
 })
 export class MantLibroListComponent {
-  libros: Libro[] = [];
-  subCategorias: SubCategoria[] = [];
-  subCategoriasPaginas: SubCategoria[] = [];
-  totalSubCategorias: number = 0;
-  categoriasMap: Map<number, string> = new Map();
+ libros: Libro[] = [];
+  categorias: Categoria[] = [];
+  subcategorias: SubCategoria[] = [];
+
   currentPage = 1;
   pageSize = 10;
-  currentPageSubCategorias = 1;
-  isModalOpen: boolean = false;
-  isEditMode: boolean = false;
-  libroSeleccionado: Libro | null = null;
-  precio: Precio[] = [];  // Inicializa el precio
-  Stock: number = 0;
-  precioVenta: number = 0;
-  categorias: Categoria[] = [];
-  subcategoria: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
-  subcategoriaSeleccionada: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
-  categoria: Categoria = { idCategoria: 0, categoria1: '' }; // Nueva categoría
-  isEditSubcategoriaMode = false;
-  isCategoriaModalOpen = false;
-  isSubcategoriaModalOpen: boolean = false;
-  estadoSeleccionado?: boolean;
+  totalItems = 0;
+  totalPages = 0;
+  hasMoreData = true;
+
   tituloBuscado: string = '';
-  totalItems: number = 0; // Total de libros obtenidos de la API
-  totalPages: number = 0; // Número total de páginas
-  hasMoreData: boolean = true; // Indica si hay más datos para mostrar
+  estadoSeleccionado?: boolean;
+  categoriaSeleccionada: number = 0;
+  subcategoriaSeleccionada: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
+
+  isModalOpen = false;
+  isEditMode = false;
+  libroSeleccionado: Libro | null = null;
+
+  precioVenta = 0;
+  Stock = 0;
 
   constructor(
-    private libroService: LibroService,) { }
+    private libroService: LibroService,
+    private categoriaService: CategoriaService,
+    private subcategoriaService: SubcategoriaService
+  ) {}
+
   ngOnInit() {
+    this.cargarCategorias();
     this.getLibrosPaginados(this.currentPage);
   }
+
+  // ==================== CARGA DE CATEGORIAS Y SUBCATEGORIAS ====================
+  cargarCategorias(): void {
+    this.categoriaService.getCategorias().subscribe({
+      next: data => this.categorias = data,
+      error: err => console.error('Error al cargar categorías', err)
+    });
+  }
+
+  cargarSubcategorias(idCategoria: number): void {
+    if (!idCategoria || idCategoria === 0) {
+      this.subcategorias = [];
+      return;
+    }
+    this.categoriaService.getCategoriaSub(idCategoria).subscribe({
+      next: data => this.subcategorias = data,
+      error: err => console.error('Error al cargar subcategorías', err)
+    });
+  }
+
+  // ==================== MÉTODOS DE MODAL ====================
+  openCreateModal(): void {
+    this.isEditMode = false;
+    this.libroSeleccionado = null;
+    this.isModalOpen = true;
+    document.body.classList.add('overflow-hidden');
+  }
+
   openEditModal(libro: Libro): void {
-    this.isEditMode = true; // Modo edición
+    this.isEditMode = true;
     this.libroSeleccionado = libro;
     forkJoin({
-
       precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro),
       kardex: this.libroService.getStockById(libro.idLibro),
     }).subscribe({
-      next: (response) => {
-        if (response.precio && typeof response.precio === 'object') {
-          this.precioVenta = response.precio.precioVenta;
-        } else {
-          console.warn('El precio no se recibió como un objeto esperado');
-        }
-        this.Stock = response.kardex.stock;
+      next: response => {
+        this.precioVenta = response.precio?.precioVenta ?? 0;
+        this.Stock = response.kardex?.stock ?? 0;
       },
-      error: (err) => {
-        console.error('Error al obtener datos:', err);
-      },
+      error: err => console.error('Error al obtener datos:', err)
     });
     this.isModalOpen = true;
     document.body.classList.add('overflow-hidden');
   }
 
-  // getLibros() {
-  //   this.libroService.get().subscribe(
-  //     (data: Libro[]) => {
-  //       this.libros = data;
-  //       console.log(data);
-  //     },
-  //     (error) => {
-  //       console.error('Error al obtener libros:', error);
-  //     }
-  //   );
-  // }
-
-  getLibrosPaginados(page: number) {
-    this.libroService.getPaginatedLibros(page, this.pageSize).subscribe(
-      (data: Libro[]) => {
-        this.libros = data;
-        this.hasMoreData = this.libros.length === this.pageSize;
-      },
-      (error) => {
-        console.error('Error al obtener libros:', error);
-      }
-    );
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.Stock = 0;
+    this.precioVenta = 0;
+    document.body.classList.remove('overflow-hidden');
   }
+
+  handleLibroGuardado(): void {
+    this.buscar(); // Refresca la lista manteniendo filtros y página
+    this.closeModal();
+  }
+
+  // ==================== SUBIDA DE EXCEL ====================
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      const file = input.files[0];
+      Swal.fire({
+        title: 'Cargando Excel...',
+        text: 'Por favor espera mientras se procesan los libros',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(Swal.getConfirmButton())
+      });
+      this.libroService.cargarExcelLibros(file).subscribe({
+        next: () => {
+          Swal.close();
+          Swal.fire('¡Éxito!', 'Excel cargado correctamente ✅', 'success');
+          this.buscar(); // Refresca libros con filtros actuales
+        },
+        error: err => {
+          Swal.close();
+          Swal.fire('Error', 'No se pudo cargar el Excel ❌', 'error');
+          console.error('Error al subir archivo', err);
+        }
+      });
+    }
+  }
+
+  // ==================== MÉTODOS DE FILTRO ====================
+  private get filtrosActivos(): boolean {
+    return !!this.tituloBuscado || this.estadoSeleccionado !== undefined || this.categoriaSeleccionada > 0 || (this.subcategoriaSeleccionada?.id > 0);
+  }
+
+  buscar(): void {
+    this.currentPage = 1; // Si el usuario ejecuta búsqueda, reinicia página
+    this.filtrarLibros();
+  }
+
   filtrarLibros(): void {
-    this.libroService.filtrarLibros(this.estadoSeleccionado, this.tituloBuscado, this.currentPage, this.pageSize)
-      .subscribe(
-        (response) => {
+    if (this.filtrosActivos) {
+      this.libroService.filtrarLibros(
+        this.estadoSeleccionado,
+        this.tituloBuscado,
+        this.categoriaSeleccionada,
+        this.subcategoriaSeleccionada?.id,
+        this.currentPage,
+        this.pageSize
+      ).subscribe({
+        next: response => {
           this.libros = response.libros;
           this.totalItems = response.totalItems;
-          this.totalPages = Math.ceil(this.totalItems / this.pageSize); // Calcula el total de páginas
-          this.hasMoreData = this.libros.length === this.pageSize; // Si la cantidad recibida es menor, no hay más datos
+          this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+          this.hasMoreData = this.currentPage < this.totalPages;
         },
-        (error) => {
-          console.error('Error al obtener libros filtrados:', error);
-        }
-      );
-  }
-  deleteLibro(id: number) {
-    this.libroService.updateestado(id).subscribe({
-      next: () => {
-        Swal.fire(
-          '¡Inactivo!',
-          'El libro cambió a inactivo',
-          'success'
-        );
-        this.getLibrosPaginados(this.currentPage); // Recarga los datos de la tabla
-      },
-      error: (error) => {
-        console.error("Error al cambiar estado:", error);
-        Swal.fire(
-          'Error',
-          'No se pudo cambiar el estado del libro',
-          'error'
-        );
-      }
-    });
-  }
-  // Método para abrir el modal
-  openCreateModal(): void {
-    this.isEditMode = false;
-    this.isModalOpen = true;
-    this.libroSeleccionado = null;
-    document.body.classList.add('overflow-hidden');
+        error: err => console.error('Error al obtener libros filtrados:', err)
+      });
+    } else {
+      this.getLibrosPaginados(this.currentPage);
+    }
   }
 
   mostrarTodos(): void {
     this.tituloBuscado = '';
     this.estadoSeleccionado = undefined;
-    this.currentPage = 1; // Reiniciar paginación
-    this.getLibrosPaginados(this.currentPage); // Cargar todos los libros sin filtro
-  }
-  buscar(): void {
-    this.currentPage = 1; // Reiniciar a la primera página al buscar
-    this.filtrarLibros(); // Llamar al filtro con título y estado
+    this.categoriaSeleccionada = 0;
+    this.subcategoriaSeleccionada = { id: 0, descripcion: '', idCategoria: 0 };
+    this.currentPage = 1;
+    this.getLibrosPaginados(this.currentPage);
   }
 
-  // Método para cerrar el modal
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.Stock = 0;
-    this.precioVenta = 0
-    document.body.classList.remove('overflow-hidden');
-  }
-  handleLibroGuardado(): void {
-    this.getLibrosPaginados(this.currentPage); // Refrescar lista de libros
-    this.closeModal(); // Cerrar el modal
-    console.log('Libro guardado, actualizando lista...');
-  }
-
-  prevPage() {
+  // ==================== PAGINACIÓN ====================
+  prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
-      if (this.tituloBuscado || this.estadoSeleccionado !== undefined) {
-        this.filtrarLibros(); // Si hay filtro, usa la búsqueda filtrada
-      } else {
-        this.getLibrosPaginados(this.currentPage); // Si no hay filtro, usa la lista paginada normal
-      }
+      this.filtrarLibros(); // Mantiene filtros activos
     }
   }
 
-  nextPage() {
-    if (this.hasMoreData) { // Verifica si hay más datos antes de avanzar
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
       this.currentPage++;
-      if (this.tituloBuscado || this.estadoSeleccionado !== undefined) {
-        this.filtrarLibros(); // Si hay filtro, usa la búsqueda filtrada
-      } else {
-        this.getLibrosPaginados(this.currentPage); // Si no hay filtro, usa la lista paginada normal
-      }
+      this.filtrarLibros(); // Mantiene filtros activos
     }
+  }
+
+  // ==================== OBTENER LIBROS ====================
+  getLibrosPaginados(page: number): void {
+    this.libroService.getPaginatedLibros(page, this.pageSize).subscribe({
+      next: data => {
+        this.libros = data;
+        this.totalItems = data.length; // si tu API devuelve total, usa eso
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        this.hasMoreData = this.currentPage < this.totalPages;
+      },
+      error: err => console.error('Error al obtener libros:', err)
+    });
+  }
+
+  deleteLibro(id: number): void {
+    this.libroService.updateestado(id).subscribe({
+      next: () => {
+        Swal.fire('¡Inactivo!', 'El libro cambió a inactivo', 'success');
+        this.filtrarLibros();
+      },
+      error: err => Swal.fire('Error', 'No se pudo cambiar el estado del libro', 'error')
+    });
   }
 }

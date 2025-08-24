@@ -1,0 +1,418 @@
+<!-- Sección de Búsqueda de Libros Mejorada -->
+<div class="text-center mb-4">
+  <h2 class="fw-bold text-primary mb-2">
+    <i class="fas fa-brain me-2"></i>Predicción de Venta de un Libro
+  </h2>
+  <p class="text-muted mb-0">Análisis inteligente con IA para proyecciones de ventas</p>
+</div>
+
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card shadow-lg border-0">
+      <div class="card-header bg-gradient bg-primary text-white py-3">
+        <div class="d-flex align-items-center">
+          <div class="bg-white bg-opacity-25 rounded-circle p-2 me-3">
+            <i class="fas fa-search-plus text-white"></i>
+          </div>
+          <div>
+            <h6 class="mb-0 fw-bold">Buscar Libro para Predicciones</h6>
+            <small class="text-white-50">Encuentra el libro y configura el análisis predictivo</small>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-body p-4">
+        <div class="row g-4">
+          <!-- Campo de Búsqueda -->
+          <div class="col-lg-6">
+            <label class="form-label fw-semibold text-dark">
+              <i class="fas fa-book me-2 text-primary"></i>Título del Libro
+            </label>
+            <div class="position-relative">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-book-open text-primary"></i>
+                </span>
+                <input type="text" 
+                       class="form-control border-start-0 ps-0" 
+                       placeholder="Escribe el título del libro..." 
+                       [(ngModel)]="terminoBusqueda"
+                       (input)="buscarLibros()"
+                       (focus)="buscarLibros()">
+                <button class="btn btn-outline-danger" 
+                        type="button" 
+                        (click)="limpiarSeleccion()"
+                        *ngIf="libroSeleccionado"
+                        title="Limpiar selección">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <!-- Loading spinner mejorado -->
+              <div class="position-absolute top-50 end-0 translate-middle-y me-3" 
+                   *ngIf="buscandoLibros"
+                   style="z-index: 10;">
+                <div class="d-flex align-items-center">
+                  <div class="spinner-border spinner-border-sm text-primary me-2"></div>
+                  <small class="text-primary fw-semibold">Buscando...</small>
+                </div>
+              </div>
+              
+              <!-- Resultados de búsqueda mejorados -->
+              <div class="dropdown-menu show w-100 mt-1 border-0 shadow-lg" 
+                   *ngIf="mostrarResultados && librosEncontrados.length > 0"
+                   style="max-height: 350px; overflow-y: auto; z-index: 1050;">
+                <div class="dropdown-header bg-light">
+                  <small class="text-muted">
+                    <i class="fas fa-list me-1"></i>{{ librosEncontrados.length }} libro(s) encontrado(s)
+                  </small>
+                </div>
+                <button class="dropdown-item py-2 border-bottom"
+                        *ngFor="let libro of librosEncontrados; let i = index"
+                        (click)="seleccionarLibro(libro)"
+                        [class.bg-primary]="i === 0"
+                        [class.text-white]="i === 0">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div class="fw-semibold" [class.text-white]="i === 0">{{ libro.titulo }}</div>
+                      <small [class.text-white-50]="i === 0" [class.text-muted]="i !== 0">
+                        <i class="fas fa-hashtag me-1"></i>ID: {{ libro.idLibro }}
+                      </small>
+                    </div>
+                    <i class="fas fa-plus-circle" [class.text-white]="i === 0" [class.text-primary]="i !== 0"></i>
+                  </div>
+                </button>
+              </div>
+              
+              <!-- Sin resultados mejorado -->
+              <div class="dropdown-menu show w-100 mt-1 border-0 shadow" 
+                   *ngIf="mostrarResultados && librosEncontrados.length === 0 && !buscandoLibros">
+                <div class="dropdown-item-text text-center py-4">
+                  <i class="fas fa-search fa-2x text-muted mb-2"></i>
+                  <div class="text-muted mb-1">No se encontraron libros</div>
+                  <small class="text-muted">Intenta con otro término de búsqueda</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Configuración de Días -->
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold text-dark">
+              <i class="fas fa-calendar-alt me-2 text-success"></i>Período de Análisis
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-light">
+                <i class="fas fa-clock text-success"></i>
+              </span>
+              <input type="number" 
+                     class="form-control text-center fw-bold" 
+                     placeholder="7" 
+                     min="1" 
+                     max="30"
+                     [(ngModel)]="diasPrediccion">
+              <span class="input-group-text bg-light text-muted">días</span>
+            </div>
+            <small class="form-text text-muted mt-1">
+              <i class="fas fa-info-circle me-1"></i>Rango: 1-30 días
+            </small>
+          </div>
+          
+          <!-- Botón de Predicción -->
+          <div class="col-lg-3">
+            <label class="form-label fw-semibold text-dark">Generar Análisis</label>
+            <button class="btn btn-success w-100 fw-bold py-2" 
+                    (click)="obtenerPredicciones()"
+                    [disabled]="!libroSeleccionado || cargandoPredicciones">
+              <div class="d-flex align-items-center justify-content-center">
+                <div class="me-2">
+                  <span *ngIf="cargandoPredicciones" class="spinner-border spinner-border-sm"></span>
+                  <i class="fas fa-magic" *ngIf="!cargandoPredicciones"></i>
+                </div>
+                <div class="text-start">
+                  <div>{{ cargandoPredicciones ? 'Analizando' : 'Predecir' }}</div>
+                  <small class="opacity-75" style="font-size: 0.75rem;">
+                    {{ cargandoPredicciones ? 'Procesando...' : 'IA Predictiva' }}
+                  </small>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Libro seleccionado mejorado -->
+        <div class="alert alert-success border-0 shadow-sm mt-4 d-flex justify-content-between align-items-center" 
+             *ngIf="libroSeleccionado"
+             style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);">
+          <div class="d-flex align-items-center">
+            <div class="bg-success bg-opacity-25 rounded-circle p-2 me-3">
+              <i class="fas fa-check-circle text-success"></i>
+            </div>
+            <div>
+              <div class="mb-1 fw-bold text-success">Libro Seleccionado</div>
+              <div class="text-dark">
+                <strong>{{ libroSeleccionado.titulo }}</strong>
+                <span class="badge bg-success ms-2">ID: {{ libroSeleccionado.idLibro }}</span>
+              </div>
+              <small class="text-success opacity-75">Listo para análisis predictivo</small>
+            </div>
+          </div>
+          <button class="btn btn-outline-success btn-sm fw-semibold" (click)="limpiarSeleccion()">
+            <i class="fas fa-edit me-1"></i>Cambiar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tarjetas de Estadísticas (solo mostrar si hay predicciones) -->
+<div class="row mb-4" *ngIf="predicciones.length > 0">
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ estadisticas.total | number:'1.2-2' }}</h5>
+        <p class="card-text small">Total Predicho</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-success">{{ estadisticas.promedio | number:'1.2-2' }}</h5>
+        <p class="card-text small">Promedio</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-warning">{{ estadisticas.maximo | number:'1.2-2' }}</h5>
+        <p class="card-text small">Máximo</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-info">{{ estadisticas.minimo | number:'1.2-2' }}</h5>
+        <p class="card-text small">Mínimo</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-danger">{{ estadisticas.diasFinSemana }}</h5>
+        <p class="card-text small">Fin de Semana</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="card text-center stat-card">
+      <div class="card-body">
+        <h5 class="card-title text-secondary">{{ estadisticas.diasLaborables }}</h5>
+        <p class="card-text small">Días Laborables</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Controles de Vista (solo mostrar si hay predicciones) -->
+<div class="row mb-3" *ngIf="predicciones.length > 0">
+  <div class="col-12">
+    <div class="btn-group" role="group">
+      <button type="button" 
+              class="btn"
+              [class.btn-primary]="vistaActual === 'lineas'"
+              [class.btn-outline-primary]="vistaActual !== 'lineas'"
+              (click)="cambiarVista('lineas')">
+        <i class="fas fa-chart-line me-1"></i>Líneas
+      </button>
+      <button type="button" 
+              class="btn"
+              [class.btn-primary]="vistaActual === 'barras'"
+              [class.btn-outline-primary]="vistaActual !== 'barras'"
+              (click)="cambiarVista('barras')">
+        <i class="fas fa-chart-bar me-1"></i>Barras
+      </button>
+      <button type="button" 
+              class="btn"
+              [class.btn-primary]="vistaActual === 'tabla'"
+              [class.btn-outline-primary]="vistaActual !== 'tabla'"
+              (click)="cambiarVista('tabla')">
+        <i class="fas fa-table me-1"></i>Tabla
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Vista de Gráfico de Líneas -->
+<div class="card" *ngIf="vistaActual === 'lineas' && predicciones.length > 0">
+  <div class="card-body">
+    <div class="chart-container" style="height: 400px;">
+      <canvas baseChart
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              type="line">
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Vista de Gráfico de Barras -->
+<div class="card" *ngIf="vistaActual === 'barras' && predicciones.length > 0">
+  <div class="card-body">
+    <div class="chart-container" style="height: 400px;">
+      <canvas baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              type="bar">
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Vista de Tabla -->
+<div class="card" *ngIf="vistaActual === 'tabla' && predicciones.length > 0">
+  <div class="card-header">
+    <h5 class="mb-0">
+      <i class="fas fa-table me-2"></i>Detalles de Predicciones
+    </h5>
+  </div>
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th class="text-center">Cantidad Predicha</th>
+            <th class="text-center">Tipo de Día</th>
+            <th class="text-center">Fin de Semana</th>
+            <th class="text-center">Trimestre</th>
+            <th>Estación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prediccion of predicciones; let i = index"
+              [class.table-warning]="prediccion.dimFecha.esFinDeSemana">
+            <td>
+              <strong>{{ prediccion.fecha | date:'dd/MM/yyyy' }}</strong>
+            </td>
+            <td>
+              <span class="badge bg-secondary">
+                {{ prediccion.dimFecha.nombreDia }}
+              </span>
+            </td>
+            <td class="text-center">
+              <span class="badge bg-primary fs-6 px-3 py-2">
+                {{ prediccion.cantidadPredicha | number:'1.2-2' }}
+              </span>
+            </td>
+            <td class="text-center">
+              <span class="badge" [ngClass]="obtenerClaseTipoDia(prediccion.dimFecha.tipoDia)">
+                {{ prediccion.dimFecha.tipoDia }}
+              </span>
+            </td>
+            <td class="text-center">
+              <i class="fas" 
+                 [class.fa-check-circle]="prediccion.dimFecha.esFinDeSemana"
+                 [class.fa-times-circle]="!prediccion.dimFecha.esFinDeSemana"
+                 [class.text-success]="prediccion.dimFecha.esFinDeSemana"
+                 [class.text-muted]="!prediccion.dimFecha.esFinDeSemana">
+              </i>
+            </td>
+            <td class="text-center">
+              <span class="badge bg-info">Q{{ prediccion.dimFecha.trimestre }}</span>
+            </td>
+            <td>
+              <span class="badge" 
+                    [class.bg-primary]="prediccion.dimFecha.estacion === 'Invierno'"
+                    [class.bg-success]="prediccion.dimFecha.estacion === 'Primavera'"
+                    [class.bg-warning]="prediccion.dimFecha.estacion === 'Verano'"
+                    [class.bg-danger]="prediccion.dimFecha.estacion === 'Otoño'">
+                <i class="fas fa-snowflake me-1" *ngIf="prediccion.dimFecha.estacion === 'Invierno'"></i>
+                <i class="fas fa-leaf me-1" *ngIf="prediccion.dimFecha.estacion === 'Primavera'"></i>
+                <i class="fas fa-sun me-1" *ngIf="prediccion.dimFecha.estacion === 'Verano'"></i>
+                <i class="fas fa-tree me-1" *ngIf="prediccion.dimFecha.estacion === 'Otoño'"></i>
+                {{ prediccion.dimFecha.estacion }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Información adicional -->
+<div class="row mt-4" *ngIf="predicciones.length > 0">
+  <div class="col-12">
+    <div class="alert alert-info">
+      <h6><i class="fas fa-info-circle me-2"></i>Información sobre los datos:</h6>
+      <ul class="mb-0">
+        <li><strong>Libro:</strong> {{ libroSeleccionado?.titulo }} (ID: {{ libroSeleccionado?.idLibro }})</li>
+        <li><strong>Rango de fechas:</strong> {{ predicciones[0].fecha | date:'dd/MM/yyyy' }} - {{ predicciones[predicciones.length-1].fecha | date:'dd/MM/yyyy' }}</li>
+        <li><strong>Total de días:</strong> {{ predicciones.length }}</li>
+        <li><strong>Días de fin de semana:</strong> {{ estadisticas.diasFinSemana }} (mostrados en color diferente)</li>
+        <li><strong>Días laborables:</strong> {{ estadisticas.diasLaborables }}</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Mensaje cuando no hay datos -->
+<div class="row mt-4" *ngIf="predicciones.length === 0 && !cargandoPredicciones">
+  <div class="col-12">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body text-center py-5">
+        <div class="mb-4">
+          <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" 
+               style="width: 100px; height: 100px;">
+            <i class="fas fa-chart-line fa-3x text-primary opacity-50"></i>
+          </div>
+        </div>
+        
+        <h4 class="text-dark mb-3">¡Comienza tu Análisis Predictivo!</h4>
+        <p class="text-muted mb-4 fs-6">
+          Selecciona un libro y configura el período para generar predicciones inteligentes de ventas
+        </p>
+        
+        <div class="row g-3 justify-content-center mb-4">
+          <div class="col-auto">
+            <div class="d-flex align-items-center text-muted">
+              <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                <i class="fas fa-brain text-primary"></i>
+              </div>
+              <small class="fw-semibold">Inteligencia Artificial</small>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="d-flex align-items-center text-muted">
+              <div class="bg-success bg-opacity-10 rounded-circle p-2 me-2">
+                <i class="fas fa-chart-bar text-success"></i>
+              </div>
+              <small class="fw-semibold">Análisis Avanzado</small>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="d-flex align-items-center text-muted">
+              <div class="bg-info bg-opacity-10 rounded-circle p-2 me-2">
+                <i class="fas fa-calendar-week text-info"></i>
+              </div>
+              <small class="fw-semibold">Predicción Semanal</small>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-light rounded p-3">
+          <small class="text-muted">
+            <i class="fas fa-lightbulb me-1 text-warning"></i>
+            <strong>Tip:</strong> Usa el buscador arriba para encontrar un libro y comenzar el análisis
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

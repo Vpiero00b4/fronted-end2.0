@@ -57,6 +57,7 @@ export interface SubCategoria {
   id: number;
   descripcion?: string;
   idCategoria: number;
+  categoriaNombre?: string;
 }
 
 export interface Categoria {

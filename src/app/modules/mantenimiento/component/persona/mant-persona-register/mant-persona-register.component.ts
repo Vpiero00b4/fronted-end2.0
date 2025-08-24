@@ -17,6 +17,7 @@ export class MantPersonaRegisterComponent implements OnInit {
   @Input() usuario: UsuarioResponse = new UsuarioResponse();
   @Input() accion: number = 0;
   @Output() closeModalEmmit = new EventEmitter<boolean>();
+  @Output() personaCreada = new EventEmitter<PersonaResponse>();
 
   myForm: FormGroup;
   personaEnvio: PersonaRequest = new PersonaRequest();

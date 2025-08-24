@@ -1,0 +1,48 @@
+<div class="card-body">
+    <div class="card-header bg-white border-bottom-0 text-center py-3">
+      <h2 class="fw-bold text-primary mb-0">Lista de Proveedores</h2>
+    </div>
+    <!-- Botón Crear Proveedor -->
+    <div class="mb-3 d-grid gap-2">
+        <button type="button" class="btn btn-success" (click)="abrirModalCrear()">
+            <i class="fas fa-plus me-2"></i> Crear Proveedor
+        </button>
+    </div>
+
+    <!-- Tabla de proveedores -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Razon Social</th>
+                    <th>RUC</th>
+                    <th>Dirección</th>
+                    <th>Tipo Proveedor</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let proveedor of proveedores">
+                    <td>{{ proveedor.razonSocial }}</td>
+                    <td>{{ proveedor.ruc }}</td>
+                    <td>{{ proveedor.direccion }}</td>
+                    <td>{{ proveedor.idTipoProveedor === 1 ? 'Marca' : proveedor.idTipoProveedor === 2 ? 'Editorial' :
+                        'Desconocido' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirModalEditar(proveedor)">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger"
+                            (click)="eliminarProveedor(proveedor.idProveedor)">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- Modal Crear/Editar Proveedor -->
+<app-proveedor-register *ngIf="mostrarModalProveedor" [accion]="accionModal" [proveedor]="proveedorSeleccionado"
+    (closeModalEmmit)="cerrarModalProveedor($event)">
+</app-proveedor-register>

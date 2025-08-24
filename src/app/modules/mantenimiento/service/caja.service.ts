@@ -21,7 +21,9 @@ export class CajaService {
   createCaja(cajaData: any): Observable<any> {
     return this.http.post(`${UrlConstants.caja}`, cajaData);
   }
-
+  crearRetiro(request: any): Observable<any> {
+    return this.http.post(`${UrlConstants.caja}/crear-retiro`, request);
+  }
   updateCaja(cajaData: any): Observable<any> {
   return this.http.put(`${UrlConstants.caja}`, cajaData);
 }

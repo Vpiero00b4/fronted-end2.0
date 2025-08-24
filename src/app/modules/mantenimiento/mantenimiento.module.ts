@@ -13,6 +13,14 @@ import { MantReporteInventarioComponent } from './component/inventarioc/mant-inv
 import { MantVentaRegisterComponent } from './component/venta/mant-venta-register/mant-venta-register.component';
 import { AutorComponent } from './component/autor/autor.component';
 import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
+import { SubCategoriaListComponent } from './component/subCategoria/sub-categoria-list/sub-categoria-list.component';
+import { SubCategoriaRegisterComponent } from './component/subCategoria/sub-categoria-register/sub-categoria-register.component';
+import { ProveedorListComponent } from './component/proveedor/proveedor-list/proveedor-list.component';
+import { ProveedorRegisterComponent } from './component/proveedor/proveedor-register/proveedor-register.component';
+import { CategoriaListComponent } from './component/Categoria/categoria-list/categoria-list.component';
+import { CategoriaRegisterComponent } from './component/Categoria/categoria-register/categoria-register.component';
+import { TruncatePipe } from '../../pipes/truncate.pipe';
+
 
 @NgModule({
   declarations: [
@@ -24,9 +32,14 @@ import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
     MantUsuarioRegisterComponent,
     MantReporteInventarioComponent,
     MantVentaRegisterComponent,
-    AutorComponent    
-    
-    
+    AutorComponent,
+    ProveedorListComponent,
+    ProveedorRegisterComponent,
+    SubCategoriaListComponent,
+    SubCategoriaRegisterComponent,
+    CategoriaListComponent,
+    CategoriaRegisterComponent,
+    TruncatePipe
 
   ],
   imports: [
@@ -34,8 +47,10 @@ import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
     MantenimientoRoutingModule,
     SharedModule,
     ReactiveFormsModule,
-    FormsModule
-   
+    FormsModule,
+  ],
+  exports: [
+    TruncatePipe // 👈 si quieres usarlo en otros módulos
   ]
 })
 export class MantenimientoModule { }

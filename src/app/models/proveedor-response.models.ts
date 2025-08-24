@@ -5,3 +5,5 @@ export class ProveedorResponse {
     direccion: string = "";
     idTipoProveedor: number =0;
 }
+
+

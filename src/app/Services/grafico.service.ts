@@ -8,24 +8,27 @@ import { ProductoMasVendido } from '../modules/template/component/dashboard/dash
 })
 export class GraficoService {
   private baseurl = "https://localhost:7143"
-  constructor(private http : HttpClient) { }
+  constructor(private http: HttpClient) { }
 
 
-   obtenerProductosMasVendidos(mes: number, anio: number): Observable<ProductoMasVendido[]> {
+  obtenerProductosMasVendidos(mes: number, anio: number): Observable<ProductoMasVendido[]> {
     const params = new HttpParams()
       .set('mes', mes.toString())
       .set('anio', anio.toString());
 
     return this.http.get<ProductoMasVendido[]>(`${this.baseurl}/DetalleVenta/productos-mas-vendidos`, { params });
   }
-  
 
-    obtenerResumenVentas(): Observable<any> {
+
+  obtenerResumenVentas(): Observable<any> {
     return this.http.get(`${this.baseurl}/Venta/resumen-ventas`);
   }
 
 
   obtenerTasaRotacion(filtro: string, offset: number, limit: number): Observable<any> {
-  return this.http.get(`${this.baseurl}/Venta/tasaRotacion?filtro=${filtro}&offset=${offset}&limit=${limit}`);
-}
+    return this.http.get(`${this.baseurl}/Venta/tasaRotacion?filtro=${filtro}&offset=${offset}&limit=${limit}`);
+  }
+  obtenerPagos():Observable<any>{
+    return this.http.get(`${this.baseurl}/DetalleVenta/Pagos`);
+  }
 }

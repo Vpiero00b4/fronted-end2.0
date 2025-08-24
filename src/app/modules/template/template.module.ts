@@ -8,6 +8,8 @@ import { SharedModule } from '../shared/shared.module';
 import { TasaRotacionComponent } from './component/dashboard/tasa-rotacion/tasa-rotacion.component';
 import { NgChartsModule } from 'ng2-charts';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
+import { PagoComponent } from './component/dashboard/pago-component/pago-component.component';
+
 
 
 @NgModule({
@@ -16,6 +18,7 @@ import { DashboardComponent } from './component/dashboard/dashboard.component';
     TemplateComponent,
     TasaRotacionComponent,
     DashboardComponent,
+    PagoComponent
   ],
   imports: [
     CommonModule,

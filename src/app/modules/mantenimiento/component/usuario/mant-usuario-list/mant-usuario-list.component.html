@@ -10,15 +10,11 @@
           <thead class="table-light">
             <tr>
               <th>Usuario</th>
-              <th>Contraseña</th>
               <th>Cargo</th>
               <th>Estado</th>
+              <th>Encargado</th>
               <th class="position-relative">
-                <button
-                  (click)="crearUsuario(modalEdit)"
-                  class="btn btn-sm btn-success"
-                  title="Nuevo Usuario"
-                >
+                <button (click)="crearUsuario(modalEdit)" class="btn btn-sm btn-success" title="Nuevo Usuario">
                   <i class="fas fa-user-plus"></i>
                 </button>
               </th>
@@ -27,20 +23,16 @@
           <tbody>
             <tr *ngFor="let usuario of usuarios">
               <td>{{ usuario.username }}</td>
-              <td>{{ usuario.password }}</td>
               <td>{{ usuario.cargo }}</td>
-              <td>{{ usuario.estado }}</td>
+              <td>{{ usuario?.estado ? 'Activo' : 'Inactivo' }}</td>
               <td>
-                <button
-                  (click)="editarUsuario(modalEdit, usuario)"
-                  class="btn btn-sm btn-outline-primary me-2"
-                >
+                {{ usuario?.nombre || 'Sin nombre' }} {{usuario?.apellidoPaterno}} {{usuario?.apellidoMaterno}}
+              </td>
+              <td>
+                <button (click)="editarUsuario(modalEdit, usuario)" class="btn btn-sm btn-outline-primary me-2">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button
-                  (click)="eliminarRegistro(usuario.idUsuario)"
-                  class="btn btn-sm btn-outline-danger"
-                >
+                <button (click)="eliminarRegistro(usuario.idUsuario)" class="btn btn-sm btn-outline-danger">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </td>
@@ -69,10 +61,6 @@
 
 <!-- Modal -->
 <ng-template #modalEdit>
-  <app-mant-usuario-register
-    [title]="titleModal"
-    [usuario]="usuarioSelected"
-    [accion]="accionModal"
-    (closeModalEmmit)="getCloseModalEmmit($event)"
-  ></app-mant-usuario-register>
+  <app-mant-usuario-register [title]="titleModal" [usuario]="usuarioSelected" [accion]="accionModal"
+    (closeModalEmmit)="getCloseModalEmmit($event)"></app-mant-usuario-register>
 </ng-template>

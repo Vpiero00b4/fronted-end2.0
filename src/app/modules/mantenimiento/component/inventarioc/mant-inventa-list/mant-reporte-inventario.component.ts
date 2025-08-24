@@ -6,6 +6,17 @@ import { PaginatedResponse } from '../../../../../models/PaginatedResponse';
 import { of, forkJoin, throwError } from 'rxjs';
 import { KardexService } from '../../../service/kardex.service';
 import { KardexResponse } from '../../../../../models/kardex-response.models';
+import { ProveedorResponse } from '../../../../../models/proveedor-response.models';
+import { ProveedorService } from '../../../service/proveedor.service';
+// 🔹 Tipo extendido para los libros en inventario
+export type LibroInventario = LibroResponse & {
+  precioVenta: number;
+  porcUtilidad: number;
+  idPrecios: number;
+  stock: number;
+  editandoStock?: boolean;
+  stockTemporal?: number;
+};
 
 @Component({
   selector: 'app-mant-reporte-inventario',
@@ -13,133 +24,137 @@ import { KardexResponse } from '../../../../../models/kardex-response.models';
   styleUrls: ['./mant-reporte-inventario.component.css']
 })
 export class MantReporteInventarioComponent implements OnInit {
-  libros: (LibroResponse & { precioVenta: number, porcUtilidad: number, idPrecios: number, stock: number })[] = [];
+  libros: LibroInventario[] = [];
+  proveedores: ProveedorResponse[] = [];
+  idProveedorSeleccionado: number | null = null; // null = todos
+
   currentPage: number = 1;
   totalPages: number = 0;
   totalItems: number = 0;
-  stock:number=0;
+  tiposPapel: { [key: number]: string } = {
+    1: 'Papel ahuesado',
+    2: 'Papel bond',
+    3: 'Cartón',
+    4: 'Papel couché',
+    5: 'Papel periódico'
+  };
+
   columnasDisponibles = [
-  { key: 'idLibro', label: 'ID Libro' },
-  { key: 'titulo', label: 'Nombre del libro' },
-  { key: 'precioVenta', label: 'Precio de venta' },
-  { key: 'porcUtilidad', label: '% Utilidad' },
-  { key: 'idPrecios', label: 'ID Precios' },
-  { key: 'isbn', label: 'ISBN' },
-  { key: 'tamanno', label: 'Tamaño' },
-  { key: 'descripcion', label: 'Descripción' },
-  { key: 'condicion', label: 'Condición' },
-  { key: 'impresion', label: 'Impresión' },
-  { key: 'estado', label: 'Estado' } ,
-  { key: 'idTipoPapel', label: 'ID Tipo de Papel' },
-  { key: 'idProveedor', label: 'ID Proveedor' },
-  { key: 'stock', label: 'Stock' }
-  
-];
-mostrarColumnas: { [key: string]: boolean } = {};
+    { key: 'titulo', label: 'Nombre del libro' },
+    { key: 'precioVenta', label: 'S/. Precio de venta' },
+    { key: 'porcUtilidad', label: '% Utilidad' },
+    { key: 'isbn', label: 'ISBN' },
+    { key: 'tamanno', label: 'Tamaño' },
+    { key: 'descripcion', label: 'Descripción' },
+    { key: 'condicion', label: 'Condición' },
+    { key: 'impresion', label: 'Impresión' },
+    { key: 'estado', label: 'Estado' },
+    { key: 'idTipoPapel', label: 'Tipo Papel' },
+    { key: 'nombreProveedor', label: 'Proveedor' },
+    { key: 'stock', label: 'Stock' }
+  ];
+  proveedoresCache: { [key: number]: string } = {};
+  mostrarColumnas: { [key: string]: boolean } = {};
 
-
-  constructor(private libroService: LibroService,
-    private _kardexService:KardexService
-    ) {}
+  constructor(
+    private libroService: LibroService,
+    private kardexService: KardexService,
+    private proveedorService: ProveedorService
+  ) { }
 
   ngOnInit(): void {
-    this.loadInventoryData(this.currentPage, 10);
-    this.columnasDisponibles.forEach(c => {
-    this.mostrarColumnas[c.key] = ['idLibro', 'titulo', 'precioVenta', 'stock'].includes(c.key);
-  });
-  }
+    this.cargarProveedores();
+    this.cargarInventario(this.currentPage, 10);
 
-  loadInventoryData(pageIndex: number, pageSize: number): void {
-    this.libroService.getAllPaginated(pageIndex, pageSize).pipe(
-      switchMap(response => {
-        if (response.libros && response.libros.length > 0) {
-          this.totalPages = response.totalPages;
-          this.currentPage = response.currentPage;
-          this.totalItems = response.totalItems;
-  
-          const detailsObservables = response.libros.map(libro => 
-            forkJoin({
-              libro: of(libro),
-              precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
-              kardex: this.libroService.getKardexByLibroId(libro.idLibro).pipe(catchError(() => of(null)) )
-            }).pipe(
-              map(({ libro, precio, kardex }) => ({
-                ...libro,
-                precioVenta: precio?.precioVenta ?? 0,
-                porcUtilidad: precio?.porcUtilidad ?? 0,
-                idPrecios: precio?.idPrecios ?? 0,
-                stock: kardex ? kardex.stock : 0 // Directamente accediendo a la propiedad stock del objeto KardexResponse
-              }))
-            )
-          );
-  
-          return forkJoin(detailsObservables);
-        } else {
-          return of([]);
-        }
-      })
-    ).subscribe({
-      next: librosConDetalles => {
-        this.libros = librosConDetalles;
-      },
-      error: e => console.error(e)
+    // Definir columnas iniciales visibles
+    this.columnasDisponibles.forEach(c => {
+      this.mostrarColumnas[c.key] = ['titulo', 'precioVenta', 'stock'].includes(c.key);
     });
   }
-  
+
+  cargarProveedores() {
+    this.proveedorService.getAll().subscribe({
+      next: (res) => {
+        this.proveedores = res;
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+cargarInventario(page: number, pageSize: number): void {
+  this.libroService
+    .filtrarLibrosProveedor(this.idProveedorSeleccionado ?? undefined, page, pageSize)
+    .pipe(
+      switchMap(res => {
+        this.totalItems = res.totalItems;
+        this.totalPages = Math.ceil(res.totalItems / pageSize);
+        this.currentPage = page;
+
+        if (!res.libros || res.libros.length === 0) {
+          return of([] as LibroInventario[]);
+        }
+
+        const detalles$ = res.libros.map(libro =>
+          forkJoin({
+            libro: of(libro),
+            precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
+            kardex: this.libroService.getKardexByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
+            proveedor: this.proveedorService.getProveedorbyid(libro.idProveedor).pipe(catchError(() => of(null)))
+          }).pipe(
+            map(({ libro, precio, kardex, proveedor }) => ({
+              ...libro,
+              precioVenta: precio?.precioVenta ?? 0,
+              porcUtilidad: precio?.porcUtilidad ?? 0,
+              idPrecios: precio?.idPrecios ?? 0,
+              stock: kardex?.stock ?? 0,
+              nombreProveedor: proveedor?.razonSocial ?? 'Desconocido'   // 👈 ya tienes el dato listo para la tabla
+            } as LibroInventario))
+          )
+        );
+
+        return forkJoin(detalles$);
+      })
+    )
+    .subscribe({
+      next: librosDetallados => (this.libros = librosDetallados),
+      error: err => console.error('Error cargando inventario', err),
+    });
+}
 
 
   updateKardex(idLibro: number, newStock: number): void {
     this.libroService.getKardexByLibroId(idLibro).subscribe({
-      next: (kardex) => {
-        // Asegúrate de que el kardex exista y tenga un idSucursal válido.
+      next: kardex => {
         if (kardex && kardex.idSucursal) {
-          const kardexToUpdate = {
-            ...kardex, // Extiende todas las propiedades existentes
-            stock: newStock // Actualiza solo el stock
-          };
-  
-          // Ahora llama a la API para actualizar
-          this._kardexService.actuizarka(kardexToUpdate).subscribe({
-            next: (response) => {
-              console.log('Kardex actualizado con éxito', response);
-              // Aquí podrías también actualizar la vista con el nuevo stock,
-              // o recargar la parte de la vista que muestra el kardex.
-            },
-            error: (error) => {
-              console.error('Error al actualizar el kardex', error);
-            }
+          const kardexToUpdate = { ...kardex, stock: newStock };
+          this.kardexService.actuizarka(kardexToUpdate).subscribe({
+            next: res => console.log('Kardex actualizado', res),
+            error: err => console.error('Error actualizando kardex', err)
           });
         } else {
-          console.error('Kardex no encontrado para el libro con ID:', idLibro);
+          console.error('Kardex no encontrado para libro', idLibro);
         }
       },
-      error: (error) => {
-        console.error('Error al recuperar el kardex para el libro con ID:', idLibro, error);
-      }
+      error: err => console.error('Error recuperando kardex', err)
     });
   }
-  
-  toggleEditStock(libro: LibroResponse): void {
+
+  toggleEditStock(libro: LibroInventario): void {
     libro.editandoStock = !libro.editandoStock;
-    // Si empezamos a editar, inicializamos stockTemporal con el stock actual
     if (libro.editandoStock) {
       libro.stockTemporal = libro.stock;
     }
   }
 
-  saveStock(libro: LibroResponse): void {
+  saveStock(libro: LibroInventario): void {
     if (libro.stockTemporal != null) {
       this.updateKardex(libro.idLibro, libro.stockTemporal);
-      libro.stock = libro.stockTemporal; // Opcional, si quieres actualizar la vista inmediatamente
+      libro.stock = libro.stockTemporal;
     }
-    libro.editandoStock = false; // Dejamos de editar
-  }
-  
-  
-  onPageChange(newPageIndex: number): void {
-    this.currentPage = newPageIndex;
-    this.loadInventoryData(newPageIndex, 10);
+    libro.editandoStock = false;
   }
 
-
+  onPageChange(newPage: number): void {
+    this.cargarInventario(newPage, 10);
+  }
 }

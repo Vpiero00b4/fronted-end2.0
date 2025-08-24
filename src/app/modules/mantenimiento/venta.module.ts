@@ -11,6 +11,9 @@ import { MantCajaListComponent } from './component/venta/caja-venta-list/mant-ca
 import { FventaRegisterComponent } from './component/Fventa/Fventaregister/mant-fventa-register.component';
 import { FpagoComponent } from './component/Fventa/Fpago/fpago.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { ProveedorListComponent } from './component/proveedor/proveedor-list/proveedor-list.component';
+import { ProveedorRegisterComponent } from './component/proveedor/proveedor-register/proveedor-register.component';
+
 
 
 

@@ -1,16 +1,53 @@
 <div class="container py-4">
   <!-- Tabla de Libros -->
-  <div class="card shadow mb-4">
-    <div class="card-body">
-      <h2 class="h4 fw-bold mb-4 text-dark">Libros</h2>
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-white border-bottom">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="h4 fw-bold mb-0 text-dark d-flex align-items-center">
+          <i class="fas fa-book text-primary me-2"></i>
+          Gestión de Libros
+        </h2>
+        <div class="d-flex justify-content-end mb-3 gap-2">
+          <!-- Botón para subir Excel -->
+          <button class="btn btn-success" (click)="fileInput.click()">
+            <i class="fas fa-file-excel me-1"></i>
+            Cargar Excel
+          </button>
+          <input #fileInput type="file" accept=".xlsx,.xls" (change)="onFileSelected($event)" hidden />
 
-      <div class="row g-2 align-items-end mb-3">
-        <div class="col-md-4">
-          <input [(ngModel)]="tituloBuscado" (keyup.enter)="buscar()" type="text" placeholder="Buscar por título"
-            class="form-control" />
+          <!-- Botón para crear nuevo libro -->
+          <button (click)="openCreateModal()" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>
+            Nuevo Libro
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <!-- Filtros mejorados -->
+      <div class="row g-3 align-items-end mb-4 p-3 bg-light rounded">
+        <!-- Buscar por título -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-muted">
+            <i class="fas fa-search me-1"></i>
+            Buscar por título
+          </label>
+          <div class="input-group">
+            <input [(ngModel)]="tituloBuscado" (keyup.enter)="buscar()" type="text" placeholder="Buscar libro..."
+              class="form-control" />
+            <button (click)="buscar()" class="btn btn-outline-primary">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
         </div>
 
-        <div class="col-md-3">
+        <!-- Estado -->
+        <div class="col-md-2">
+          <label class="form-label fw-semibold text-muted">
+            <i class="fas fa-toggle-on me-1"></i>
+            Estado
+          </label>
           <select [(ngModel)]="estadoSeleccionado" (change)="buscar()" class="form-select">
             <option [ngValue]="undefined">Todos</option>
             <option [ngValue]="true">Activos</option>
@@ -18,50 +55,116 @@
           </select>
         </div>
 
-        <div class="col-auto">
-          <button (click)="buscar()" class="btn btn-primary">🔍 Buscar</button>
+        <!-- Categoría -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-muted">
+            <i class="fas fa-tags me-1"></i>
+            Categoría
+          </label>
+          <select [(ngModel)]="categoriaSeleccionada" (change)="cargarSubcategorias(categoriaSeleccionada); buscar()"
+            class="form-select">
+            <option [ngValue]="0">Todas las Categorías</option>
+            <option *ngFor="let cat of categorias" [ngValue]="cat.idCategoria">
+              {{ cat.categoria1 }}
+            </option>
+          </select>
         </div>
 
-        <div class="col-auto">
-          <button (click)="mostrarTodos()" class="btn btn-secondary">🔄 Mostrar Todos</button>
+        <!-- Subcategoría -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold text-muted">
+            <i class="fas fa-bookmark me-1"></i>
+            Subcategoría
+          </label>
+          <select [(ngModel)]="subcategoriaSeleccionada.id" (change)="buscar()" class="form-select">
+            <option [ngValue]="0">Todas las subcategorías</option>
+            <option *ngFor="let sub of subcategorias" [ngValue]="sub.id">
+              {{ sub.descripcion }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Botón limpiar -->
+        <div class="col-md-1">
+          <button (click)="mostrarTodos()" class="btn btn-outline-secondary w-100" title="Limpiar filtros">
+            <i class="fas fa-refresh"></i>
+          </button>
         </div>
       </div>
 
+      <!-- Info de resultados -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <small class="text-muted">
+          <i class="fas fa-info-circle me-1"></i>
+          Mostrando {{ libros.length }} libros
+        </small>
+      </div>
+
+      <!-- Tabla mejorada -->
       <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle text-center">
+        <table class="table table-hover align-middle">
           <thead class="table-light">
             <tr>
-              <th>Título</th>
-              <th>ISBN</th>
-              <th>Impresión</th>
-              <th>Estado</th>
-              <th>Condición</th>
-              <!-- <th>descripcion</th> -->
-
-              <th>
-                <button (click)="openCreateModal()" class="btn btn-sm btn-outline-success">➕</button>
+              <th class="fw-semibold">
+                <i class="fas fa-book text-primary me-1"></i>
+                Título
+              </th>
+              <th class="fw-semibold">
+                <i class="fas fa-barcode text-primary me-1"></i>
+                ISBN
+              </th>
+              <th class="fw-semibold">
+                <i class="fas fa-print text-primary me-1"></i>
+                Impresión
+              </th>
+              <th class="fw-semibold text-center">
+                <i class="fas fa-toggle-on text-primary me-1"></i>
+                Estado
+              </th>
+              <th class="fw-semibold">
+                <i class="fas fa-star text-primary me-1"></i>
+                Condición
+              </th>
+              <th class="fw-semibold text-center">
+                <i class="fas fa-cogs text-primary me-1"></i>
+                Acciones
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let libro of libros">
-              <td class="text-start">{{ libro.titulo }}</td>
-              <td class="text-start">{{ libro.isbn }}</td>
-              <td class="text-start">{{ libro.impresion }}</td>
-              <!-- <td class="text-start">{{ libro.descripcion }}</td> -->
-
-
+            <tr *ngFor="let libro of libros" class="border-bottom">
               <td>
-                <span class="badge rounded-pill"
-                  [ngClass]="libro.estado ? 'bg-success text-light' : 'bg-danger text-light'">
+                <div class="d-flex align-items-center">
+                  <div class="bg-primary bg-opacity-10 rounded p-2 me-2">
+                    <i class="fas fa-book-open text-primary"></i>
+                  </div>
+                  <div>
+                    <div class="fw-semibold">{{ libro.titulo }}</div>
+                    <small class="text-muted">{{ libro.descripcion | truncate:20:true}}</small>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <code class="bg-light px-2 py-1 rounded">{{ libro.isbn }}</code>
+              </td>
+              <td>{{ libro.impresion }}</td>
+              <td class="text-center">
+                <span class="badge rounded-pill px-3" [ngClass]="libro.estado ? 'bg-success' : 'bg-danger'">
+                  <i class="fas me-1" [ngClass]="libro.estado ? 'fa-check-circle' : 'fa-times-circle'"></i>
                   {{ libro.estado ? 'Activo' : 'Inactivo' }}
                 </span>
               </td>
-              <td>{{ libro.condicion }}</td>
               <td>
-                <div class="d-flex justify-content-center gap-2">
-                  <button (click)="openEditModal(libro)" class="btn btn-sm btn-outline-primary">✏️</button>
-                  <button (click)="deleteLibro(libro.idLibro)" class="btn btn-sm btn-outline-danger">🗑️</button>
+                <span class="badge bg-warning text-dark">{{ libro.condicion }}</span>
+              </td>
+              <td>
+                <div class="d-flex justify-content-center gap-1">
+                  <button (click)="openEditModal(libro)" class="btn btn-sm btn-outline-primary" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button (click)="deleteLibro(libro.idLibro)" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -69,34 +172,45 @@
         </table>
       </div>
 
-      <!-- Modal Bootstrap estilo personalizado -->
-      <div *ngIf="isModalOpen" class="modal d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-          <div class="modal-content p-4">
-            <h2 class="h4 fw-bold mb-3 text-dark">
-              {{ isEditMode ? 'Actualizar Libro' : 'Crear Libro' }}
-            </h2>
-            <app-mant-libro-register [isEditMode]="isEditMode"
-              [libro]="libroSeleccionado || { idLibro: 0, titulo: '', isbn: undefined, tamanno: '', descripcion: '', condicion: '', impresion: '', tipoTapa: '', estado: true, idSubcategoria: 0, idTipoPapel: 0, idProveedor: 0, imagen: '' }"
-              [precioVenta]="precioVenta" [Stock]="Stock"
-              (close)="closeModal()"
-              (libroGuardado)="handleLibroGuardado()">
-            </app-mant-libro-register>
-          </div>
-        </div>
-      </div>
-
-      <!-- Paginación -->
+      <!-- Paginación mejorada -->
       <div class="d-flex justify-content-between align-items-center mt-4">
         <button (click)="prevPage()" [disabled]="currentPage === 1"
-          class="btn btn-outline-secondary"
-          [ngClass]="{ 'disabled': currentPage === 1 }">
-          ⬅️ Anterior
+          class="btn btn-outline-primary d-flex align-items-center" [ngClass]="{ 'disabled': currentPage === 1 }">
+          <i class="fas fa-chevron-left me-1"></i>
+          Anterior
         </button>
-        <span>Página {{ currentPage }}</span>
-        <button (click)="nextPage()" class="btn btn-primary">
-          Siguiente ➡️
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted">Página</span>
+          <span class="badge bg-primary fs-6">{{ currentPage }}</span>
+        </div>
+
+        <button (click)="nextPage()" class="btn btn-primary d-flex align-items-center">
+          Siguiente
+          <i class="fas fa-chevron-right ms-1"></i>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal mejorado -->
+  <div *ngIf="isModalOpen" class="modal d-block" tabindex="-1"
+    style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title d-flex align-items-center">
+            <i class="fas fa-book me-2"></i>
+            {{ isEditMode ? 'Actualizar Libro' : 'Crear Libro' }}
+          </h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body p-4">
+          <app-mant-libro-register [isEditMode]="isEditMode"
+            [libro]="libroSeleccionado || { idLibro: 0, titulo: '', isbn: undefined, tamanno: '', descripcion: '', condicion: '', impresion: '', tipoTapa: '', estado: true, idSubcategoria: 0, idTipoPapel: 0, idProveedor: 0, imagen: '' }"
+            [precioVenta]="precioVenta" [Stock]="Stock" (close)="closeModal()" (libroGuardado)="handleLibroGuardado()">
+          </app-mant-libro-register>
+        </div>
       </div>
     </div>
   </div>

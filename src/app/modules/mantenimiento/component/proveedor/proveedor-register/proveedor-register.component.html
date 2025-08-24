@@ -1,0 +1,58 @@
+<div class="modal d-block" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white rounded-lg shadow-lg">
+      
+      <!-- Header -->
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title fw-bold">
+          {{ accion === 2 ? 'Editar Proveedor' : 'Crear Proveedor' }}
+        </h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal(false)"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body pt-0">
+        <form [formGroup]="myForm">
+          
+          <!-- Razon Social -->
+          <div class="mb-2">
+            <label>Razon Social</label>
+            <input formControlName="razonSocial" class="form-control" placeholder="Ingrese la razon social">
+          </div>
+
+          <!-- RUC -->
+          <div class="mb-2">
+            <label>RUC</label>
+            <input formControlName="ruc" class="form-control" placeholder="Ej: 20123456789">
+          </div>
+
+          <!-- Dirección -->
+          <div class="mb-2">
+            <label>Dirección</label>
+            <input formControlName="direccion" class="form-control" placeholder="Ingrese la dirección">
+          </div>
+
+          <!-- Tipo Proveedor -->
+          <div class="mb-2">
+            <label>Tipo de Proveedor</label>
+            <select formControlName="idTipoProveedor" class="form-control">
+              <option value="" disabled>Seleccione</option>
+              <option value="1">Marca</option>
+              <option value="2">Editorial</option>
+            </select>
+          </div>
+
+          <!-- Botones -->
+          <div class="d-grid gap-2 mt-3">
+            <button type="button" class="btn btn-success" (click)="guardar()" [disabled]="myForm.invalid">
+              {{ accion === 2 ? 'Actualizar' : 'Crear' }}
+            </button>
+            <button type="button" class="btn btn-outline-danger" (click)="cerrarModal(false)">
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,8 +10,14 @@ export interface ProductoMasVendido {
   totalVendidos: number;
 }
 interface ResumenVentas {
-  totalComprobantesEmitidos: number;
-  montoTotalComprobantes: string;
+  totalComprobantes: number;
+  montoTotal: string;
+  totalBoletas: number;
+  montoTotalBoletas: string;
+  totalFacturas: number;
+  montoTotalFacturas: string;
+  totalNotas: number;
+  montoTotalNotas: string;
 }
 
 @Component({
@@ -20,36 +26,41 @@ interface ResumenVentas {
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
-   productos: ProductoMasVendido[] = [];
+  productos: ProductoMasVendido[] = [];
   mes: number = new Date().getMonth() + 1;
   anio: number = new Date().getFullYear();
-   resumenVentas: ResumenVentas | null = null;
+  resumenVentas: ResumenVentas | null = null;
+  meses: string[] = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
 
-  constructor(private _graficoService: GraficoService) {}
+
+  constructor(private _graficoService: GraficoService) { }
 
   barChartType: 'bar' = 'bar';
   barChartOptions: ChartOptions<'bar'> = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: {
-    legend: { display: false }
-  },
-  scales: {
-    x: {
-      ticks: {
-        maxRotation: 30, // ligera inclinación
-        minRotation: 0,
-        callback: function(value) {
-          const label = this.getLabelForValue(value as number);
-          return label.length > 12 ? label.substring(0, 12) + '…' : label;
-        }
-      }
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
     },
-    y: {
-      beginAtZero: true
+    scales: {
+      x: {
+        ticks: {
+          maxRotation: 30, // ligera inclinación
+          minRotation: 0,
+          callback: function (value) {
+            const label = this.getLabelForValue(value as number);
+            return label.length > 12 ? label.substring(0, 12) + '…' : label;
+          }
+        }
+      },
+      y: {
+        beginAtZero: true
+      }
     }
-  }
-};
+  };
 
 
   barChartData: ChartData<'bar'> = {
@@ -68,23 +79,23 @@ export class DashboardComponent {
     this.cargarProductosMasVendidos();
   }
 
- cargarProductosMasVendidos(): void {
-  this._graficoService.obtenerProductosMasVendidos(this.mes, this.anio).subscribe(data => {
-    this.productos = data;
+  cargarProductosMasVendidos(): void {
+    this._graficoService.obtenerProductosMasVendidos(this.mes, this.anio).subscribe(data => {
+      this.productos = data;
 
-    this.barChartData = {
-      labels: data.map(p => p.nombreProducto),
-      datasets: [
-        {
-          data: data.map(p => p.totalVendidos),
-          label: 'Cantidad Vendida',
-          backgroundColor: '#3b82f6'
-        }
-      ]
-    };
-  });
-}
-obtenerResumenVentas(): void {
+      this.barChartData = {
+        labels: data.map(p => p.nombreProducto),
+        datasets: [
+          {
+            data: data.map(p => p.totalVendidos),
+            label: 'Cantidad Vendida',
+            backgroundColor: '#3b82f6'
+          }
+        ]
+      };
+    });
+  }
+  obtenerResumenVentas(): void {
     this._graficoService.obtenerResumenVentas().subscribe({
       next: (data) => {
         this.resumenVentas = data;

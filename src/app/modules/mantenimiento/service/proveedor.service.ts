@@ -20,4 +20,16 @@ export class ProveedorService {
   getProveedor(): Observable<Provedor[]> {
     return this.http.get<any>(`${this.apiUrl}`);
   }
+  getProveedorbyid(id: number): Observable<Provedor> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+  delete(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+  create(proveedor: any) {
+    return this.http.post(`${this.apiUrl}`, proveedor);
+  }
+  update(proveedor: any) {
+    return this.http.put(`${this.apiUrl}`, proveedor)
+  }
 }

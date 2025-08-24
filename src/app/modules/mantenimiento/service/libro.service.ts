@@ -59,7 +59,35 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
       map(response => response.libros)
     );
   }
-  filtrarLibros(estado?: boolean, titulo?: string, page: number = 1, pageSize: number = 10): Observable<any> {
+  getByProveedor(idProveedor: number, pageIndex: number, pageSize: number): Observable<PaginatedResponse<LibroResponse>> {
+    const url = `${UrlConstants.libro}/proveedor/${idProveedor}?pagina=${pageIndex}&cantidad=${pageSize}`;
+    return this.http.get<PaginatedResponse<LibroResponse>>(url);
+  }
+  filtrarLibrosProveedor(
+    idProveedor?: number,
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<{ libros: LibroResponse[], totalItems: number }> {
+    let params: any = { page, pageSize };
+
+    if (idProveedor !== undefined && idProveedor !== null) {
+      params.idProveedor = idProveedor;
+    }
+
+    return this.http.get<{ libros: LibroResponse[], totalItems: number }>(
+      `${UrlConstants.libro}/Filtro/Proveedor`,
+      { params }
+    );
+  }
+
+  filtrarLibros(
+    estado?: boolean,
+    titulo?: string,
+    idCategoria?: number,
+    idSubcategoria?: number,
+    page: number = 1,
+    pageSize: number = 10
+  ): Observable<any> {
     let params: any = { page, pageSize };
 
     if (estado !== undefined) {
@@ -68,9 +96,16 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     if (titulo) {
       params.titulo = titulo;
     }
+    if (idCategoria) {
+      params.idCategoria = idCategoria;
+    }
+    if (idSubcategoria) {
+      params.idSubcategoria = idSubcategoria;
+    }
 
     return this.http.get<any>(`${this.url_service}/filtrar`, { params });
   }
+
   updateestado(id: number) {
     return this.http.put(`${this.url_service}/cambiar-estado/${id}`, id)
   }
@@ -81,7 +116,11 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
   getStockById(id: number): Observable<Kardex> {
     return this.http.get<Kardex>(`${this.url_service}/kardex/${id}`);
   }
-
+  cargarExcelLibros(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('archivoExcel', file, file.name);
+    return this.http.post(`${this.url_service}/cargar-excel-libros`, formData);
+  }
   getUltimoPrecioByLibroId(idLibro: number): Observable<Precio | null> {
     return this.http.get<Precio[]>(`https://localhost:7143/Libro/precios/${idLibro}`).pipe(
       map(precios => precios.length > 0 ? precios[0] : null)
@@ -116,6 +155,9 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
   crearLibro(formData: FormData): Observable<LibroResponse> {
     return this.http.post<LibroResponse>(this.url_service, formData);
   }
-
+  buscarLibros(titulo: string): Observable<Libro[]> {
+    const url = `${this.url_service}/filtroComplete?titulo=${encodeURIComponent(titulo)}`;
+    return this.http.get<Libro[]>(url);
+  }
 
 }

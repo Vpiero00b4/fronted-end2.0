@@ -1,0 +1,45 @@
+<div class="card-body">
+  <div class="d-flex justify-content-between mb-3">
+    <h2 class="fw-bold text-primary">Lista de SubCategorías</h2>
+    <button type="button" class="btn btn-success" (click)="crearSubcategoria()">
+      <i class="fas fa-plus me-1"></i> Crear Subcategoría
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle text-center">
+      <thead class="table-light">
+        <tr>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sub of subcategorias">
+          <td>{{ sub.descripcion }}</td>
+          <td>{{ sub.categoriaNombre || 'Sin categoría' }}</td>
+          <td>
+            <button  type="button" class="btn btn-sm btn-outline-primary me-2" (click)="editarSubcategoria(sub)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="eliminarSubcategoria(sub.id)">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Crear/Editar Subcategoría -->
+<app-sub-categoria-register
+  *ngIf="mostrarModalSubcategoria"
+  [accion]="accionModal"
+  [subcategoria]="subcategoriaSeleccionada"
+  (closeModalEmmit)="cerrarModalSubcategoria($event)">
+</app-sub-categoria-register>
+
+
+

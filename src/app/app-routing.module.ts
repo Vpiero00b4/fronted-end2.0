@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { WelcomeComponent } from './pages/welcome/welcome.component';
 import { PruebaComponent } from './pages/prueba/prueba.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { PrediccionComponent } from './modules/prediccion-component/prediccion-component.component';
 // import { AuthGuard } from './guard/auth.guard';
 
 const routes: Routes = [
@@ -19,7 +20,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     // canActivate: [AuthGuard],
-    
+
     loadChildren: () => import('./modules/template/template.module').then(x => x.TemplateModule)
   },
 
@@ -27,7 +28,7 @@ const routes: Routes = [
     path: 'reportes',
     loadChildren: () => import('./modules/mantenimiento/mantenimiento.module').then(x => x.MantenimientoModule)
   },
-  
+
   // { path: 'categoria', component: CategoriaComponent },
   // { path: 'almacen', component: AlmacenComponent }
 ];

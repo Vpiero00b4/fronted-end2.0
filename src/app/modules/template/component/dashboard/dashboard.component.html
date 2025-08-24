@@ -1,37 +1,146 @@
 <div class="container-fluid p-4">
-
-  <div class="d-flex flex-row justify-content-end gap-3">
+  <div class="row g-3">
+    
     <!-- Card Comprobantes Emitidos -->
-    <div class="card border-0 shadow-sm"
-      style="min-width: 220px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-      <div class="card-body text-black">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="card-subtitle mb-2">COMPROBANTES</h6>
-            <h4 class="card-title fw-bold mb-0">{{ resumenVentas?.totalComprobantesEmitidos || 0 }}</h4>
-            <small class="opacity-75">Emitidos</small>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #4facfe 0%, #1849a3 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">COMPROBANTES</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.totalComprobantes || 0 }}</h3>
+              <small class="opacity-75">Emitidos</small>
+            </div>
+            <i class="bi bi-receipt-cutoff fs-1 opacity-75"></i>
           </div>
-          <i class="bi bi-receipt-cutoff display-5 opacity-50"></i>
         </div>
       </div>
     </div>
 
     <!-- Card Monto Total -->
-    <div class="card border-0 shadow-sm"
-      style="min-width: 220px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-      <div class="card-body text-black">
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            <h6 class="card-subtitle mb-2">MONTO TOTAL</h6>
-            <h4 class="card-title fw-bold mb-0">{{ resumenVentas?.montoTotalComprobantes || 'S/ 0.00' }}</h4>
-            <small class="opacity-75">Ventas totales</small>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #43e97b 0%, #187060 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">MONTO TOTAL</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.montoTotal || 'S/ 0.00' }}</h3>
+              <small class="opacity-75">Ventas totales</small>
+            </div>
+            <i class="bi bi-cash-stack fs-1 opacity-75"></i>
           </div>
-          <i class="bi bi-cash-stack display-5 opacity-50"></i>
         </div>
       </div>
     </div>
+
+    <!-- Card Boletas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">BOLETAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.totalBoletas || 0 }}</h3>
+              <small class="opacity-75">Emitidos</small>
+            </div>
+            <i class="bi bi-receipt fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Monto Boletas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #11998e 0%, #13aa4d 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">MONTO BOLETAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.montoTotalBoletas || 'S/ 0.00' }}</h3>
+              <small class="opacity-75">Ventas totales</small>
+            </div>
+            <i class="bi bi-cash fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Facturas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">FACTURAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.totalFacturas || 0 }}</h3>
+              <small class="opacity-75">Emitidos</small>
+            </div>
+            <i class="bi bi-receipt-cutoff fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Monto Facturas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">MONTO FACTURAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.montoTotalFacturas || 'S/ 0.00' }}</h3>
+              <small class="opacity-75">Ventas totales</small>
+            </div>
+            <i class="bi bi-cash-stack fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Notas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">NOTAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.totalNotas || 0 }}</h3>
+              <small class="opacity-75">Emitidos</small>
+            </div>
+            <i class="bi bi-receipt fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Monto Notas -->
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="card border-0 shadow-sm rounded-4 text-white" 
+           style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="card-subtitle mb-2">MONTO NOTAS</h6>
+              <h3 class="fw-bold mb-0">{{ resumenVentas?.montoTotalNotas || 'S/ 0.00' }}</h3>
+              <small class="opacity-75">Ventas totales</small>
+            </div>
+            <i class="bi bi-cash fs-1 opacity-75"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
+
+<app-pago-component></app-pago-component>
 
 <div class="container-fluid py-4">
   <div class="row justify-content-center mb-4">
@@ -39,16 +148,26 @@
       <h2>PRODUCTOS MAS VENDIDOS DEL MES</h2>
     </div>
   </div>
-  <!-- Filtros -->
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-8">
-      <div class="d-flex gap-3 justify-content-center">
-        <input type="number" [(ngModel)]="mes" placeholder="Mes (1-12)" class="form-control" style="width: 150px;">
-        <input type="number" [(ngModel)]="anio" placeholder="Año" class="form-control" style="width: 150px;">
-        <button (click)="cargarDatos()" class="btn btn-primary">Filtrar</button>
-      </div>
+<!-- Filtros -->
+<div class="row justify-content-center mb-4">
+  <div class="col-md-8">
+    <div class="d-flex gap-3 justify-content-center">
+      
+      <!-- Selección de Mes -->
+      <select [(ngModel)]="mes" (ngModelChange)="cargarDatos()" class="form-control" style="width: 150px;">
+        <option *ngFor="let m of meses; let i = index" [value]="i + 1">
+          {{ m }}
+        </option>
+      </select>
+
+      <!-- Año -->
+      <input type="number" [(ngModel)]="anio" (ngModelChange)="cargarDatos()" class="form-control" style="width: 150px;">
+      
     </div>
   </div>
+</div>
+
+
 
   <!-- Gráfico centrado -->
   <div class="row justify-content-center">

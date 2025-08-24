@@ -20,7 +20,7 @@ export class PersonaService extends CrudService<PersonaRequest, PersonaResponse>
     if (!tipoDocumento || !numeroDocumento) {
       return throwError(new Error('Tipo de documento o número de documento inválido.'));
     }
-    
+
     const url = `${UrlConstants.persona}/dni/${tipoDocumento}/${numeroDocumento}`;
     return this.http.get<PersonaResponse>(url).pipe(
       catchError((error) => {
@@ -34,7 +34,7 @@ export class PersonaService extends CrudService<PersonaRequest, PersonaResponse>
     if (!idPersona) {
       return throwError(new Error('ID de persona inválido.'));
     }
-    
+
     const url = `${UrlConstants.persona}/${idPersona}`;
     return this.http.get<PersonaResponse>(url).pipe(
       catchError((error) => {
@@ -44,19 +44,21 @@ export class PersonaService extends CrudService<PersonaRequest, PersonaResponse>
     );
   }
   obtenerPersonasPaginadas(page: number, pageSize: number): Observable<{ data: PersonaResponse[], total: number }> {
-  const url = `${UrlConstants.persona}/Paginator?page=${page}&pageSize=${pageSize}`;
-  return this.http.get<any>(url).pipe(
-    map(res => ({
-      data: res.persona,          // ✅ persona ya es un array
-      total: res.totalItems       // ✅ total global
-    })),
-    catchError(error => {
-      console.error('Error al obtener personas paginadas', error);
-      return throwError(() => error);
-    })
-  );
-}
+    const url = `${UrlConstants.persona}/Paginator?page=${page}&pageSize=${pageSize}`;
+    return this.http.get<any>(url).pipe(
+      map(res => ({
+        data: res.persona,          // ✅ persona ya es un array
+        total: res.totalItems       // ✅ total global
+      })),
+      catchError(error => {
+        console.error('Error al obtener personas paginadas', error);
+        return throwError(() => error);
+      })
+    );
 
+  }
 
-
+  buscarPorNombre(nombre: string) {
+    return this.http.get<any[]>(`${UrlConstants.persona}/buscar/${nombre}`);
+  }
 }
