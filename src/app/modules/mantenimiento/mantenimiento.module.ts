@@ -20,6 +20,8 @@ import { ProveedorRegisterComponent } from './component/proveedor/proveedor-regi
 import { CategoriaListComponent } from './component/Categoria/categoria-list/categoria-list.component';
 import { CategoriaRegisterComponent } from './component/Categoria/categoria-register/categoria-register.component';
 import { TruncatePipe } from '../../pipes/truncate.pipe';
+import { VReportesComponent } from './component/reportes/vreportes-component/vreportes-component';
+import { VReportesDetalleComponent } from './component/reportes/vreportes-detalle/vreportes-detalle.component';
 
 
 @NgModule({
@@ -39,7 +41,9 @@ import { TruncatePipe } from '../../pipes/truncate.pipe';
     SubCategoriaRegisterComponent,
     CategoriaListComponent,
     CategoriaRegisterComponent,
-    TruncatePipe
+    TruncatePipe,
+    VReportesComponent,
+    VReportesDetalleComponent
 
   ],
   imports: [

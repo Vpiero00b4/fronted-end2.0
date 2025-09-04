@@ -109,11 +109,32 @@
           </nav>
         </div>
       </div>
-            <!-- INVENTARIO (ADMIN o INVENTARIO) -->
+      <!-- VENTAS (ADMIN o VENDEDOR) -->
+      <div *ngIf="cargo === 'admin' || cargo === 'vendedor'">
+        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
+          aria-expanded="false" aria-controls="collapseReportes">
+          <div class="sb-nav-link-icon"><i class="fas fa-file-alt"></i></div>
+          <span class="link-text">Reportes</span>
+          <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+        </a>
+        <div class="collapse" id="collapseReportes">
+          <nav class="sb-sidenav-menu-nested nav">
+            <a class="nav-link" routerLink="ventas/reporte-venta">
+              <i class="bi bi-plus-square sb-nav-link-icon"></i>
+              <span class="link-text">Resumen de ventas</span>
+            </a>
+            <a class="nav-link" routerLink="ventas/reporte-detalle">
+              <i class="bi bi-plus-square sb-nav-link-icon"></i>
+              <span class="link-text">Resumen Detallado de ventas</span>
+            </a>
+          </nav>
+        </div>
+      </div>
+      <!-- INVENTARIO (ADMIN o INVENTARIO) -->
       <div *ngIf="cargo === 'admin' || cargo === 'inventario'">
         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePred"
           aria-expanded="false" aria-controls="collapsePred">
-          <div class="sb-nav-link-icon"><i class="fas fa-warehouse"></i></div>
+          <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
           <span class="link-text">Prediccion de Ventas</span>
           <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
         </a>
@@ -127,7 +148,8 @@
         </div>
       </div>
       <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" (click)="logout()">
-        <span class="link-text">Cerrar Sesion</span>
+        <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+        <span class="link-text"> Cerrar Sesion</span>
       </a>
     </div>
   </div>

@@ -1,45 +1,64 @@
-<div class="card-body">
-  <div class="d-flex justify-content-between mb-3">
-    <h2 class="fw-bold text-primary">Lista de SubCategorías</h2>
-    <button type="button" class="btn btn-success" (click)="crearSubcategoria()">
-      <i class="fas fa-plus me-1"></i> Crear Subcategoría
-    </button>
-  </div>
+<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; overflow: hidden;">
+  <!-- Header con botón Crear -->
+  <div class="card-body">
+    <div class="d-flex justify-content-between mb-3">
+      <h2 class="fw-bold text-primary">Lista de SubCategorías</h2>
+      <button type="button" class="btn btn-success" (click)="crearSubcategoria()">
+        <i class="fas fa-plus me-1"></i> Crear Subcategoría
+      </button>
+    </div>
 
-  <div class="table-responsive">
-    <table class="table table-hover align-middle text-center">
-      <thead class="table-light">
-        <tr>
-          <th>Nombre</th>
-          <th>Categoría</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let sub of subcategorias">
-          <td>{{ sub.descripcion }}</td>
-          <td>{{ sub.categoriaNombre || 'Sin categoría' }}</td>
-          <td>
-            <button  type="button" class="btn btn-sm btn-outline-primary me-2" (click)="editarSubcategoria(sub)">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="eliminarSubcategoria(sub.id)">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Tabla de subcategorías -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle text-center">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sub of subcategoriasPaginadas,let i = index">
+             <td>{{ (paginaActual - 1) * elementosPorPagina + i + 1 }}</td>
+            <td>{{ sub.descripcion }}</td>
+            <td>{{ sub.categoriaNombre || 'Sin categoría' }}</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline-primary me-2" (click)="editarSubcategoria(sub)">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" (click)="eliminarSubcategoria(sub.id)">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginación -->
+    <nav *ngIf="totalPaginas > 1" aria-label="Paginación subcategorías" class="mt-3">
+      <ul class="pagination justify-content-center mb-0">
+        <li class="page-item" [class.disabled]="paginaActual === 1">
+          <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+        </li>
+
+        <li class="page-item" *ngFor="let p of [].constructor(totalPaginas); let i = index"
+          [class.active]="paginaActual === i+1">
+          <button class="page-link" (click)="cambiarPagina(i+1)">{{ i + 1 }}</button>
+        </li>
+
+        <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+          <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+        </li>
+      </ul>
+    </nav>
   </div>
 </div>
 
 <!-- Modal Crear/Editar Subcategoría -->
-<app-sub-categoria-register
-  *ngIf="mostrarModalSubcategoria"
-  [accion]="accionModal"
-  [subcategoria]="subcategoriaSeleccionada"
-  (closeModalEmmit)="cerrarModalSubcategoria($event)">
+<app-sub-categoria-register *ngIf="mostrarModalSubcategoria" [accion]="accionModal"
+  [subcategoria]="subcategoriaSeleccionada" (closeModalEmmit)="cerrarModalSubcategoria($event)">
 </app-sub-categoria-register>
-
-
-

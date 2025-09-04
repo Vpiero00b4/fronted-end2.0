@@ -6,6 +6,7 @@ import { MantUsuarioListComponent } from './component/usuario/mant-usuario-list/
 import { MantReporteInventarioComponent } from './component/inventarioc/mant-inventa-list/mant-reporte-inventario.component';
 import { ProveedorListComponent } from './component/proveedor/proveedor-list/proveedor-list.component';
 import { SubCategoriaListComponent } from './component/subCategoria/sub-categoria-list/sub-categoria-list.component';
+import { VReportesComponent } from './component/reportes/vreportes-component/vreportes-component';
 
 const routes: Routes = [
   {
@@ -28,7 +29,7 @@ const routes: Routes = [
   },
   {
     path: 'reporte-inventario', component: MantReporteInventarioComponent
-  }
+  },
 ];
 
 @NgModule({

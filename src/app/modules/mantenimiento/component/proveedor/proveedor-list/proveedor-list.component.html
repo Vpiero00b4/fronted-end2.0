@@ -1,16 +1,18 @@
-<div class="card-body">
+<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; overflow: hidden;">
+    <!-- Header -->
     <div class="card-header bg-white border-bottom-0 text-center py-3">
-      <h2 class="fw-bold text-primary mb-0">Lista de Proveedores</h2>
+        <h2 class="fw-bold text-primary mb-0">Lista de Proveedores</h2>
     </div>
+
     <!-- Botón Crear Proveedor -->
-    <div class="mb-3 d-grid gap-2">
+    <div class="mb-3 d-grid gap-2 p-3">
         <button type="button" class="btn btn-success" (click)="abrirModalCrear()">
             <i class="fas fa-plus me-2"></i> Crear Proveedor
         </button>
     </div>
 
     <!-- Tabla de proveedores -->
-    <div class="table-responsive">
+    <div class="table-responsive px-3 pb-3">
         <table class="table table-hover align-middle text-center">
             <thead class="table-light">
                 <tr>
@@ -22,12 +24,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let proveedor of proveedores">
+                <tr *ngFor="let proveedor of proveedoresPaginados">
                     <td>{{ proveedor.razonSocial }}</td>
                     <td>{{ proveedor.ruc }}</td>
                     <td>{{ proveedor.direccion }}</td>
-                    <td>{{ proveedor.idTipoProveedor === 1 ? 'Marca' : proveedor.idTipoProveedor === 2 ? 'Editorial' :
-                        'Desconocido' }}</td>
+                    <td>
+                        {{ proveedor.idTipoProveedor === 1 ? 'Marca' : proveedor.idTipoProveedor === 2 ? 'Editorial' :
+                        'Desconocido' }}
+                    </td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary me-2" (click)="abrirModalEditar(proveedor)">
                             <i class="fas fa-edit"></i>
@@ -41,7 +45,26 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Paginación -->
+    <nav *ngIf="totalPaginas > 1" aria-label="Paginación proveedores" class="px-3 pb-3">
+        <ul class="pagination justify-content-center mb-0">
+            <li class="page-item" [class.disabled]="paginaActual === 1">
+                <button class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</button>
+            </li>
+
+            <li class="page-item" *ngFor="let p of [].constructor(totalPaginas); let i = index"
+                [class.active]="paginaActual === i+1">
+                <button class="page-link" (click)="cambiarPagina(i+1)">{{ i + 1 }}</button>
+            </li>
+
+            <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+                <button class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</button>
+            </li>
+        </ul>
+    </nav>
 </div>
+
 <!-- Modal Crear/Editar Proveedor -->
 <app-proveedor-register *ngIf="mostrarModalProveedor" [accion]="accionModal" [proveedor]="proveedorSeleccionado"
     (closeModalEmmit)="cerrarModalProveedor($event)">

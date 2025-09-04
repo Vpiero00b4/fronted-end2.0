@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AccionMantConst } from './../../../../../constans/general.constans';
 import { VentaResponse } from '../../../../../models/ventas-response.models';
 import { VentasService } from '../../../service/venta.service';
-import { Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Subject, Subscription, switchMap } from 'rxjs';
 import { SharedService } from '../../../service/sharedservice';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { PersonaService } from '../../../service/persona.service';
@@ -19,18 +19,21 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
   ventasFiltradas: VentaResponse[] = [];
   modalRef?: BsModalRef;
   ventaSelected: VentaResponse = new VentaResponse();
+  nroComprobante: string = '';
   titleModal: string = "";
   accionModal: number = 0;
   fechaInicio: string = '';
   fechaFin: string = '';
   mensaje: string = '';
   nombreCliente?: string;
+  cargando: boolean = false;
   // PAGINACIÓN
   paginaActual: number = 1;
   pageSize: number = 10;
   totalRegistros: number = 0;
   paginas: number[] = [];
   pdfUrl: string | undefined = undefined;
+  private searchSubject = new Subject<string>();
   constructor(
     private sharedService: SharedService,
     private _route: Router,
@@ -43,6 +46,43 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.listarVentasPaginadas();
     this.escucharRegistroDeVentas();
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        this.cargando = true;
+        if (!query.trim()) {
+          this.ventasFiltradas = [];
+          this.mensaje = '';
+          this.cargando = false;
+          this.listarVentasPaginadas();
+          return [];
+        }
+        return this._ventaService.getVentasPorComporbante(query);
+      })
+    ).subscribe({
+      next: (res: VentaResponse[]) => {
+        this.ventasFiltradas = res;
+
+        // Obtener nombre de cliente
+        this.ventasFiltradas.forEach((venta) => {
+          this._personaService.obtenerPersonaPorId(venta.idPersona).subscribe({
+            next: (persona) => venta.nombreCliente = persona.nombre,
+            error: () => venta.nombreCliente = 'Desconocido'
+          });
+        });
+
+        this.mensaje = this.ventasFiltradas.length === 0
+          ? "No se encontraron comprobantes con ese número."
+          : '';
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error("❌ Error al buscar comprobantes:", err);
+        this.mensaje = "Ocurrió un error al buscar los comprobantes.";
+        this.cargando = false;
+      }
+    });
   }
   getPersona(id: number) {
     this._personaService.obtenerPersonaPorId(id).subscribe({
@@ -80,7 +120,37 @@ export class MantVentaListComponent implements OnInit, OnDestroy {
     });
   }
 
+  // listarComprobantes(nroComprobante: string) {
+  //   if (!nroComprobante) return;
 
+  //   this._ventaService.getVentasPorComporbante(nroComprobante).subscribe({
+  //     next: (res) => {
+  //       this.ventasFiltradas = res;
+  //       this.ventasFiltradas.forEach((venta) => {
+  //         this._personaService.obtenerPersonaPorId(venta.idPersona).subscribe({
+  //           next: (persona) => {
+  //             venta.nombreCliente = persona.nombre; // Combina nombre y apellido si deseas
+  //           },
+  //           error: () => {
+  //             venta.nombreCliente = 'Desconocido';
+  //           }
+  //         });
+  //       });
+  //       if (this.ventasFiltradas.length === 0) {
+  //         this.mensaje = "No se encontraron comprobantes con ese número.";
+  //       } else {
+  //         this.mensaje = '';
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error("❌ Error al buscar comprobantes:", err);
+  //       this.mensaje = "Ocurrió un error al buscar los comprobantes.";
+  //     }
+  //   });
+  // }
+  onSearchChange() {
+    this.searchSubject.next(this.nroComprobante);
+  }
 
   cambiarPagina(nuevaPagina: number): void {
     if (nuevaPagina < 1 || nuevaPagina > this.paginas.length) return;

@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { CrudService } from '../../shared/services/crud.service';
-import { Kardex, Libro, LibroRequest, Precio } from '../../../models/libro-request.models';
+import { Kardex, Libro, LibroInventarioDto, LibroRequest, Precio } from '../../../models/libro-request.models';
 import { LibroResponse } from '../../../models/libro-response.models';
 import { UrlConstants } from '../../../constans/url.constans';
 import { KardexResponse } from '../../../models/kardex-response.models';
@@ -63,22 +63,6 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     const url = `${UrlConstants.libro}/proveedor/${idProveedor}?pagina=${pageIndex}&cantidad=${pageSize}`;
     return this.http.get<PaginatedResponse<LibroResponse>>(url);
   }
-  filtrarLibrosProveedor(
-    idProveedor?: number,
-    page: number = 1,
-    pageSize: number = 10
-  ): Observable<{ libros: LibroResponse[], totalItems: number }> {
-    let params: any = { page, pageSize };
-
-    if (idProveedor !== undefined && idProveedor !== null) {
-      params.idProveedor = idProveedor;
-    }
-
-    return this.http.get<{ libros: LibroResponse[], totalItems: number }>(
-      `${UrlConstants.libro}/Filtro/Proveedor`,
-      { params }
-    );
-  }
 
   filtrarLibros(
     estado?: boolean,
@@ -104,6 +88,17 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     }
 
     return this.http.get<any>(`${this.url_service}/filtrar`, { params });
+  }
+
+  filtrarLibrosProveedor(idProveedor?: number, titulo?: string, page: number = 1, pageSize: number = 10): Observable<{ libros: LibroInventarioDto[], totalItems: number }> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (idProveedor) params = params.set('idProveedor', idProveedor.toString());
+    if (titulo) params = params.set('titulo', titulo);
+
+    return this.http.get<{ libros: LibroInventarioDto[], totalItems: number }>(`${UrlConstants.libro}/Filtro/Proveedor`, { params });
   }
 
   updateestado(id: number) {

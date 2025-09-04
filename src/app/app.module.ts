@@ -1,4 +1,4 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -42,7 +42,10 @@ import { NgChartsModule } from 'ng2-charts';
 import { TruncatePipe } from './pipes/truncate.pipe';
 import { PrediccionComponent } from './modules/prediccion-component/prediccion-component.component';
 
+import localeEs from '@angular/common/locales/es';
+import { registerLocaleData } from '@angular/common';
 
+registerLocaleData(localeEs);
 
 
 
@@ -80,7 +83,7 @@ import { PrediccionComponent } from './modules/prediccion-component/prediccion-c
 
   ],
 
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, }],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, }, { provide: LOCALE_ID, useValue: 'es' }],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

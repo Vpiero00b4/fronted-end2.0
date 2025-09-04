@@ -27,11 +27,11 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
   }
   crearVenta(venta: VentaRequest): Observable<VentaResponse> {
     return this.http.post<VentaResponse>(UrlConstants.venta, venta);
-}
+  }
 
   actualizarVenta(id: number, venta: VentaRequest): Observable<VentaResponse> {
     return this.http.put<VentaResponse>(`${UrlConstants.venta}/${id}`, venta);
-}
+  }
   buscarVentasPorFecha(fechaInicio: string, fechaFin: string): Observable<VentaResponse[]> {
     return this.http.get<VentaResponse[]>(`${UrlConstants.venta}/buscar?fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`);
   }
@@ -49,22 +49,35 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
     const url = `${UrlConstants.venta}/ObtenerPorFechas`;
     const params = new HttpParams().set('fechaInicio', fechaInicio).set('fechaFin', fechaFin);
     return this.http.get<VentaResponse[]>(url, { params });
-    
   }
   getVentas(): Observable<VentaResponse[]> {
-  return this.http.get<VentaResponse[]>(UrlConstants.venta);
-}
-getVentasPaginadas(page: number, pageSize: number) {
-  const params = new HttpParams()
-    .set('page', page.toString())
-    .set('pageSize', pageSize.toString());
+    return this.http.get<VentaResponse[]>(UrlConstants.venta);
+  }
+  getVentasPaginadas(page: number, pageSize: number) {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
 
-  return this.http.get<any>(`${UrlConstants.venta}/Paginator`, { params });
-}
-registrarVentaConDetalle(venta: Cart): Observable<any> {
-  return this.http.post(`${UrlConstants.DetalleVenta}`, venta);
-}
+    return this.http.get<any>(`${UrlConstants.venta}/Paginator`, { params });
+  }
+  registrarVentaConDetalle(venta: Cart): Observable<any> {
+    return this.http.post(`${UrlConstants.DetalleVenta}`, venta);
+  }
 
+  getVentasPorComporbante(nroComprobante: string): Observable<VentaResponse[]> {
+    return this._http.get<VentaResponse[]>(`${UrlConstants.venta}/nroComprobante/${nroComprobante}`)
+  }
+
+  getPDFVentas(fecha: Date): Observable<Blob> {
+    const fechaStr = `${(fecha.getMonth() + 1).toString().padStart(2, '0')}/` +
+      `${fecha.getDate().toString().padStart(2, '0')}/` +
+      `${fecha.getFullYear()}`;
+
+    return this._http.get(`${UrlConstants.venta}/resumen-ingresos`, {
+      params: { fecha: fechaStr },
+      responseType: 'blob' // necesario para descargar archivos
+    });
+  }
 
 
 }

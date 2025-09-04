@@ -70,12 +70,34 @@ export interface Provedor {
 }
 
 export interface Precio {
-    idPrecios: number;
-    precioVenta: number;
-    porcUtilidad: number | null;
+  idPrecios: number;
+  precioVenta: number;
+  porcUtilidad: number | null;
 }
 
 export interface Kardex {
-    idSucursal: number;
-    stock: number;
+  idSucursal: number;
+  stock: number;
+}
+
+export interface LibroInventarioDto {
+  idLibro: number;
+  titulo?: string;
+  isbn?: string;
+  tamanno?: string;
+  descripcion?: string;
+  imagen?: string;
+  stock: number;
+  precio: number;
+  tipoPapel: string;
+  idProveedor: number;
+  nombreProveedor: string;
+  editandoStock?: boolean;
+  stockTemporal?: number;
+  idTipoPapel: number;
+  imprecion?:string;
+  porcUtilidad:string;
+  condicion?:string;
+  estado?:string;
+  [key: string]: any; // 🔹 permite libro[col.key]
 }

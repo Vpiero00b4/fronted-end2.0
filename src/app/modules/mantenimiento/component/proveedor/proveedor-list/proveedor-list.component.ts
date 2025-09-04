@@ -27,12 +27,34 @@ export class ProveedorListComponent {
   ngOnInit(): void {
     this.obtenerProveedores();
   }
+  paginaActual: number = 1;
 
+  // Cantidad de elementos por página
+  elementosPorPagina: number = 10;
   obtenerProveedores(): void {
     this.proveedorService.getAll().subscribe({
       next: (data) => this.proveedores = data,
       error: (err) => console.error('Error al obtener proveedores', err)
     });
+  }
+
+  // Lista filtrada para la página actual
+  get proveedoresPaginados() {
+    const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+    const fin = inicio + this.elementosPorPagina;
+    return this.proveedores.slice(inicio, fin);
+  }
+
+  // Total de páginas
+  get totalPaginas() {
+    return Math.ceil(this.proveedores.length / this.elementosPorPagina);
+  }
+
+  // Cambiar de página
+  cambiarPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+    }
   }
 
   aplicarFiltro() {

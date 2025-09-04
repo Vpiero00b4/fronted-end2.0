@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { VentaResponse } from '../../../../../../models/ventas-response.models';
 import { VentasService } from '../../../../service/venta.service';
 import { CajaService } from '../../../../service/caja.service';
+import { Caja, RetiroDeCaja } from '../../../../../../models/caja-response';
+import { RetiroDeCajaService } from '../../../../service/retirocaja.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-mant-caja-list',
@@ -12,62 +15,127 @@ export class MantCajaListComponent implements OnInit {
   ventasDelDia: VentaResponse[] = [];
   fechaFiltro: string;
   // Saldos y montos
-  saldoInicial = 0;
-  saldoDigital = 0;
-  saldoFinal = 0;
-  totalVentas = 0;
-  totalEfectivo = 0;
   montoIngreso = 0;
   montoRetiro = 0;
-  ingresosACaja=0;
 
   nuevoIngreso = 0;
   nuevoRetiro = 0;
 
-  cajaActual: any = null;  // Caja para la fecha seleccionada
-  mensajeCaja: string = '';
-
+  cajaHoy: Caja | null = null;
+  mensajeCaja: string | null = null;
+  mostrarFormularioRetiro = false;
   // PAGINADO
   paginaActual: number = 1;
   pageSize: number = 10;
   totalVentasDia: number = 0;
   totalPaginas: number = 0;
   cajaAbierta: any = null;
+  
+
+  @ViewChild('retiroModal') retiroModal!: ElementRef;
+
+
   constructor(
     private ventaService: VentasService,
-    private cajaService: CajaService
+    private cajaService: CajaService,
+    private retiroCajaService: RetiroDeCajaService
   ) {
     const hoy = new Date();
-    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset()); // Ajusta a tu zona horaria local
+    hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
     this.fechaFiltro = hoy.toISOString().split('T')[0];
-
   }
 
   ngOnInit(): void {
-    this.filtrarPorFecha();
+    this.getCajaHoy();
     this.obtenerventas();
   }
-
-  filtrarPorFecha(): void {
-    this.limpiarDatos();
-
-    this.cajaService.getCajas().subscribe({
-      next: (cajas: any[]) => {
-        const caja = cajas.find(c => c.fecha && c.fecha.startsWith(this.fechaFiltro));
-        if (caja) {
-          this.cajaActual = caja;
-          this.asignarDatosDeCaja(caja);
-          this.paginaActual = 1;
+  getCajaHoy(): void {
+    this.cajaService.getCajaHoy().subscribe({
+      next: (res) => {
+        if (res) {
+          this.cajaHoy = res;
+          this.mensajeCaja = null;
         } else {
-          this.mensajeCaja = 'No existe una caja registrada para esta fecha.';
+          this.cajaHoy = null;
+          this.mensajeCaja = 'No hay caja registrada para la fecha seleccionada.';
         }
       },
-      error: (err: any) => {
+      error: () => {
+        this.cajaHoy = null;
         this.mensajeCaja = 'Error al obtener datos de caja.';
-        this.limpiarDatos();
+      }
+    });
+    this.retiroCajaService.getRetiros().subscribe({
+      next:(res)=>{
+        this.montoRetiro=res;
+      }
+    })
+  }
+
+  retiro: RetiroDeCaja = {
+    id: 0,
+    descripcion: "",
+    fecha: new Date().toISOString().split("T")[0],
+    cajaId: 0,
+    montoEfectivo: 0,
+    montoDigital: 0
+  };
+
+
+  abrirFormularioRetiro() {
+    if (!this.cajaHoy) return;
+
+    this.retiro = {
+      id: 0,
+      descripcion: "",
+      fecha: new Date().toISOString().split("T")[0],
+      cajaId: this.cajaHoy.idCaja,
+      montoEfectivo: 0,
+      montoDigital: 0
+    };
+    this.mostrarFormularioRetiro = true; // ← Esto muestra el modal
+  }
+
+  cerrarFormularioRetiro() {
+    this.mostrarFormularioRetiro = false; // ← Esto oculta el modal
+    this.resetFormulario();
+  }
+
+  private resetFormulario() {
+    this.retiro = {
+      id: 0,
+      descripcion: "",
+      fecha: new Date().toISOString().split("T")[0],
+      cajaId: 0,
+      montoEfectivo: 0,
+      montoDigital: 0
+    };
+  }
+
+  registrarRetiroDeCaja() {
+    if (!this.cajaHoy) return;
+
+    const request: RetiroDeCaja = {
+      ...this.retiro,
+      cajaId: this.cajaHoy.idCaja
+    };
+
+    this.retiroCajaService.createRetiroCaja(request).subscribe({
+      next: (res) => {
+        Swal.fire(
+            'Retiro registrado',
+            'El retiro se ha realizado con éxito.',
+            'success'
+          );
+        this.getCajaHoy();
+        this.cerrarFormularioRetiro(); // ← Esto funciona perfectamente ahora
+      },
+      error: (err) => {
+        console.error("❌ Error al registrar retiro", err);
       }
     });
   }
+
 
   obtenerventas() {
     if (!this.fechaFiltro) return;
@@ -96,23 +164,8 @@ export class MantCajaListComponent implements OnInit {
     this.paginaActual = nuevaPagina;
   }
 
-  asignarDatosDeCaja(caja: any): void {
-    this.saldoInicial = caja.saldoInicial ?? 0;
-    this.saldoFinal = caja.saldoFinal ?? 0;
-    this.saldoDigital = caja.saldoDigital ?? 0;
-    this.montoIngreso = caja.ingresosACaja ?? 0;
-    this.ingresosACaja = caja.ingresosACaja??0;
-
-    // Si tu backend trae retiros u otros campos, asígnalos aquí.
-  }
-
   limpiarDatos(): void {
-    this.cajaActual = null;
-    this.saldoInicial = 0;
-    this.saldoFinal = 0;
-    this.saldoDigital = 0;
-    this.totalVentas = 0;
-    this.totalEfectivo = 0;
+    this.cajaHoy = null;
     this.montoIngreso = 0;
     this.montoRetiro = 0;
     this.ventasDelDia = [];
@@ -122,43 +175,52 @@ export class MantCajaListComponent implements OnInit {
     this.totalVentasDia = 0;
   }
 
+  mostrarIngreso: boolean = false;
+  tipoIngreso: 'efectivo' | 'digital' = 'efectivo';
+
   registrarIngresoACaja(): void {
+    if (!this.cajaHoy) return;
+
     if (this.nuevoIngreso <= 0) {
       alert('Ingrese un monto válido para el ingreso.');
       return;
     }
-    this.montoIngreso += this.nuevoIngreso;
-    this.nuevoIngreso = 0;
-    this.calcularSaldoFinalLocal();
-  }
+    const cajaIngreso = { ...this.cajaHoy };
 
-  registrarRetiroDeCaja(): void {
-    if (this.nuevoRetiro <= 0) {
-      alert('Ingrese un monto válido para el retiro.');
-      return;
+    // Sumar al saldo correspondiente
+    if (this.tipoIngreso === 'efectivo') {
+      cajaIngreso.ingresosACaja += this.nuevoIngreso; // o saldo en efectivo si tienes otro campo
+    } else if (this.tipoIngreso === 'digital') {
+      cajaIngreso.saldoDigital += this.nuevoIngreso;
     }
-    this.montoRetiro += this.nuevoRetiro;
-    this.nuevoRetiro = 0;
-    this.calcularSaldoFinalLocal();
-  }
 
-  calcularSaldoFinalLocal(): void {
-    this.saldoFinal =
-      this.saldoInicial +
-      this.montoIngreso +
-      this.totalVentas -
-      this.montoRetiro;
+    // Actualizar el saldo final
+    cajaIngreso.saldoFinal = cajaIngreso.ingresosACaja + cajaIngreso.saldoDigital;
+
+    // Enviar al backend
+    this.cajaService.updateCaja(cajaIngreso).subscribe({
+      next: () => {
+        alert('✅ Ingreso registrado correctamente');
+        this.mostrarIngreso = false; // ocultar formulario
+        this.nuevoIngreso = 0;
+        this.montoIngreso=cajaIngreso.saldoDigital
+        this.getCajaHoy();
+      },
+      error: (err) => {
+        console.error('❌ Error al registrar ingreso:', err);
+      }
+    });
   }
 
   cerrarCaja(): void {
-    if (!this.cajaActual) {
+    if (!this.cajaHoy) {
       alert('No hay Caja Abierta.');
       this.limpiarDatos();
       this.mensajeCaja = 'No existe una caja registrada para esta fecha.';
       return;
     }
 
-    if (this.cajaActual.fechaCierre) {
+    if (this.cajaHoy.fechaCierre) {
       alert('No hay Caja Abierta.');
       this.limpiarDatos();
       this.mensajeCaja = 'La caja ya está cerrada para esta fecha.';
@@ -166,12 +228,12 @@ export class MantCajaListComponent implements OnInit {
     }
 
     const cajaCierre = {
-      idCaja: this.cajaActual.idCaja,
-      saldoInicial: this.cajaActual.saldoInicial,
-      saldoFinal: this.saldoFinal,
-      fecha: this.cajaActual.fecha,
+      idCaja: this.cajaHoy.idCaja,
+      saldoInicial: this.cajaHoy.saldoInicial,
+      saldoFinal: this.cajaHoy.saldoFinal,
+      fecha: this.cajaHoy.fecha,
       ingresosACaja: this.montoIngreso,
-      saldoDigital: this.saldoDigital,
+      saldoDigital: this.cajaHoy.saldoDigital,
       fechaCierre: new Date().toISOString()
     };
 
@@ -187,5 +249,4 @@ export class MantCajaListComponent implements OnInit {
       }
     });
   }
-
 }

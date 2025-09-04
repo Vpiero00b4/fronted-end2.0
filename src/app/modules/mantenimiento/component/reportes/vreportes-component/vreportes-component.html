@@ -1,0 +1,136 @@
+<!-- Added gradient header and improved visual hierarchy -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #173bdb 0%, #62a3c2 100%);">
+            <div class="card-body text-white text-center py-4">
+                <i class="fas fa-file-alt fa-3x mb-3"></i>
+                <h2 class="mb-0 fw-bold">Resumen de Ventas</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CALENDARIO PARA REPORTES DE VENTAS -->
+<div class="card border-0 shadow-lg mb-4" style="border-radius: 16px; overflow: hidden;">
+    <!-- Header con gradiente profesional -->
+    <div class="card-header border-0 py-4" style="background: linear-gradient(135deg, #173bdb 0%, #62a3c2 100%);">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center text-white">
+                <div class="rounded-circle p-3 me-3">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div>
+                    <small class="opacity-75">Selecciona el período para generar el reporte</small>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <span class="badge bg-warning bg-opacity-20 text-white px-3 py-2 rounded-pill">
+                    <i class="fas fa-calendar-day me-1"></i>
+                    Período
+                </span>
+                <span class="badge bg-success bg-opacity-90 text-white px-3 py-2 rounded-pill">
+                    <i class="fas fa-coins me-1"></i>
+                    Activo
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4" style="background: #f8f9fa;">
+        <!-- Navegación del calendario -->
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded-3 shadow-sm">
+            <button class="btn btn-outline-primary btn-sm px-3" (click)="mesAnterior()">
+                <i class="fas fa-chevron-left me-1"></i>
+                <span class="d-none d-sm-inline">Anterior</span>
+            </button>
+
+            <div class="text-center">
+                <h6 class="mb-0 fw-bold text-primary">{{ meses[mesActual] }} {{ anioActual }}</h6>
+                <small class="text-muted">Haz clic en una fecha</small>
+            </div>
+
+            <button class="btn btn-outline-primary btn-sm px-3" (click)="mesSiguiente()">
+                <span class="d-none d-sm-inline">Siguiente</span>
+                <i class="fas fa-chevron-right ms-1"></i>
+            </button>
+        </div>
+
+        <!-- Días de la semana con mejor diseño -->
+        <div class="row g-2 mb-3">
+            <div *ngFor="let dia of diasSemana" class="col">
+                <div class="text-center py-2 bg-primary bg-opacity-10 rounded-2">
+                    <small class="fw-bold text-primary">{{ dia }}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Días del mes con diseño mejorado -->
+        <div class="row g-2 mb-4">
+            <div *ngFor="let dia of diasDelMes" class="col">
+                <button class="btn w-100 position-relative calendar-day-btn" [ngClass]="{
+                  'btn-primary shadow-sm': dia === fechaSeleccionada?.getDate(),
+                  'btn-outline-light border-2': dia !== fechaSeleccionada?.getDate(),
+                  'btn-success': tieneVentas(dia),
+                  'btn-outline-secondary': !tieneVentas(dia) && dia !== fechaSeleccionada?.getDate()
+                }" (click)="seleccionarDia(dia)" style="height: 45px; font-weight: 600; transition: all 0.2s ease;">
+
+                    <!-- Número del día -->
+                    <span class="d-block">{{ dia }}</span>
+
+                    <!-- Indicador de ventas -->
+                    <span *ngIf="tieneVentas(dia) && dia !== fechaSeleccionada?.getDate()"
+                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning"
+                        style="font-size: 8px; padding: 2px 4px;">
+                        <i class="fas fa-circle"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer informativo -->
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm">
+                    <i class="fas fa-calendar-check text-primary fs-4 me-3"></i>
+                    <div>
+                        <small class="text-muted d-block">Fecha Seleccionada</small>
+                        <span class="fw-bold text-dark">
+                            {{ fechaSeleccionada ? (fechaSeleccionada | date:'fullDate') : 'Ninguna' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="d-flex align-items-center p-3 bg-white rounded-3 shadow-sm">
+                    <i class="fas fa-chart-line text-success fs-4 me-3"></i>
+                    <div>
+                        <small class="text-muted d-block">Días con Ventas</small>
+                        <span class="fw-bold text-success">{{ diasDelMes.length }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leyenda -->
+        <div class="mt-4 p-3 bg-white rounded-3 shadow-sm">
+            <small class="text-muted fw-semibold d-block mb-2">
+                <i class="fas fa-info-circle me-1"></i>
+                Leyenda:
+            </small>
+            <div class="d-flex flex-wrap gap-3">
+                <div class="d-flex align-items-center">
+                    <div class="bg-primary rounded me-2" style="width: 12px; height: 12px;"></div>
+                    <small class="text-muted">Día seleccionado</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="bg-success rounded me-2" style="width: 12px; height: 12px;"></div>
+                    <small class="text-muted">Con ventas</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="border border-secondary rounded me-2" style="width: 12px; height: 12px;"></div>
+                    <small class="text-muted">Sin ventas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

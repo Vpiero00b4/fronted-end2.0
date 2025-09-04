@@ -52,17 +52,20 @@
               <!-- Selector de Método -->
               <label class="form-label small fw-semibold">Selecciona el Método</label>
               <div class="btn-group w-100 mb-3" role="group">
-                <input type="radio" class="btn-check" id="pagoEfectivo" value="Efectivo" formControlName="tipoPago">
+                <input type="radio" class="btn-check" id="pagoEfectivo" value="Efectivo" formControlName="tipoPago"
+                  (change)="enfocarInput('efectivoRecibidoInput')">
                 <label class="btn btn-outline-success" for="pagoEfectivo">
                   <i class="fas fa-money-bill-wave me-1"></i>Efectivo
                 </label>
 
-                <input type="radio" class="btn-check" id="pagoDigital" value="Digital" formControlName="tipoPago">
+                <input type="radio" class="btn-check" id="pagoDigital" value="Digital" formControlName="tipoPago"
+                  (change)="enfocarInput('montoDigitalInput')">
                 <label class="btn btn-outline-info" for="pagoDigital">
                   <i class="fas fa-mobile-alt me-1"></i>Digital
                 </label>
 
-                <input type="radio" class="btn-check" id="pagoMixto" value="Mixto" formControlName="tipoPago">
+                <input type="radio" class="btn-check" id="pagoMixto" value="Mixto" formControlName="tipoPago"
+                  (change)="enfocarInput('efectivoRecibidoInput')">
                 <label class="btn btn-outline-warning" for="pagoMixto">
                   <i class="fas fa-coins me-1"></i>Mixto
                 </label>
@@ -75,8 +78,8 @@
                 </label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input type="number" class="form-control" formControlName="efectivoRecibido" min="0" step="0.01"
-                    placeholder="0.00">
+                  <input #efectivoRecibidoInput type="number" class="form-control" formControlName="efectivoRecibido"
+                    min="0" step="0.01" placeholder="0.00">
                 </div>
                 <small class="text-muted">Monto recibido en efectivo</small>
               </div>
@@ -88,11 +91,12 @@
                 </label>
                 <div class="input-group">
                   <span class="input-group-text">S/</span>
-                  <input type="number" class="form-control" formControlName="montoDigital" min="0" step="0.01"
-                    placeholder="0.00">
+                  <input #montoDigitalInput type="number" class="form-control" formControlName="montoDigital" min="0"
+                    step="0.01" placeholder="0.00">
                 </div>
                 <small class="text-muted">Monto recibido vía transferencia</small>
               </div>
+
 
               <!-- Eliminamos calculadora JS embebida. Puedes usar botones Angular si lo deseas. -->
             </div>

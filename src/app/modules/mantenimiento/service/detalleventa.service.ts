@@ -12,7 +12,7 @@ export interface Prediccion {
     esFinDeSemana: boolean;
     tipoDia: string;
     estacion: string;
-    trimestre:string;
+    trimestre: string;
   };
 }
 @Injectable({
@@ -26,6 +26,17 @@ export class DetalleVentaService {
   }
   obtenerPredicciones(idLibro: number, horizonte: number = 7): Observable<Prediccion[]> {
     return this.http.get<Prediccion[]>(`${UrlConstants.DetalleVentas}/predecir-ventas/${idLibro}?horizonte=${horizonte}`);
+  }
+
+  getPDFVentasDetalles(fecha: Date): Observable<Blob> {
+    const fechaStr = `${(fecha.getMonth() + 1).toString().padStart(2, '0')}/` +
+      `${fecha.getDate().toString().padStart(2, '0')}/` +
+      `${fecha.getFullYear()}`;
+
+    return this.http.get(`${UrlConstants.DetalleVentas}/reporte-detalle-ventas`, {
+      params: { fecha: fechaStr },
+      responseType: 'blob' // necesario para descargar archivos
+    });
   }
 }
 

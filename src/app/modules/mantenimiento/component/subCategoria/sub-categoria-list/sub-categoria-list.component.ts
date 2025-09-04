@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
   styleUrl: './sub-categoria-list.component.css'
 })
 export class SubCategoriaListComponent implements OnInit {
-subcategorias: SubCategoria[] = [];
+  subcategorias: SubCategoria[] = [];
   subcategoriaSeleccionada: SubCategoria = {} as SubCategoria;
 
   mostrarModalSubcategoria: boolean = false;
@@ -45,19 +45,19 @@ subcategorias: SubCategoria[] = [];
     });
   }
 
-crearSubcategoria() {
-  this.accionModal = 1;
-  this.subcategoriaSeleccionada = {} as SubCategoria;
-  this.mostrarModalSubcategoria = true;
-  console.log("click");
+  crearSubcategoria() {
+    this.accionModal = 1;
+    this.subcategoriaSeleccionada = {} as SubCategoria;
+    this.mostrarModalSubcategoria = true;
+    console.log("click");
 
-}
+  }
 
-editarSubcategoria(sub: SubCategoria) {
-  this.accionModal = 2;
-  this.subcategoriaSeleccionada = { ...sub };
-  this.mostrarModalSubcategoria = true;
-}
+  editarSubcategoria(sub: SubCategoria) {
+    this.accionModal = 2;
+    this.subcategoriaSeleccionada = { ...sub };
+    this.mostrarModalSubcategoria = true;
+  }
   cerrarModalSubcategoria(actualizo: boolean): void {
     this.mostrarModalSubcategoria = false;
     if (actualizo) {
@@ -90,4 +90,28 @@ editarSubcategoria(sub: SubCategoria) {
       }
     });
   }
+
+
+  paginaActual: number = 1;
+  elementosPorPagina: number = 10;
+
+  // Lista paginada
+  get subcategoriasPaginadas() {
+    const inicio = (this.paginaActual - 1) * this.elementosPorPagina;
+    const fin = inicio + this.elementosPorPagina;
+    return this.subcategorias.slice(inicio, fin);
+  }
+
+  // Total de páginas
+  get totalPaginas() {
+    return Math.ceil(this.subcategorias.length / this.elementosPorPagina);
+  }
+
+  // Cambiar página
+  cambiarPagina(pagina: number) {
+    if (pagina >= 1 && pagina <= this.totalPaginas) {
+      this.paginaActual = pagina;
+    }
+  }
+
 }

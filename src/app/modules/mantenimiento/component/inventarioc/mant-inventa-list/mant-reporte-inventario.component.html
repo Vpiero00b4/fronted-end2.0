@@ -37,6 +37,24 @@
       </div>
     </div>
   </div>
+  <!-- Buscar por título -->
+  <div class="col-md-4 p-3">
+    <label for="buscadorTitulo" class="form-label fw-semibold text-muted d-block mb-2">
+      <i class="fas fa-search me-1"></i>
+      Buscar por título
+    </label>
+    <div class="input-group shadow-sm rounded">
+      <input id="buscadorTitulo" [(ngModel)]="tituloBuscado" (keyup.enter)="buscar()" type="text"
+        class="form-control border-0" placeholder="Escribe el nombre del libro..."
+        style="border-radius: 0.375rem 0 0 0.375rem;">
+      <button (click)="buscar()" class="btn btn-primary rounded-end" style="border-radius: 0 0.375rem 0.375rem 0;">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+    <small class="text-muted d-block mt-1">
+      Presiona Enter o haz clic en la lupa para buscar
+    </small>
+  </div>
 
   <!-- Selector de Columnas mejorado -->
   <div class="card shadow-sm border-0 rounded-3 mb-4">
@@ -61,117 +79,113 @@
     </div>
   </div>
 
-<!-- Tabla de Libros mejorada -->
-<div class="card shadow-sm border-0 rounded-3 mb-4">
-  <div class="card-header bg-primary text-white border-0">
-    <h5 class="mb-0 d-flex align-items-center">
-      <i class="fas fa-table me-2"></i>
-      Lista de Libros en Inventario
-    </h5>
-  </div>
-  <div class="card-body p-0">
-    <div *ngIf="libros && libros.length > 0" class="table-responsive">
-      <table class="table table-hover mb-0 align-middle">
-        <thead class="table-light">
-          <tr>
-            <th *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]"
-              class="fw-semibold border-0 py-3">
-              <i class="fas fa-circle text-primary me-2" style="font-size: 0.5rem;"></i>
-              {{ col.label }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let libro of libros" class="border-bottom">
-            <td *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]" class="py-3">
-              <ng-container [ngSwitch]="col.key">
+  <!-- Tabla de Libros mejorada -->
+  <div class="card shadow-sm border-0 rounded-3 mb-4">
+    <div class="card-header bg-primary text-white border-0">
+      <h5 class="mb-0 d-flex align-items-center">
+        <i class="fas fa-table me-2"></i>
+        Lista de Libros en Inventario
+      </h5>
+    </div>
+    <div class="card-body p-0">
+      <div *ngIf="libros && libros.length > 0" class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]"
+                class="fw-semibold border-0 py-3">
+                <i class="fas fa-circle text-primary me-2" style="font-size: 0.5rem;"></i>
+                {{ col.label }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let libro of libros" class="border-bottom">
+              <td *ngFor="let col of columnasDisponibles" [hidden]="!mostrarColumnas[col.key]" class="py-3">
+                <ng-container [ngSwitch]="col.key">
 
-                <!-- Columna editable: Stock -->
-                <ng-container *ngSwitchCase="'stock'">
-                  <div *ngIf="!libro.editandoStock" class="d-flex align-items-center gap-2">
-                    <span class="badge rounded-pill px-3 py-2"
-                      [class.bg-success]="libro.stock > 10"
-                      [class.bg-warning]="libro.stock <= 10 && libro.stock > 0"
-                      [class.bg-danger]="libro.stock === 0">
-                      {{ libro.stock }}
+                  <!-- Columna editable: Stock -->
+                  <ng-container *ngSwitchCase="'stock'">
+                    <div *ngIf="!libro.editandoStock" class="d-flex align-items-center gap-2">
+                      <span class="badge rounded-pill px-3 py-2" [class.bg-success]="libro.stock > 10"
+                        [class.bg-warning]="libro.stock <= 10 && libro.stock > 0" [class.bg-danger]="libro.stock === 0">
+                        {{ libro.stock }}
+                      </span>
+                      <button class="btn btn-outline-primary btn-sm rounded-pill px-2 py-1"
+                        (click)="toggleEditStock(libro)" title="Editar stock">
+                        <i class="fas fa-edit"></i>
+                      </button>
+                    </div>
+                    <div *ngIf="libro.editandoStock" class="d-flex align-items-center gap-2">
+                      <input type="number" class="form-control form-control-sm rounded-pill text-center"
+                        [(ngModel)]="libro.stockTemporal" [ngModelOptions]="{standalone: true}"
+                        style="max-width: 80px;">
+                      <button class="btn btn-success btn-sm rounded-pill px-2 py-1" (click)="saveStock(libro)"
+                        title="Guardar">
+                        <i class="fas fa-check"></i>
+                      </button>
+                    </div>
+                  </ng-container>
+
+                  <!-- Columna de título -->
+                  <ng-container *ngSwitchCase="'titulo'">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="bg-primary bg-opacity-10 rounded-circle p-2">
+                        <i class="fas fa-book text-primary"></i>
+                      </div>
+                      <div>
+                        <div class="fw-semibold text-dark">{{ libro[col.key] }}</div>
+                        <small class="text-muted">Libro</small>
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <!-- Columna de estado -->
+                  <ng-container *ngSwitchCase="'estado'">
+                    <span class="badge rounded-pill px-3 py-2" [class.bg-success]="libro[col.key]"
+                      [class.bg-secondary]="!libro[col.key]">
+                      <i class="fas me-1" [class.fa-check-circle]="libro[col.key]"
+                        [class.fa-times-circle]="!libro[col.key]"></i>
+                      {{ libro[col.key] ? 'Activo' : 'Inactivo' }}
                     </span>
-                    <button class="btn btn-outline-primary btn-sm rounded-pill px-2 py-1"
-                      (click)="toggleEditStock(libro)" title="Editar stock">
-                      <i class="fas fa-edit"></i>
-                    </button>
-                  </div>
-                  <div *ngIf="libro.editandoStock" class="d-flex align-items-center gap-2">
-                    <input type="number" class="form-control form-control-sm rounded-pill text-center"
-                      [(ngModel)]="libro.stockTemporal" [ngModelOptions]="{standalone: true}"
-                      style="max-width: 80px;">
-                    <button class="btn btn-success btn-sm rounded-pill px-2 py-1" (click)="saveStock(libro)"
-                      title="Guardar">
-                      <i class="fas fa-check"></i>
-                    </button>
-                  </div>
+                  </ng-container>
+
+                  <!-- Columna de tipo de papel -->
+                  <ng-container *ngSwitchCase="'idTipoPapel'">
+                    <span class="text-dark">
+                      {{ libro[col.key] || '-' }}
+                    </span>
+                  </ng-container>
+
+                  <!-- Columna precio de venta (S/.) -->
+                  <ng-container *ngSwitchCase="'precio'">
+                    <span class="text-dark">
+                      S/. {{ libro[col.key] | number:'1.2-2' }}
+                    </span>
+                  </ng-container>
+
+                  <!-- Columnas normales -->
+                  <ng-container *ngSwitchDefault>
+                    <span class="text-dark">{{ libro[col.key] || '-' }}</span>
+                  </ng-container>
+
                 </ng-container>
-
-                <!-- Columna de título -->
-                <ng-container *ngSwitchCase="'titulo'">
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="bg-primary bg-opacity-10 rounded-circle p-2">
-                      <i class="fas fa-book text-primary"></i>
-                    </div>
-                    <div>
-                      <div class="fw-semibold text-dark">{{ libro[col.key] }}</div>
-                      <small class="text-muted">Libro</small>
-                    </div>
-                  </div>
-                </ng-container>
-
-                <!-- Columna de estado -->
-                <ng-container *ngSwitchCase="'estado'">
-                  <span class="badge rounded-pill px-3 py-2"
-                    [class.bg-success]="libro[col.key]"
-                    [class.bg-secondary]="!libro[col.key]">
-                    <i class="fas me-1"
-                      [class.fa-check-circle]="libro[col.key]"
-                      [class.fa-times-circle]="!libro[col.key]"></i>
-                    {{ libro[col.key] ? 'Activo' : 'Inactivo' }}
-                  </span>
-                </ng-container>
-
-                <!-- Columna de tipo de papel -->
-                <ng-container *ngSwitchCase="'idTipoPapel'">
-                  <span class="text-dark">
-                    {{ tiposPapel[libro.idTipoPapel] || '-' }}
-                  </span>
-                </ng-container>
-
-                <!-- Columna precio de venta (S/.) -->
-                <ng-container *ngSwitchCase="'precioVenta'">
-                  <span class="text-dark">
-                    S/. {{ libro[col.key] | number:'1.2-2' }}
-                  </span>
-                </ng-container>
-
-                <!-- Columnas normales -->
-                <ng-container *ngSwitchDefault>
-                  <span class="text-dark">{{ libro[col.key] || '-' }}</span>
-                </ng-container>
-
-              </ng-container>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Sin resultados -->
-    <div *ngIf="!libros || libros.length === 0" class="text-center py-5">
-      <div class="mb-3">
-        <i class="fas fa-box-open text-muted" style="font-size: 4rem;"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <h5 class="text-muted mb-2">No se encontraron libros</h5>
-      <p class="text-muted">No hay libros disponibles en el inventario con los filtros aplicados.</p>
+
+      <!-- Sin resultados -->
+      <div *ngIf="!libros || libros.length === 0" class="text-center py-5">
+        <div class="mb-3">
+          <i class="fas fa-box-open text-muted" style="font-size: 4rem;"></i>
+        </div>
+        <h5 class="text-muted mb-2">No se encontraron libros</h5>
+        <p class="text-muted">No hay libros disponibles en el inventario con los filtros aplicados.</p>
+      </div>
     </div>
   </div>
-</div>
 
 
   <!-- Paginación mejorada -->

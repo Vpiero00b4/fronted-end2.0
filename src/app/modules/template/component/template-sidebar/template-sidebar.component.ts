@@ -9,6 +9,7 @@ import { AuthService } from '../../../auth/servicef/auth.service';
 export class TemplateSidebarComponent implements OnInit {
   isSidebarExpanded = false;
   cargo: string | null = null;;
+
   constructor(private authService: AuthService) { }
   ngOnInit(): void {
     this.cargo = this.authService.getCargo();
@@ -25,7 +26,10 @@ export class TemplateSidebarComponent implements OnInit {
   esInventario(): boolean {
     return this.cargo === 'INVENTARIO';
   }
-    logout(){
+  logout() {
     this.authService.logout();
+  }
+  toggleSidebar() {
+    this.isSidebarExpanded = !this.isSidebarExpanded;
   }
 }

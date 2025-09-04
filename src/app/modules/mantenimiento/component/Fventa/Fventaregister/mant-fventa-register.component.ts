@@ -218,16 +218,32 @@ export class FventaRegisterComponent implements OnInit {
   mostrarPDF: boolean = false;
   pdfurl: SafeResourceUrl | null = null;
   idVentas: number = 0;
+
   finalizarVentaDesdePago(cart: Cart): void {
     this.ventasService.registrarVentaConDetalle(cart).subscribe({
       next: (res: VentaRespon) => {
         this.idVentas = res.idVenta;
 
-        Swal.fire('Éxito', 'Venta registrada correctamente', 'success').then(() => {
-          // Primero imprimimos
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Venta registrada correctamente',
+          confirmButtonText: 'Imprimir comprobante'
+        }).then(() => {
+          // Mostrar loader mientras se genera el PDF
+          Swal.fire({
+            title: 'Generando comprobante...',
+            text: 'Por favor, espere unos segundos',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading(null);
+            }
+          });
+
+          // Descargar PDF
           this.descargarPDF(this.idVentas, () => {
-            // Después de imprimir, limpiamos el formulario
-            this.resetearFormulario();
+            Swal.close(); // Cerrar loader
+            this.resetearFormulario(); // Resetear después de imprimir
           });
         });
       },
@@ -246,10 +262,12 @@ export class FventaRegisterComponent implements OnInit {
       },
       error: (err) => {
         console.error('❌ Error al obtener PDF:', err);
-        if (callback) callback(); // por si igual quieres limpiar
+        Swal.fire('Error', 'No se pudo generar el comprobante', 'error');
+        if (callback) callback();
       }
     });
   }
+
 
   imprimirDesdeBlob(blobUrl: string, callback?: () => void) {
     const iframe = document.createElement('iframe');
@@ -339,12 +357,14 @@ export class FventaRegisterComponent implements OnInit {
   }
 
   calcularDescuentoTotal(): number {
-    return this.productosAgregados.reduce((total, item) => total + (item.descuento ?? 0), 0);
+    const descuentoProductos = this.productosAgregados.reduce((total, item) => total + (item.descuento ?? 0), 0);
+    const descuentoGeneral = this.descuentoVenta ?? 0;
+    return descuentoProductos + descuentoGeneral;
   }
 
+
   calcularTotal(): number {
-    const subtotal = this.productosAgregados.reduce((total, item) => total + (item.precioUnit * item.cantidad), 0);
-    return subtotal - this.calcularDescuentoTotal();
+    return this.subtotal - this.calcularDescuentoTotal();
   }
 
   get subtotal(): number {

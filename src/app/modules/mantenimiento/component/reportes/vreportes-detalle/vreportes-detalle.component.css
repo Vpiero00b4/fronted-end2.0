@@ -1,0 +1,50 @@
+.calendar-day-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  }
+  
+  .calendar-day-btn:active {
+    transform: translateY(0);
+  }
+  
+  .btn-outline-light {
+    background: white;
+    border-color: #e9ecef;
+    color: #495057;
+  }
+  
+  .btn-outline-light:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    color: #495057;
+  }
+  
+  .card {
+    transition: all 0.3s ease;
+  }
+  
+  @media (max-width: 768px) {
+    .calendar-day-btn {
+      height: 40px !important;
+      font-size: 0.85rem;
+    }
+    
+    .card-body {
+      padding: 1rem !important;
+    }
+    
+    .row.g-2 > * {
+      padding: 0.25rem;
+    }
+  }
+  
+  /* Animación sutil para los badges */
+  .badge {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+  }

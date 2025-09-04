@@ -3,11 +3,12 @@ import { LibroResponse } from '../../../../../models/libro-response.models';
 import { LibroService } from '../../../service/libro.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { PaginatedResponse } from '../../../../../models/PaginatedResponse';
-import { of, forkJoin, throwError } from 'rxjs';
+import { of, forkJoin, throwError, Observable } from 'rxjs';
 import { KardexService } from '../../../service/kardex.service';
 import { KardexResponse } from '../../../../../models/kardex-response.models';
 import { ProveedorResponse } from '../../../../../models/proveedor-response.models';
 import { ProveedorService } from '../../../service/proveedor.service';
+import { LibroInventarioDto, SubCategoria } from '../../../../../models/libro-request.models';
 // 🔹 Tipo extendido para los libros en inventario
 export type LibroInventario = LibroResponse & {
   precioVenta: number;
@@ -24,24 +25,26 @@ export type LibroInventario = LibroResponse & {
   styleUrls: ['./mant-reporte-inventario.component.css']
 })
 export class MantReporteInventarioComponent implements OnInit {
-  libros: LibroInventario[] = [];
+  libros: LibroInventarioDto[] = [];
   proveedores: ProveedorResponse[] = [];
   idProveedorSeleccionado: number | null = null; // null = todos
-
+  tituloBuscado: string = '';
   currentPage: number = 1;
   totalPages: number = 0;
   totalItems: number = 0;
-  tiposPapel: { [key: number]: string } = {
-    1: 'Papel ahuesado',
-    2: 'Papel bond',
-    3: 'Cartón',
-    4: 'Papel couché',
-    5: 'Papel periódico'
-  };
+  estadoSeleccionado?: boolean;
+  categoriaSeleccionada: number = 0;
+  subcategoriaSeleccionada: SubCategoria = { id: 0, descripcion: '', idCategoria: 0 };
+  pageSize = 10;
+  hasMoreData = true;
+  private get filtrosActivos(): boolean {
+    return !!this.tituloBuscado || this.estadoSeleccionado !== undefined || this.categoriaSeleccionada > 0 || (this.subcategoriaSeleccionada?.id > 0);
+  }
+
 
   columnasDisponibles = [
     { key: 'titulo', label: 'Nombre del libro' },
-    { key: 'precioVenta', label: 'S/. Precio de venta' },
+    { key: 'precio', label: 'S/. Precio de venta' },
     { key: 'porcUtilidad', label: '% Utilidad' },
     { key: 'isbn', label: 'ISBN' },
     { key: 'tamanno', label: 'Tamaño' },
@@ -49,7 +52,7 @@ export class MantReporteInventarioComponent implements OnInit {
     { key: 'condicion', label: 'Condición' },
     { key: 'impresion', label: 'Impresión' },
     { key: 'estado', label: 'Estado' },
-    { key: 'idTipoPapel', label: 'Tipo Papel' },
+    { key: 'tipoPapel', label: 'Tipo Papel' },
     { key: 'nombreProveedor', label: 'Proveedor' },
     { key: 'stock', label: 'Stock' }
   ];
@@ -68,9 +71,10 @@ export class MantReporteInventarioComponent implements OnInit {
 
     // Definir columnas iniciales visibles
     this.columnasDisponibles.forEach(c => {
-      this.mostrarColumnas[c.key] = ['titulo', 'precioVenta', 'stock'].includes(c.key);
+      this.mostrarColumnas[c.key] = ['titulo', 'precio', 'stock'].includes(c.key);
     });
   }
+
 
   cargarProveedores() {
     this.proveedorService.getAll().subscribe({
@@ -81,45 +85,26 @@ export class MantReporteInventarioComponent implements OnInit {
     });
   }
 
-cargarInventario(page: number, pageSize: number): void {
-  this.libroService
-    .filtrarLibrosProveedor(this.idProveedorSeleccionado ?? undefined, page, pageSize)
-    .pipe(
-      switchMap(res => {
-        this.totalItems = res.totalItems;
-        this.totalPages = Math.ceil(res.totalItems / pageSize);
-        this.currentPage = page;
+  cargarInventario(page: number, pageSize: number): void {
+    this.libroService
+      .filtrarLibrosProveedor(this.idProveedorSeleccionado ?? undefined, this.tituloBuscado, page, pageSize)
+      .subscribe({
+        next: res => {
+          this.libros = res.libros;
+          this.totalItems = res.totalItems;
+          this.totalPages = Math.ceil(this.totalItems / pageSize);
+          this.currentPage = page;
+          this.hasMoreData = this.currentPage < this.totalPages;
+        },
+        error: err => console.error('Error cargando inventario', err)
+      });
+  }
 
-        if (!res.libros || res.libros.length === 0) {
-          return of([] as LibroInventario[]);
-        }
+  buscar(): void {
+    this.currentPage = 1; // Reinicia a la primera página
+    this.cargarInventario(this.currentPage, this.pageSize);
+  }
 
-        const detalles$ = res.libros.map(libro =>
-          forkJoin({
-            libro: of(libro),
-            precio: this.libroService.getUltimoPrecioByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
-            kardex: this.libroService.getKardexByLibroId(libro.idLibro).pipe(catchError(() => of(null))),
-            proveedor: this.proveedorService.getProveedorbyid(libro.idProveedor).pipe(catchError(() => of(null)))
-          }).pipe(
-            map(({ libro, precio, kardex, proveedor }) => ({
-              ...libro,
-              precioVenta: precio?.precioVenta ?? 0,
-              porcUtilidad: precio?.porcUtilidad ?? 0,
-              idPrecios: precio?.idPrecios ?? 0,
-              stock: kardex?.stock ?? 0,
-              nombreProveedor: proveedor?.razonSocial ?? 'Desconocido'   // 👈 ya tienes el dato listo para la tabla
-            } as LibroInventario))
-          )
-        );
-
-        return forkJoin(detalles$);
-      })
-    )
-    .subscribe({
-      next: librosDetallados => (this.libros = librosDetallados),
-      error: err => console.error('Error cargando inventario', err),
-    });
-}
 
 
   updateKardex(idLibro: number, newStock: number): void {
@@ -139,14 +124,14 @@ cargarInventario(page: number, pageSize: number): void {
     });
   }
 
-  toggleEditStock(libro: LibroInventario): void {
+  toggleEditStock(libro: LibroInventarioDto): void {
     libro.editandoStock = !libro.editandoStock;
     if (libro.editandoStock) {
       libro.stockTemporal = libro.stock;
     }
   }
 
-  saveStock(libro: LibroInventario): void {
+  saveStock(libro: LibroInventarioDto): void {
     if (libro.stockTemporal != null) {
       this.updateKardex(libro.idLibro, libro.stockTemporal);
       libro.stock = libro.stockTemporal;

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DetalleVentaResponse } from '../../../../../models/detallle-venta-response.models';
 import { PersonaResponse } from '../../../../../models/persona-response-models';
@@ -20,7 +20,8 @@ export class FpagoComponent implements OnInit {
   @Output() cerrar = new EventEmitter<void>();
   @Output() confirmarPago = new EventEmitter<Cart>();
   @Input() descuentoVenta: number = 0;
-
+  @ViewChild('efectivoRecibidoInput') efectivoInput!: ElementRef;
+  @ViewChild('montoDigitalInput') digitalInput!: ElementRef;
 
   pagoForm!: FormGroup;
   Math = Math;
@@ -147,5 +148,15 @@ export class FpagoComponent implements OnInit {
 
   }
 
+  enfocarInput(inputName: string) {
+    switch(inputName) {
+      case 'efectivoRecibidoInput':
+        this.efectivoInput.nativeElement.focus();
+        break;
+      case 'montoDigitalInput':
+        this.digitalInput.nativeElement.focus();
+        break;
+    }
+  }
   
 }

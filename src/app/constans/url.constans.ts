@@ -21,6 +21,6 @@ export const dominio = "https://localhost:7143/";
         subCategoria:dominio+"Subcategoria",
         tipoPapel:dominio+"TipoPapel",
         autor:dominio+"Autor",
-        
+        retiroCaja:dominio+"api/RetiroDeCaja"
     };
     

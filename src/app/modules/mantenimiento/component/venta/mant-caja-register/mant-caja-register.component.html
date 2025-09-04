@@ -1,29 +1,65 @@
-<div class="container mt-4">
+<div class="container-fluid mt-4">
+  <!-- Added gradient header and improved visual hierarchy -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #6a7cce 0%, #0e38c2 100%);">
+        <div class="card-body text-white text-center py-4">
+          <i class="fas fa-cash-register fa-3x mb-3"></i>
+          <h2 class="mb-0 fw-bold">Gestión de Cajas Registradoras</h2>
+          <p class="mb-0 opacity-75">Administra y controla tus cajas de manera eficiente</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <div class="card shadow-sm rounded mb-4">
-    <div class="card-body">
-      <h4 class="card-title mb-4">Abrir nueva caja</h4>
-
+  <!-- Improved form design with icons and better layout -->
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-header bg-success text-white">
+      <h4 class="card-title mb-0">
+        <i class="fas fa-plus-circle me-2"></i>
+        Abrir Nueva Caja
+      </h4>
+    </div>
+    <div class="card-body bg-light">
       <form [formGroup]="updateForm">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="saldoInicial" class="form-label">Saldo Inicial</label>
-            <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control" placeholder="Saldo Inicial">
+        <div class="row g-4">
+          <div class="col-md-4">
+            <label for="saldoInicial" class="form-label fw-semibold">
+              <i class="fas fa-coins text-warning me-2"></i>
+              Saldo Inicial
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-warning text-dark">S/.</span>
+              <input formControlName="saldoInicial" type="number" id="saldoInicial" class="form-control form-control-lg"
+                placeholder="0.00" step="0.01">
+            </div>
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label for="fecha" class="form-label">Fecha de Inicio</label>
-            <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control">
+          <div class="col-md-4">
+            <label for="fecha" class="form-label fw-semibold">
+              <i class="fas fa-calendar-alt text-primary me-2"></i>
+              Fecha de Inicio
+            </label>
+            <input formControlName="fecha" type="datetime-local" id="fecha" class="form-control form-control-lg">
           </div>
 
-          <div class="col-md-6 mb-3">
-            <label for="ingresosACaja" class="form-label">Ingresos a Caja</label>
-            <input formControlName="ingresosACaja" type="number" id="ingresosACaja" class="form-control" placeholder="Ingresos a Caja">
+          <div class="col-md-4">
+            <label for="ingresosACaja" class="form-label fw-semibold">
+              <i class="fas fa-arrow-up text-success me-2"></i>
+              Ingresos a Caja
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-success text-white">S/.</span>
+              <input formControlName="ingresosACaja" type="number" id="ingresosACaja"
+                class="form-control form-control-lg" placeholder="0.00" step="0.01">
+            </div>
           </div>
         </div>
 
-        <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-success" (click)="crearCaja()" [disabled]="!updateForm.valid">
+        <div class="d-flex justify-content-end mt-4">
+          <button type="button" class="btn btn-success btn-lg px-4" (click)="crearCaja()"
+            [disabled]="!updateForm.valid">
+            <i class="fas fa-save me-2"></i>
             Crear Caja
           </button>
         </div>
@@ -31,38 +67,118 @@
     </div>
   </div>
 
-  <div class="card shadow-sm rounded">
-    <div class="card-body">
-      <h5 class="card-title mb-3">Historial de Cajas</h5>
+  <!-- Enhanced table design with status badges and better visual presentation -->
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+
       <div class="table-responsive">
-        <table class="table table-hover table-bordered align-middle">
-          <thead class="table-light">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-dark">
             <tr>
-              <th>ID</th>
-              <th>Saldo Inicial</th>
-              <th>Saldo Final</th>
-              <th>Fecha</th>
-              <th>Fecha Cierre</th>
-              <th>Ingresos</th>
-              <th>Saldo Digital</th>
+              <th class="text-center">
+                # 
+              </th>
+              <th class="text-center">
+                <i class="fas fa-coins me-1"></i>
+                Saldo Inicial
+              </th>
+              <th class="text-center">
+                <i class="fas fa-money-bill-wave me-1"></i>
+                Saldo Final
+              </th>
+              <th class="text-center">
+                <i class="fas fa-calendar me-1"></i>
+                Fecha Apertura
+              </th>
+              <th class="text-center">
+                <i class="fas fa-calendar-check me-1"></i>
+                Fecha Cierre
+              </th>
+              <th class="text-center">
+                <i class="fas fa-arrow-up me-1"></i>
+                Ingresos
+              </th>
+              <th class="text-center">
+                <i class="fas fa-credit-card me-1"></i>
+                Saldo Digital
+              </th>
+              <th class="text-center">Estado</th>
+              <th class="text-center">Retiros</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let caja of listaCajas">
-              <td>{{ caja.idCaja }}</td>
-              <td>{{ caja.saldoInicial | currency:'S/.' }}</td>
-              <td>{{ caja.saldoFinal | currency:'S/.' }}</td>
-              <td>{{ caja.fecha | date:'short' }}</td>
-              <td>{{ caja.fechaCierre ? (caja.fechaCierre | date:'short') : 'Abierta' }}</td>
-              <td>{{ caja.ingresosACaja | currency:'S/.' }}</td>
-              <td>{{ caja.saldoDigital | currency:'S/.' }}</td>
+            <tr *ngFor="let caja of listaCajas; let i = index"
+              [class]="caja.fechaCierre ? 'table-light' : 'table-success-subtle'">
+              <td class="text-center fw-bold text-primary">
+                <span class="badge bg-primary fs-8">
+                  {{  (paginaActual - 1) * tamanioPagina + i + 1  }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="fw-semibold text-success">{{ caja.saldoInicial | currency:'S/.' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="fw-semibold"
+                  [class]="caja.saldoFinal > caja.saldoInicial ? 'text-success' : 'text-danger'">
+                  {{ caja.saldoFinal | currency:'S/.' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <small class="text-muted">{{ caja.fecha | date:'dd/MM/yyyy' }}</small><br>
+                <small class="text-primary">{{ caja.fecha | date:'HH:mm' }}</small>
+              </td>
+              <td class="text-center">
+                <ng-container *ngIf="caja.fechaCierre; else cajaAbierta">
+                  <small class="text-muted">{{ caja.fechaCierre | date:'dd/MM/yyyy' }}</small><br>
+                  <small class="text-danger">{{ caja.fechaCierre | date:'HH:mm' }}</small>
+                </ng-container>
+                <ng-template #cajaAbierta>
+                  <span class="badge bg-success rounded-pill">
+                    <i class="fas fa-clock me-1"></i>
+                    Abierta
+                  </span>
+                </ng-template>
+              </td>
+              <td class="text-center">
+                <span class="fw-semibold text-success">{{ caja.ingresosACaja | currency:'S/.' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="fw-semibold text-warning">{{ caja.saldoDigital | currency:'S/.' }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge rounded-pill" [class]="caja.fechaCierre ? 'bg-secondary' : 'bg-success'">
+                  <i class="fas" [class]="caja.fechaCierre ? 'fa-lock' : 'fa-unlock'"></i>
+                  {{ caja.fechaCierre ? 'Cerrada' : 'Activa' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-primary text-white" (click)="verRetiros(caja.idCaja)" data-bs-toggle="modal"
+                  data-bs-target="#retirosModal">
+                  <i class="fas fa-eye me-1"></i> Ver Retiros
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="!listaCajas || listaCajas.length === 0">
+              <td colspan="8" class="text-center py-5">
+                <div class="text-muted">
+                  <i class="fas fa-inbox fa-3x mb-3 opacity-50"></i>
+                  <h5>No hay cajas registradas</h5>
+                  <p class="mb-0">Crea tu primera caja para comenzar</p>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
-              <nav *ngIf="paginas.length > 1" class="mt-3">
-        <ul class="pagination justify-content-center">
+      </div>
+
+      <!-- Enhanced pagination design -->
+      <nav *ngIf="paginas.length > 1" class="p-3 bg-light border-top">
+        <ul class="pagination justify-content-center mb-0">
           <li class="page-item" [class.disabled]="paginaActual === 1">
-            <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+            <a class="page-link" (click)="cambiarPagina(paginaActual - 1)">
+              <i class="fas fa-chevron-left me-1"></i>
+              Anterior
+            </a>
           </li>
 
           <li class="page-item" *ngFor="let pagina of paginas" [class.active]="paginaActual === pagina">
@@ -70,13 +186,73 @@
           </li>
 
           <li class="page-item" [class.disabled]="paginaActual === paginas.length">
-            <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+            <a class="page-link" (click)="cambiarPagina(paginaActual + 1)">
+              Siguiente
+              <i class="fas fa-chevron-right ms-1"></i>
+            </a>
           </li>
         </ul>
       </nav>
-
-      </div>
     </div>
   </div>
+</div>
 
+<!-- Modal -->
+<div class="modal fade" id="retirosModal" tabindex="-1" aria-labelledby="retirosModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-3">
+
+      <!-- Header -->
+      <div class="modal-header bg-gradient bg-primary text-white rounded-top">
+        <h5 class="modal-title fw-bold" id="retirosModalLabel">
+          <i class="fas fa-wallet me-2"></i> Retiros de Caja
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body p-4">
+        <!-- Vacío -->
+        <div *ngIf="listaRetiros.length === 0" class="text-center text-muted py-5">
+          <i class="fas fa-inbox fs-1 mb-3 text-secondary"></i>
+          <p class="fs-5">No hay retiros registrados para esta caja.</p>
+        </div>
+
+        <!-- Tabla -->
+        <div *ngIf="listaRetiros.length > 0" class="table-responsive">
+          <table class="table table-hover align-middle border rounded shadow-sm">
+            <thead class="table-primary text-center">
+              <tr>
+                <th>#</th>
+                <th>Monto Efectivo (S/.)</th>
+                <th>Monto Digital (S/.)</th>
+                <th>Motivo</th>
+                <th>Fecha</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let retiro of listaRetiros; let i = index" class="text-center">
+                <td class="fw-bold">{{ i + 1 }}</td>
+                <td class="fw-bold text-danger">S/. {{ retiro.montoEfectivo | number:'1.2-2' }}</td>
+                <td class="fw-bold text-success">S/. {{ retiro.montoDigital | number:'1.2-2' }}</td>
+                <td class="text-start">{{ retiro.descripcion }}</td>
+                <td>
+                  <small class="text-muted d-block">{{ retiro.fecha | date:'dd/MM/yyyy' }}</small>
+                  <small class="text-primary">{{ retiro.fecha | date:'HH:mm' }}</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer bg-light rounded-bottom">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          <i class="fas fa-times me-1"></i> Cerrar
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>
