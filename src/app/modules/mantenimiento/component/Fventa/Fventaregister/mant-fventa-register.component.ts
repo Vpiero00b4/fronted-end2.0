@@ -329,39 +329,139 @@ export class FventaRegisterComponent implements OnInit {
 
   editarDescuentoProducto(index: number): void {
     const producto = this.productosAgregados[index];
+
     Swal.fire({
-      title: `Descuento para "${producto.nombreProducto}"`,
-      input: 'number',
-      inputLabel: 'Ingresa el descuento en soles',
-      inputValue: producto.descuento || 0,
-      inputAttributes: {
-        min: '0',
-        step: '0.1'
+      title: `<div style="display: flex; align-items: center; gap: 12px; justify-content: center;">
+              <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                          border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-percentage" style="color: white; font-size: 18px;"></i>
+              </div>
+              <div style="text-align: left;">
+                <div style="font-size: 20px; font-weight: 700; color: #1f2937; margin-bottom: 4px;">
+                  Editar Producto
+                </div>
+                <div style="font-size: 14px; color: #6b7280; font-weight: 400;">
+                  ${producto.nombreProducto}
+                </div>
+              </div>
+            </div>`,
+
+      html: `
+      <div style="padding: 20px 0; font-family: 'Inter', sans-serif;">
+        <!-- Info -->
+        <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); 
+                    border-radius: 12px; padding: 16px; margin-bottom: 24px; border: 1px solid #e5e7eb;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 16px; text-align: center;">
+            <div>
+              <div style="font-size: 12px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">PRECIO UNITARIO</div>
+              <div style="font-size: 16px; font-weight: 700; color: #059669;">S/ ${producto.precioUnit?.toFixed(2) || '0.00'}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">CANTIDAD ACTUAL</div>
+              <div style="font-size: 16px; font-weight: 700; color: #3b82f6;">${producto.cantidad || 1}</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: #6b7280; font-weight: 600; margin-bottom: 4px;">DESCUENTO ACTUAL</div>
+              <div style="font-size: 16px; font-weight: 700; color: #f59e0b;">S/ ${producto.descuento?.toFixed(2) || '0.00'}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inputs -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div>
+            <label style="font-weight: 600; font-size: 14px; color: #374151; margin-bottom: 8px; display: flex; gap: 8px; align-items: center;">
+              <i class="fas fa-sort-numeric-up" style="color: #6366f1;"></i> Nueva Cantidad
+            </label>
+            <input id="nueva-cantidad" type="number" min="1" step="1" value="${producto.cantidad || 1}"
+                   style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;">
+          </div>
+          <div>
+            <label style="font-weight: 600; font-size: 14px; color: #374151; margin-bottom: 8px; display: flex; gap: 8px; align-items: center;">
+              <i class="fas fa-percentage" style="color: #6366f1;"></i> Nuevo Descuento (S/)
+            </label>
+            <input id="nuevo-descuento" type="number" min="0" step="0.1" value="${producto.descuento || 0}"
+                   style="width:100%;padding:12px 16px;border:2px solid #e5e7eb;border-radius:12px;">
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div id="total-preview" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
+                                        border-radius: 12px; padding: 16px; border: 1px solid #a7f3d0;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; color: #065f46; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-calculator" style="color: #059669;"></i> Nuevo Total
+            </div>
+            <div style="font-size: 20px; font-weight: 800; color: #059669;">
+              S/ <span id="total-amount">${((producto.precioUnit || 0) * (producto.cantidad || 1) - (producto.descuento || 0)).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `,
+
+      didOpen: () => {
+        const cantidadInput = document.getElementById('nueva-cantidad') as HTMLInputElement;
+        const descuentoInput = document.getElementById('nuevo-descuento') as HTMLInputElement;
+        const totalAmount = document.getElementById('total-amount') as HTMLElement;
+        const precioUnitario = producto.precioUnit || 0;
+
+        const actualizarTotal = () => {
+          const cantidad = parseFloat(cantidadInput.value) || 1;
+          const descuento = parseFloat(descuentoInput.value) || 0;
+          const total = (precioUnitario * cantidad) - descuento;
+          totalAmount.textContent = total.toFixed(2);
+        };
+
+        cantidadInput.addEventListener('input', actualizarTotal);
+        descuentoInput.addEventListener('input', actualizarTotal);
       },
+
       showCancelButton: true,
-      confirmButtonText: 'Aplicar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (value === null || value === '') return 'El descuento es requerido';
-        if (parseFloat(value) < 0) return 'Debe ser un valor positivo';
-        return null;
-      }
-    }).then(result => {
-      if (result.isConfirmed) {
-        const nuevoDescuento = parseFloat(result.value);
-        if (!isNaN(nuevoDescuento)) {
-          this.productosAgregados[index].descuento = nuevoDescuento;
+      confirmButtonText: `<i class="fas fa-check"></i> Aplicar Cambios`,
+      cancelButtonText: `<i class="fas fa-times"></i> Cancelar`,
+      customClass: {
+        popup: 'swal-popup-custom',
+        confirmButton: 'swal-confirm-custom',
+        cancelButton: 'swal-cancel-custom'
+      },
+      width: '600px',
+      padding: '0',
+      background: '#fff',
+
+      preConfirm: () => {
+        const nuevaCantidad = parseFloat((document.getElementById('nueva-cantidad') as HTMLInputElement).value);
+        const nuevoDescuento = parseFloat((document.getElementById('nuevo-descuento') as HTMLInputElement).value);
+
+        if (isNaN(nuevaCantidad) || nuevaCantidad < 1) {
+          Swal.showValidationMessage('La cantidad debe ser mayor a 0');
+          return false;
         }
+        if (isNaN(nuevoDescuento) || nuevoDescuento < 0) {
+          Swal.showValidationMessage('El descuento debe ser mayor o igual a 0');
+          return false;
+        }
+        const subtotal = (producto.precioUnit || 0) * nuevaCantidad;
+        if (nuevoDescuento > subtotal) {
+          Swal.showValidationMessage('El descuento no puede ser mayor al subtotal');
+          return false;
+        }
+        return { cantidad: nuevaCantidad, descuento: nuevoDescuento };
+      }
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        producto.cantidad = result.value.cantidad;
+        producto.descuento = result.value.descuento;
       }
     });
   }
 
+  // Métodos de cálculo globales
   calcularDescuentoTotal(): number {
     const descuentoProductos = this.productosAgregados.reduce((total, item) => total + (item.descuento ?? 0), 0);
     const descuentoGeneral = this.descuentoVenta ?? 0;
     return descuentoProductos + descuentoGeneral;
   }
-
 
   calcularTotal(): number {
     return this.subtotal - this.calcularDescuentoTotal();
@@ -372,10 +472,8 @@ export class FventaRegisterComponent implements OnInit {
   }
 
   get totalVenta(): number {
-    const subtotal = this.productosAgregados.reduce((acc, p) => acc + (p.precioUnit * p.cantidad), 0);
+    const subtotal = this.subtotal;
     const descuentoProductos = this.productosAgregados.reduce((acc, p) => acc + (p.descuento || 0), 0);
     return subtotal - descuentoProductos - (this.descuentoVenta || 0);
   }
-
 }
-

@@ -1,74 +1,158 @@
-<div class="modal fade show d-block" tabindex="-1" role="dialog">
+<div class="modal fade show d-block custom-modal-zoom" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-    <div class="modal-content border-0 rounded-4 shadow-lg">
-
-      <!-- Encabezado -->
-      <div class="modal-header bg-primary text-white rounded-top py-2 px-3">
-        <h5 class="modal-title fw-semibold">
-          <i class="fas fa-book me-2"></i>Agregar Libro a la Venta
-        </h5>
-        <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" (click)="cerrar()"></button>
+    <div class="modal-content border-0 shadow-lg">
+      
+      <!-- Header con gradiente moderno -->
+      <div class="modal-header">
+        <div class="modal-title-wrapper">
+          <div class="modal-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div>
+            <h5 class="modal-title mb-0">Agregar Libro a la Venta</h5>
+            <p class="modal-subtitle mb-0">Complete los detalles del producto</p>
+          </div>
+        </div>
+        <button type="button" class="btn-close-custom" aria-label="Cerrar" (click)="cerrar()">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
 
-      <!-- Cuerpo -->
-      <div class="modal-body p-4">
+      <!-- Body del modal -->
+      <div class="modal-body">
         <form [formGroup]="libroForm" (ngSubmit)="agregarLibro()">
+          
+          <!-- Sección de búsqueda -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-search section-icon"></i>
+              <span class="section-title">Buscar Libro</span>
+            </div>
+            
+            <div class="search-container">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-barcode"></i>
+                </div>
+                <input 
+                  type="text" 
+                  class="form-control-modern" 
+                  formControlName="busqueda"
+                  placeholder="ISBN, título o autor del libro..."
+                  (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()"
+                />
+              </div>
+            </div>
 
-          <!-- Buscador de libros -->
-          <div class="mb-3">
-            <label class="form-label fw-semibold small text-muted">Buscar ISBN o Título</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="fas fa-search"></i></span>
-              <input type="text" class="form-control" formControlName="busqueda"
-                placeholder="Ej: 9780132350884, Clean Code" (focus)="limpiarBusqueda(); mostrarOpcionesDeLibros()" />
+            <!-- Lista de sugerencias mejorada -->
+            <div *ngIf="mostrarOpciones && librosFiltrados.length" 
+                 class="suggestions-dropdown">
+              <div class="suggestions-header">
+                <span class="suggestions-count">{{ librosFiltrados.length }} resultado(s) encontrado(s)</span>
+              </div>
+              <div class="suggestions-list">
+                <button 
+                  *ngFor="let libro of librosFiltrados; trackBy: trackByLibroId" 
+                  type="button" 
+                  class="suggestion-item"
+                  (click)="seleccionarLibro(libro.idLibro)">
+                  <div class="suggestion-icon">
+                    <i class="fas fa-book"></i>
+                  </div>
+                  <div class="suggestion-content">
+                    <span class="suggestion-title">{{ libro.displayText }}</span>
+                  </div>
+                  <div class="suggestion-action">
+                    <i class="fas fa-chevron-right"></i>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Lista de sugerencias -->
-          <div *ngIf="mostrarOpciones && librosFiltrados.length" class="list-group mb-3 border rounded-3 shadow-sm"
-            style="max-height: 200px; overflow-y: auto;">
-            <button *ngFor="let libro of librosFiltrados" type="button" class="list-group-item list-group-item-action"
-              (click)="seleccionarLibro(libro.idLibro)">
-              <i class="fas fa-book-open me-2 text-primary"></i>{{ libro.displayText }}
+          <!-- Sección de detalles -->
+          <div class="form-section">
+            <div class="section-header">
+              <i class="fas fa-cog section-icon"></i>
+              <span class="section-title">Detalles de la Venta</span>
+            </div>
+
+            <div class="form-grid">
+              <!-- Cantidad -->
+              <div class="form-group">
+                <label class="form-label-modern">
+                  <i class="fas fa-sort-numeric-up label-icon"></i>
+                  Cantidad
+                </label>
+                <div class="input-wrapper">
+                  <input 
+                    type="number" 
+                    class="form-control-modern" 
+                    formControlName="cantidad" 
+                    min="1"
+                    placeholder="1">
+                </div>
+              </div>
+
+              <!-- Precio Unitario -->
+              <div class="form-group">
+                <label class="form-label-modern">
+                  <i class="fas fa-tag label-icon"></i>
+                  Precio Unitario
+                </label>
+                <div class="input-wrapper currency">
+                  <div class="currency-symbol">S/</div>
+                  <input 
+                    type="number" 
+                    class="form-control-modern" 
+                    formControlName="precioVenta" 
+                    readonly
+                    placeholder="0.00">
+                </div>
+              </div>
+
+              <!-- Descuento -->
+              <div class="form-group">
+                <label class="form-label-modern">
+                  <i class="fas fa-percentage label-icon"></i>
+                  Descuento
+                </label>
+                <div class="input-wrapper currency">
+                  <div class="currency-symbol">S/</div>
+                  <input 
+                    type="number" 
+                    class="form-control-modern" 
+                    formControlName="descuento" 
+                    min="0"
+                    placeholder="0.00"
+                    (input)="actualizarTotalImporte()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Total destacado -->
+            <div class="total-section">
+              <div class="total-container">
+                <div class="total-label">
+                  <i class="fas fa-calculator"></i>
+                  Total a pagar
+                </div>
+                <div class="total-amount">
+                  S/ <span class="total-value">{{ libroForm.get('importe')?.value | number:'1.2-2' || '0.00' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary-modern" (click)="cerrar()">
+              <i class="fas fa-times"></i>
+              <span>Cancelar</span>
             </button>
-          </div>
-
-          <!-- Detalles del libro -->
-          <div class="row g-3">
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold">Cantidad</label>
-              <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-sort-numeric-up"></i></span>
-                <input type="number" class="form-control" formControlName="cantidad" min="1">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold">Precio Unitario</label>
-              <div class="input-group">
-                <span class="input-group-text">S/</span>
-                <input type="number" class="form-control" formControlName="precioVenta" readonly>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label small fw-semibold">Importe Total</label>
-              <div class="input-group">
-                <span class="input-group-text">S/</span>
-                <input type="number" class="form-control" formControlName="importe" readonly>
-              </div>
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Descuento por producto (S/)</label>
-            <input type="number" class="form-control" formControlName="descuento" min="0"
-              (input)="actualizarTotalImporte()" />
-          </div>
-          <!-- Botones -->
-          <div class="d-flex justify-content-end mt-4">
-            <button type="button" class="btn btn-outline-secondary me-2" (click)="cerrar()">
-              <i class="fas fa-times me-1"></i>Cancelar
-            </button>
-            <button type="submit" class="btn btn-success" [disabled]="!libroForm.valid">
-              <i class="fas fa-plus-circle me-1"></i>Agregar
+            <button type="submit" class="btn btn-primary-modern" [disabled]="!libroForm.valid">
+              <i class="fas fa-plus-circle"></i>
+              <span>Agregar Libro</span>
             </button>
           </div>
 

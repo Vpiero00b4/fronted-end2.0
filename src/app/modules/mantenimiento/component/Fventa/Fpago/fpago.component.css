@@ -1,0 +1,104 @@
+/* ====== Tarjetas ====== */
+.card {
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* ====== Encabezados ====== */
+.card-header {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: none;
+}
+
+.card-header i {
+  opacity: 0.9;
+}
+
+/* ====== Formularios ====== */
+label.form-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.input-group-text {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+.form-control {
+  border-radius: 0.6rem;
+  box-shadow: none !important;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25,135,84,.25);
+}
+
+/* ====== Botones ====== */
+.btn {
+  border-radius: 0.6rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn i {
+  margin-right: 4px;
+}
+
+.btn-outline-success:hover {
+  background: #198754;
+  color: #fff;
+}
+
+.btn-outline-info:hover {
+  background: #0dcaf0;
+  color: #fff;
+}
+
+.btn-outline-warning:hover {
+  background: #ffc107;
+  color: #212529;
+}
+
+/* ====== Resumen ====== */
+.bg-light {
+  background: #f8fafc !important;
+}
+
+.bg-success.text-white,
+.bg-danger.text-white {
+  border-radius: 0.8rem;
+}
+
+/* Vuelto */
+.fs-3 {
+  font-size: 1.75rem !important;
+}
+
+/* ====== Badges en botones ====== */
+.btn .badge {
+  font-size: 0.75rem;
+  border-radius: 0.5rem;
+  padding: 0.35em 0.65em;
+}
+
+/* ====== Animaciones suaves ====== */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
