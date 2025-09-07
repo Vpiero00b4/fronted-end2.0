@@ -18,7 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input'
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MomentDateModule } from '@angular/material-moment-adapter';
 
 //alertas
@@ -53,7 +53,6 @@ registerLocaleData(localeEs);
   declarations: [
     AppComponent,
     PrediccionComponent,
-
   ],
   imports: [
     BrowserModule,
@@ -77,13 +76,14 @@ registerLocaleData(localeEs);
     MatIconModule,
     MatToolbarModule,
     MatSidenavModule,
-    ReactiveFormsModule,
     NgChartsModule,
     FormsModule,
-
   ],
-
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true, }, { provide: LOCALE_ID, useValue: 'es' }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'es' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-ES' } //
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

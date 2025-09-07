@@ -11,6 +11,7 @@ import { alert_successlogin } from '../../../../../functions/general.functions';
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
+  
 })
 export class LoginComponent {
 

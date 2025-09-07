@@ -7,9 +7,10 @@ import { ProductoMasVendido } from '../modules/template/component/dashboard/dash
   providedIn: 'root'
 })
 export class GraficoService {
-  private baseurl = "https://localhost:7143"
-  constructor(private http: HttpClient) { }
+  private baseurl = "https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/";
+  private baseurl2 = "https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/api";
 
+  constructor(private http: HttpClient) { }
 
   obtenerProductosMasVendidos(mes: number, anio: number): Observable<ProductoMasVendido[]> {
     const params = new HttpParams()
@@ -19,16 +20,20 @@ export class GraficoService {
     return this.http.get<ProductoMasVendido[]>(`${this.baseurl}/DetalleVenta/productos-mas-vendidos`, { params });
   }
 
-
   obtenerResumenVentas(): Observable<any> {
     return this.http.get(`${this.baseurl}/Venta/resumen-ventas`);
   }
 
-
   obtenerTasaRotacion(filtro: string, offset: number, limit: number): Observable<any> {
     return this.http.get(`${this.baseurl}/Venta/tasaRotacion?filtro=${filtro}&offset=${offset}&limit=${limit}`);
   }
-  obtenerPagos():Observable<any>{
+
+  obtenerPagos(): Observable<any> {
     return this.http.get(`${this.baseurl}/DetalleVenta/Pagos`);
+  }
+
+  // 🔔 Nuevo: obtener notificaciones de stock bajo
+  obtenerNotificaciones(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseurl2}/Notificacion`);
   }
 }

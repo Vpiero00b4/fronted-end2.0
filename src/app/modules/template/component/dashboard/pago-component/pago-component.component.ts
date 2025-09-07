@@ -4,14 +4,16 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-pago-component',
-  templateUrl: './pago-component.component.html',
+  templateUrl:'./pago-component.component.html',
   styleUrl: './pago-component.component.css'
 })
 
 export class PagoComponent {
   constructor(private _graficoService: GraficoService) { }
   ngOnInit(): void {
-    this.ObtenerPagos()
+    this.ObtenerPagos();
+    this.ObtenerNotificaciones();
+    this.calcularPaginacion();
   }
   
   ObtenerPagos() {
@@ -46,15 +48,21 @@ export class PagoComponent {
       };
     });
   }
-  // Datos del gráfico
+// variables
+paginaActual: number = 1;   //debe iniciar en 1
+itemsPorPagina: number = 10; //mostrar 10 notificaciones por página
+totalPaginas: number = 0;
+notificacionesPaginadas: any[] = [];
+totalPaginasArray: number[] = [];
   public pieChartLabels: string[] = [];
   public pieChartType: 'pie' = 'pie';
   public totalPagos: number = 0;
   public totalTransacciones: number = 0;
   public metodoPrincipal: string = '';
+   notificaciones: any[] = [];
 
   // Colores mejorados y más atractivos
-  private colores = [
+  public colores = [
     '#10B981', // Verde esmeralda
     '#F59E0B', // Ámbar
     '#3B82F6', // Azul
@@ -109,4 +117,35 @@ ppieChartOptions: ChartOptions<'pie'> = {
     const porcentaje = (valor / this.totalPagos) * 100;
     return porcentaje.toFixed(1);
   }
+
+ObtenerNotificaciones() {
+  this._graficoService.obtenerNotificaciones().subscribe({
+    next: (data) => {
+      console.log('Notificaciones:', data);
+      this.notificaciones = data.sort((a, b) => Number(a.leido) - Number(b.leido));
+      this.calcularPaginacion(); // 👉 recalculamos paginación después de cargar
+    },
+    error: (err) => console.error('Error obteniendo notificaciones', err)
+  });
 }
+
+calcularPaginacion() {
+  this.totalPaginas = Math.ceil(this.notificaciones.length / this.itemsPorPagina);
+  this.totalPaginasArray = Array.from({ length: this.totalPaginas }, (_, i) => i + 1);
+  this.actualizarLista();
+}
+
+actualizarLista() {
+  const inicio = (this.paginaActual - 1) * this.itemsPorPagina;
+  const fin = inicio + this.itemsPorPagina;
+  this.notificacionesPaginadas = this.notificaciones.slice(inicio, fin);
+}
+
+cambiarPagina(pagina: number) {
+  if (pagina >= 1 && pagina <= this.totalPaginas) {
+    this.paginaActual = pagina;
+    this.actualizarLista();
+  }
+}
+}
+

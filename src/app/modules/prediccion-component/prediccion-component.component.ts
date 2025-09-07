@@ -9,14 +9,15 @@ import { Libro } from '../../models/libro-request.models';
   styleUrl: './prediccion-component.component.css'
 })
 export class PrediccionComponent implements OnInit {
-  constructor(private detalleVentaSerice: DetalleVentaService,private libroService : LibroService) { }
+  constructor(private detalleVentaSerice: DetalleVentaService, private libroService: LibroService) { }
 
-    // Propiedades para el buscador de libros
+  // Propiedades para el buscador de libros
   public terminoBusqueda: string = '';
   public librosEncontrados: Libro[] = [];
   public libroSeleccionado: Libro | null = null;
   public mostrarResultados: boolean = false;
   public buscandoLibros: boolean = false;
+  public rangoFechas: { inicio: Date, fin: Date } | null = null;
 
   // Propiedades para las predicciones
   public cargandoPredicciones: boolean = false;
@@ -32,6 +33,10 @@ export class PrediccionComponent implements OnInit {
     labels: [],
     datasets: []
   };
+  private obtenerDia(fecha: string): string {
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', { weekday: 'long' });
+  }
 
   // Opciones mejoradas para el gráfico de líneas
   public lineChartOptions: any = {
@@ -51,8 +56,11 @@ export class PrediccionComponent implements OnInit {
         callbacks: {
           afterLabel: (context: any) => {
             const prediccion = this.predicciones[context.dataIndex];
+            const dia = new Date(prediccion.fecha)
+              .toLocaleDateString('es-ES', { weekday: 'long' });
+
             return [
-              `Día: ${prediccion.dimFecha.nombreDia}`,
+              `Día: ${dia.charAt(0).toUpperCase() + dia.slice(1)}`, // capitalizado
               `Tipo: ${prediccion.dimFecha.tipoDia}`,
               `Fin de semana: ${prediccion.dimFecha.esFinDeSemana ? 'Sí' : 'No'}`,
               `Trimestre: ${prediccion.dimFecha.trimestre}`,
@@ -61,9 +69,10 @@ export class PrediccionComponent implements OnInit {
           }
         }
       }
+
     },
     scales: {
-      y: { 
+      y: {
         beginAtZero: true,
         title: {
           display: true,
@@ -108,7 +117,7 @@ export class PrediccionComponent implements OnInit {
       }
     },
     scales: {
-      y: { 
+      y: {
         beginAtZero: true,
         title: {
           display: true,
@@ -140,8 +149,12 @@ export class PrediccionComponent implements OnInit {
   public vistaActual: 'lineas' | 'barras' | 'tabla' = 'lineas';
 
   ngOnInit(): void {
-    // No cargar predicciones automáticamente
-    // El usuario debe seleccionar un libro primero
+    if (this.predicciones && this.predicciones.length > 0) {
+      this.rangoFechas = {
+        inicio: new Date(this.predicciones[0].fecha),
+        fin: new Date(this.predicciones[this.predicciones.length - 1].fecha)
+      };
+    }
   }
 
   // Método para buscar libros
@@ -153,7 +166,7 @@ export class PrediccionComponent implements OnInit {
     }
 
     this.buscandoLibros = true;
-    
+
     // Aquí necesitas crear un método en tu servicio para buscar libros
     this.libroService.buscarLibros(this.terminoBusqueda).subscribe({
       next: (libros: Libro[]) => {
@@ -175,7 +188,7 @@ export class PrediccionComponent implements OnInit {
     this.libroSeleccionado = libro;
     this.terminoBusqueda = libro.titulo ?? '';
     this.mostrarResultados = false;
-    
+
     // Limpiar datos anteriores
     this.limpiarDatos();
   }
@@ -235,9 +248,9 @@ export class PrediccionComponent implements OnInit {
   private procesarDatos(data: Prediccion[]): void {
     const labels = data.map(d => this.formatearFecha(d.fecha));
     const cantidades = data.map(d => d.cantidadPredicha);
-    
+
     // Colores diferentes para fines de semana vs días laborables
-    const coloresBarras = data.map(d => 
+    const coloresBarras = data.map(d =>
       d.dimFecha.esFinDeSemana ? '#ff6b6b' : '#4ecdc4'
     );
 
@@ -252,7 +265,7 @@ export class PrediccionComponent implements OnInit {
           backgroundColor: 'rgba(76, 132, 255, 0.1)',
           tension: 0.4,
           fill: true,
-          pointBackgroundColor: data.map(d => 
+          pointBackgroundColor: data.map(d =>
             d.dimFecha.esFinDeSemana ? '#ff6b6b' : '#4c84ff'
           ),
           pointBorderColor: '#ffffff',
@@ -281,15 +294,15 @@ export class PrediccionComponent implements OnInit {
 
   private formatearFecha(fecha: string): string {
     const date = new Date(fecha);
-    return date.toLocaleDateString('es-ES', { 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('es-ES', {
+      month: 'short',
+      day: 'numeric'
     });
   }
 
   private calcularEstadisticas(data: Prediccion[]): void {
     const cantidades = data.map(d => d.cantidadPredicha);
-    
+
     this.estadisticas = {
       total: cantidades.reduce((sum, val) => sum + val, 0),
       promedio: cantidades.reduce((sum, val) => sum + val, 0) / cantidades.length,
@@ -305,7 +318,7 @@ export class PrediccionComponent implements OnInit {
   }
 
   public obtenerClaseTipoDia(tipoDia: string): string {
-    switch(tipoDia) {
+    switch (tipoDia) {
       case 'PrevioFeriado': return 'badge-warning';
       case 'Normal': return 'badge-success';
       default: return 'badge-secondary';
