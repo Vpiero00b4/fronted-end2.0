@@ -20,12 +20,12 @@ export class AuthService {
     'Authorization': `Bearer ${token}`
   })
 
-    return this.htpp.get("https://localhost:7143/Persona",{headers:httpHeaders});
+    return this.htpp.get("https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/Persona",{headers:httpHeaders});
 
   } 
   login(request:any){
 
-    return this.htpp.post("https://localhost:7143/api/Auth",request);
+    return this.htpp.post("https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/api/Auth",request);
     
 
   }

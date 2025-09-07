@@ -117,7 +117,7 @@ export class LibroService extends CrudService<LibroRequest, LibroResponse> {
     return this.http.post(`${this.url_service}/cargar-excel-libros`, formData);
   }
   getUltimoPrecioByLibroId(idLibro: number): Observable<Precio | null> {
-    return this.http.get<Precio[]>(`https://localhost:7143/Libro/precios/${idLibro}`).pipe(
+    return this.http.get<Precio[]>(`https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/Libro/precios/${idLibro}`).pipe(
       map(precios => precios.length > 0 ? precios[0] : null)
     );
   }

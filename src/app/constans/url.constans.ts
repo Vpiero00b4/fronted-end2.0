@@ -1,4 +1,4 @@
-export const dominio = "https://localhost:7143/";
+export const dominio = "https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/";
 
     export const UrlConstants = {
         DetalleVenta: dominio + "DetalleVenta/registrar-venta-detalle",        usuario: dominio + "Usuario", usuariocrear:dominio+"Usuario/Crear", DetalleVentas: dominio + "DetalleVenta",  

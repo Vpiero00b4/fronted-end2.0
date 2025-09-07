@@ -43,7 +43,7 @@ export class VentasService extends CrudService<VentaRequest, VentaResponse> {
     return this.http.post(`${UrlConstants}/api/Cart`, carrito);
   }
   getVentaPDF(idVenta: number): Observable<Blob> {
-    return this.http.get(`https://localhost:7143/Venta/${idVenta}/pdf`, { responseType: 'blob' });
+    return this.http.get(`https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/Venta/${idVenta}/pdf`, { responseType: 'blob' });
   }
   obtenerVentasPorFechas(fechaInicio: string, fechaFin: string): Observable<VentaResponse[]> {
     const url = `${UrlConstants.venta}/ObtenerPorFechas`;

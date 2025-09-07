@@ -7,7 +7,7 @@ import { ProductoMasVendido } from '../modules/template/component/dashboard/dash
   providedIn: 'root'
 })
 export class GraficoService {
-  private baseurl = "https://localhost:7143"
+  private baseurl = "https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net"
   constructor(private http: HttpClient) { }
 
 

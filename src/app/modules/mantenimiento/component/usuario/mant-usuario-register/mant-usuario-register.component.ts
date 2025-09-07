@@ -181,7 +181,7 @@ export class MantUsuarioRegisterComponent implements OnInit {
 
     const body = { EncryptedText: this.textoEncriptadoOriginal };
 
-    this.http.post<{ decryptedText: string }>('https://localhost:7143/api/Cripto/desencriptar', body).subscribe({
+    this.http.post<{ decryptedText: string }>('https://libsaber-h6befwejedhaakb9.canadacentral-01.azurewebsites.net/api/Cripto/desencriptar', body).subscribe({
       next: (response) => {
         this.passwordDesencriptada = response.decryptedText;
         this.mostrarPassword = true;
