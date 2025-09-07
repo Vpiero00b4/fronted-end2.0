@@ -1,26 +1,98 @@
-  <div class="row justify-content-center mb-4">
-    <div class="col-12 text-center">
-      <h2>METODOS DE PAGO</h2>
+<p>-</p>
+<div class="row g-4 align-items-start">
+  <!-- 📊 Gráfico de pagos -->
+  <div class="col-md-6">
+    <h2 class="section-title text-center mb-2">MÉTODOS DE PAGO</h2>
+
+    <div class="card shadow-sm border-0 rounded-3 p-3 h-100">
+      <!-- Título interno -->
+      <div class="fw-bold fs-5 text-primary text-center mb-3">
+        Distribución de Pagos
+      </div>
+
+      <!-- Gráfico -->
+      <div class="d-flex justify-content-center mb-3">
+        <div style="width: 260px; height: 260px;">
+          <canvas baseChart [data]="pieChartData" [type]="pieChartType" [options]="ppieChartOptions">
+          </canvas>
+        </div>
+      </div>
+
+      <!-- 📊 Resumen -->
+      <div class="stats mb-3 px-3">
+        <div class="d-flex justify-content-center flex-wrap text-center gap-5">
+
+          <!-- Total -->
+          <div>
+            <span class="text-muted small l-block mb-1">Total:</span>
+            <span class="fw-bold fs-10 text-primary">
+              S/.{{ totalPagos | number:'1.2-2' }}
+            </span>
+          </div>
+
+          <!-- Transacciones -->
+          <div>
+            <span class="text-muted small l-block mb-1">Transacciones: </span>
+            <span class="badge bg-dark fs-10 px-2 py-1">
+              {{ totalTransacciones }}
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- 📊 Porcentajes -->
+      <div class="row text-center g-2">
+        <div class="col-4" *ngFor="let label of pieChartLabels; let i = index">
+          <span class="badge metodo-badge d-block mb-1" [ngStyle]="{'background-color': colores[i]}">
+            {{ label }}
+          </span>
+          <span class="fw-bold">{{ getPorcentaje(i) }}%</span>
+        </div>
+      </div>
     </div>
   </div>
-<div class="d-flex justify-content-center">
-  <div style="width: 300px; height: 300px;">
-    <canvas baseChart
-            [data]="pieChartData"
-            [type]="pieChartType"
-            [options]="ppieChartOptions">
-    </canvas>
-  </div>
-</div>
 
-<!-- Estadísticas debajo -->
-<div class="text-center mt-1" style="font-size: 0.65rem;">
-  Total: S/.{{ totalPagos | number:'1.2-2' }} | Transacciones: {{ totalTransacciones }}<br>
-  Método principal: {{ metodoPrincipal }}
-</div>
-<!-- Mostrar porcentajes debajo -->
-<div class="text-center" style="font-size: 0.6rem; margin-top: 4px;">
-  <div *ngFor="let label of pieChartLabels; let i = index">
-    {{ label }}: {{ getPorcentaje(i) }}%
+
+  <!-- 🔔 Notificaciones -->
+  <div class="col-md-6">
+    <h2 class="section-title text-center mb-2">NOTIFICACIONES</h2>
+    <div class="card shadow-sm border-0 rounded-2 p-2 h-100 d-flex flex-column">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="fw-bold fs-5 text-primary">Productos por agotarse</span>
+        <span class="badge bg-danger text-white">{{ notificaciones.length }}</span>
+      </div>
+
+      <!-- Lista de notificaciones -->
+      <ul class="list-group list-group-flush custom-scroll flex-grow-1">
+        <li *ngFor="let noti of notificacionesPaginadas"
+          class="list-group-item d-flex justify-content-between align-items-start border-0 border-bottom py-2 px-0">
+          <div>
+            <span [ngClass]="{'fw-bold text-danger': !noti.leido}">
+              {{ noti.mensaje }}
+            </span>
+          </div>
+          <small class="text-muted ms-2">{{ noti.fecha | date:'short' }}</small>
+        </li>
+      </ul>
+
+      <!-- 📑 Paginador -->
+      <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="paginaActual === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual - 1)">Anterior</a>
+          </li>
+
+          <li *ngFor="let p of totalPaginasArray" class="page-item" [class.active]="p === paginaActual">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(p)">{{ p }}</a>
+          </li>
+
+          <li class="page-item" [class.disabled]="paginaActual === totalPaginas">
+            <a class="page-link" href="javascript:void(0)" (click)="cambiarPagina(paginaActual + 1)">Siguiente</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </div>
